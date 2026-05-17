@@ -19,7 +19,7 @@ function CheckIcon() {
 
 export async function TrustBar({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'landing.trust' });
-  const items = ['earlyAccess', 'curriculum', 'bilingual', 'tutor'] as const;
+  const items = ['accredited', 'curriculum', 'bilingual', 'faithExcellence'] as const;
 
   return (
     <section className="border-y border-midsea-ocean/10 bg-white/70 backdrop-blur">

@@ -1,16 +1,20 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
+import { Fidelis } from './Fidelis';
 
 // Iconos inline para los chips flotantes. Mantenidos simples (stroke-based)
 // para que combinen con el resto del styling y eviten una dep nueva.
 const icons = {
-  ai: (
+  faith: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="h-4 w-4">
-      <rect x="5" y="7" width="14" height="12" rx="3" />
-      <line x1="12" y1="3" x2="12" y2="7" />
-      <circle cx="9" cy="13" r="1" />
-      <circle cx="15" cy="13" r="1" />
-      <line x1="9" y1="17" x2="15" y2="17" />
+      <path d="M12 4v14" />
+      <path d="M8 8h8" />
+    </svg>
+  ),
+  accredited: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="h-4 w-4">
+      <path d="M12 3l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V6l7-3z" />
+      <polyline points="9 11 11 13 15 9" />
     </svg>
   ),
   math: (
@@ -40,18 +44,13 @@ const icons = {
       <path d="M13 21l4-10 4 10" />
       <path d="M14.5 17.5h5" />
     </svg>
-  ),
-  points: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="h-4 w-4">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-    </svg>
   )
 };
 
-type ChipTone = 'ocean' | 'lagoon' | 'coral' | 'sun' | 'nexos';
+type ChipTone = 'deep' | 'lagoon' | 'coral' | 'sun' | 'nexos';
 
 const toneClasses: Record<ChipTone, string> = {
-  ocean: 'text-midsea-ocean',
+  deep: 'text-midsea-deep',
   lagoon: 'text-midsea-lagoon',
   coral: 'text-midsea-coral',
   sun: 'text-midsea-sun',
@@ -112,40 +111,20 @@ export async function HeroSection({ locale }: { locale: string }) {
           </div>
         </div>
 
-        <div className="relative mx-auto aspect-[4/5] w-full max-w-md" aria-label={t('visualAlt')} role="img">
-          <div className="absolute inset-0 overflow-hidden rounded-[3rem] bg-gradient-to-br from-midsea-lagoon via-midsea-ocean to-midsea-deep shadow-wave">
-            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15 blur-2xl" />
-            <div className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-midsea-sun/30 blur-2xl" />
-            <div className="absolute left-1/2 top-1/2 w-[78%] -translate-x-1/2 -translate-y-1/2 space-y-3 rounded-2xl bg-white p-5 shadow-wave">
-              <div className="flex items-center justify-between">
-                <div className="h-2 w-16 rounded-full bg-midsea-foam" />
-                <div className="h-5 w-5 rounded-full bg-gradient-to-br from-nexos to-nexos-dark" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-3 w-full rounded-full bg-midsea-foam" />
-                <div className="h-3 w-4/5 rounded-full bg-midsea-foam" />
-                <div className="h-3 w-2/3 rounded-full bg-midsea-foam" />
-              </div>
-              <div className="rounded-xl bg-midsea-foam p-3">
-                <div className="h-2 w-1/2 rounded-full bg-midsea-lagoon/40" />
-                <div className="mt-2 h-2 w-3/4 rounded-full bg-midsea-lagoon/30" />
-              </div>
-              <div className="flex items-center justify-between pt-1">
-                <div className="flex gap-1">
-                  <span className="h-2 w-2 rounded-full bg-midsea-lagoon" />
-                  <span className="h-2 w-2 rounded-full bg-midsea-foam" />
-                  <span className="h-2 w-2 rounded-full bg-midsea-foam" />
-                </div>
-                <div className="h-6 w-16 rounded-lg bg-midsea-deep" />
-              </div>
-            </div>
-          </div>
+        <div
+          className="relative mx-auto aspect-square w-full max-w-md"
+          aria-label={t('visualAlt')}
+          role="img"
+        >
+          {/* halo de fondo muy sutil — la composicion principal es Fidelis */}
+          <div className="absolute inset-6 rounded-full bg-gradient-to-br from-midsea-foam via-white to-midsea-foam/40" />
+          <Fidelis className="relative h-full w-full animate-floatY" />
 
           <Chip
             className="top-[6%] -left-3 sm:-left-6"
-            icon={icons.ai}
-            label={t('tagAI')}
-            tone="ocean"
+            icon={icons.faith}
+            label={t('tagFaith')}
+            tone="deep"
             delay="0s"
           />
           <Chip
@@ -171,8 +150,8 @@ export async function HeroSection({ locale }: { locale: string }) {
           />
           <Chip
             className="-bottom-2 left-1/2 -translate-x-1/2"
-            icon={icons.points}
-            label={t('tagPoints')}
+            icon={icons.accredited}
+            label={t('tagAccredited')}
             tone="nexos"
             delay="1.6s"
           />

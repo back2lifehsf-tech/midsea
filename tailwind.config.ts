@@ -1,5 +1,12 @@
 import type { Config } from 'tailwindcss';
 
+// Paleta oficial MIDSEA Academy:
+//   #1800AA azul profundo  → midsea-deep / midsea-ocean
+//   #0D9488 teal           → midsea-lagoon
+//   #F9B21C naranja        → midsea-coral / nexos
+//   #000000 negro          → midsea-ink
+//   Derivados: foam (bg claro), sun (naranja claro), nexos-dark.
+
 const config: Config = {
   content: [
     './src/app/**/*.{ts,tsx}',
@@ -10,25 +17,25 @@ const config: Config = {
     extend: {
       colors: {
         midsea: {
-          deep: '#0B3D5C',
-          ocean: '#1A6E8E',
-          lagoon: '#3FB8AF',
-          foam: '#E8F6F4',
-          coral: '#FF7A66',
-          sun: '#FFC857',
-          ink: '#0A1F2C'
+          deep: '#1800AA',
+          ocean: '#1800AA',
+          lagoon: '#0D9488',
+          foam: '#EEF1FF',
+          coral: '#F9B21C',
+          sun: '#FCD46F',
+          ink: '#000000'
         },
         nexos: {
-          DEFAULT: '#FFC857',
-          dark: '#E0A92E'
+          DEFAULT: '#F9B21C',
+          dark: '#C88500'
         }
       },
       fontFamily: {
-        sans: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-        display: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif']
+        sans: ['var(--font-inter)', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        display: ['var(--font-inter)', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif']
       },
       boxShadow: {
-        wave: '0 12px 30px -12px rgba(11, 61, 92, 0.45)'
+        wave: '0 12px 30px -12px rgba(24, 0, 170, 0.35)'
       },
       keyframes: {
         ripple: {

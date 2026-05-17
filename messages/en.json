@@ -1,9 +1,11 @@
 {
   "meta": {
-    "title": "Midsea — Bilingual homeschooling LMS",
-    "description": "Homeschooling platform with separate spaces for parents and students."
+    "title": "MIDSEA Academy — Christian bilingual K-12 education",
+    "description": "Florida-accredited Christian bilingual virtual school. PreK-12 curriculum with values, parent tools, and home-based learning."
   },
   "landing": {
+    "brand": "MIDSEA Academy",
+    "brandShort": "Midsea",
     "nav": {
       "features": "Features",
       "pricing": "Pricing",
@@ -14,63 +16,64 @@
       "closeMenu": "Close menu"
     },
     "hero": {
-      "eyebrow": "Bilingual PreK-12 platform",
-      "headline": "Bilingual homeschooling, reimagined",
-      "subheadline": "PreK-12 curriculum in Spanish and English, personalized AI tutoring, and gamification that keeps your kids motivated. All in one platform.",
+      "eyebrow": "Christian bilingual K-12 school",
+      "headline": "Christian bilingual K-12 education, from home",
+      "subheadline": "MIDSEA Academy is a Florida-accredited virtual school. A complete K-12 curriculum, Christian values, and Spanish-English bilingual learning — all at home, without diluting your faith or your language.",
       "ctaPrimary": "Start free",
       "ctaSecondary": "See demo",
-      "tagAI": "AI Tutor",
+      "tagFaith": "Faith & Values",
       "tagMath": "Math",
       "tagScience": "Science",
       "tagLanguage": "Languages",
-      "tagPoints": "+100 Nexos",
-      "visualAlt": "Learning composition with floating subjects"
+      "tagAccredited": "FL-accredited",
+      "visualAlt": "Fidelis, the MIDSEA Academy globe mascot"
     },
     "trust": {
-      "earlyAccess": "Early access",
-      "curriculum": "K-12 curriculum",
-      "bilingual": "Bilingual es/en",
-      "tutor": "AI Tutor 24/7"
+      "accredited": "Florida-accredited",
+      "curriculum": "Full K-12",
+      "bilingual": "Native bilingual",
+      "faithExcellence": "Faith & Excellence"
     },
     "why": {
-      "heading": "Why Midsea?",
-      "subheading": "Four pillars built to stop homeschooling from feeling improvised.",
+      "heading": "Why MIDSEA Academy?",
+      "subheading": "Four pillars that sustain an education with purpose.",
+      "faith": {
+        "title": "Faith-centered",
+        "body": "Education rooted in Christian values that nurture character and spirituality across every subject."
+      },
       "bilingual": {
-        "title": "Native bilingual",
+        "title": "Bilingual by design",
         "body": "Learn in Spanish or English with no forced translations. Switch languages with one click."
       },
-      "tutor": {
-        "title": "AI Tutor Sylvie",
-        "body": "Your personal copilot that explains, reviews, and answers questions in real time."
+      "flexible": {
+        "title": "Flexible & personalized",
+        "body": "Your child advances at their own pace. You choose schedule, depth, and weekly planning."
       },
-      "gamification": {
-        "title": "Deep gamification",
-        "body": "Points, levels, badges, and rewards that keep motivation high."
-      },
-      "family": {
-        "title": "For the whole family",
-        "body": "One parent account, individual profiles for each child."
+      "accredited": {
+        "title": "Fully accredited",
+        "body": "Official academic records. Transcripts valid for college admissions or re-entry into traditional schools."
       }
     },
     "curriculum": {
       "heading": "A curriculum that grows with your child",
-      "subheading": "Common Core + LATAM standards, adapted to each family's pace and language.",
+      "subheading": "Common Core + LATAM standards integrated with Christian formation, adapted to each family's language.",
       "tabs": {
         "preK2": "PreK-2",
         "g35": "3-5",
         "g68": "6-8",
         "g912": "9-12"
       },
-      "preK2Body": "Foundations through play. Basic math, bilingual literacy, natural sciences, and art.",
-      "g35Body": "Intermediate reinforcement. Fractions, reading comprehension, basic history, language introduction.",
-      "g68Body": "Advanced preparation. Algebra, academic writing, physical sciences, geography.",
-      "g912Body": "Complete high school. Calculus, literature, chemistry, biology, world history, and electives.",
+      "preK2Body": "Foundations through play. Basic math, bilingual literacy, natural sciences, art, and Bible for kids.",
+      "g35Body": "Intermediate reinforcement. Fractions, reading comprehension, basic history, foreign language, and Bible study.",
+      "g68Body": "Advanced preparation. Algebra, academic writing, physical sciences, geography, and Christian formation.",
+      "g912Body": "Complete high school. Calculus, literature, chemistry, biology, world history, electives, and theology.",
       "subjects": {
         "math": "Math",
         "science": "Science",
         "language": "Language",
         "history": "History",
-        "art": "Art"
+        "art": "Art",
+        "bible": "Bible & Values"
       }
     },
     "learners": {
@@ -92,21 +95,21 @@
       "visualAlt": "Parent dashboard preview"
     },
     "testimonials": {
-      "heading": "Families already trusting Midsea",
-      "subheading": "We're in early access. These are the first voices.",
+      "heading": "Christian families trusting MIDSEA Academy",
+      "subheading": "First voices from our community — churches, homeschoolers, and families of faith.",
       "t1": {
-        "quote": "Midsea made our homeschooling bilingual effortlessly. My kids switch between Spanish and English naturally.",
+        "quote": "MIDSEA Academy gives us the flexibility to integrate our faith into every lesson. My kids grow up bilingual with clear values.",
         "name": "María G.",
-        "location": "Madrid"
+        "location": "Iglesia Vida Nueva, Madrid"
       },
       "t2": {
-        "quote": "The AI tutor explains hard concepts in a way no textbook has. My son finally understands fractions.",
+        "quote": "As a Christian family we finally found a school with academic excellence that doesn't dilute our values. The Bible is part of the curriculum, not an add-on.",
         "name": "Carlos R.",
         "location": "Mexico City"
       },
       "t3": {
-        "quote": "Having progress tracking and reports in Spanish saves me hours every week. It's like having an educational assistant.",
-        "name": "Andrea V.",
+        "quote": "The curriculum includes Bible, and Florida accreditation gives us peace of mind for transcripts. Our church already recommends Midsea to other families.",
+        "name": "Pastor Andrés V.",
         "location": "Miami"
       }
     },
@@ -152,19 +155,21 @@
       "cta": "Create free account"
     },
     "footer": {
-      "brandTagline": "Bilingual homeschooling with AI tutoring and gamification.",
+      "brandTagline": "Christian bilingual K-12 school, accredited in Florida.",
       "columnProduct": "Product",
-      "columnCompany": "Company",
+      "columnIdentity": "Identity",
       "columnLegal": "Legal",
       "features": "Features",
       "pricing": "Pricing",
       "forParents": "For parents",
       "forStudents": "For students",
+      "accreditation": "Accreditation",
+      "values": "Christian values",
       "about": "About",
       "contact": "Contact",
       "terms": "Terms",
       "privacy": "Privacy",
-      "copyright": "© 2026 Midsea. All rights reserved."
+      "copyright": "© 2026 MIDSEA Academy. All rights reserved."
     }
   },
   "common": {

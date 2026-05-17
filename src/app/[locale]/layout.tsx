@@ -2,9 +2,18 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { Inter } from 'next/font/google';
 import { locales, type Locale } from '@/i18n';
 import { SessionProvider } from '@/components/auth/SessionProvider';
 import '../globals.css';
+
+// Inter desde Google Fonts via next/font. La variable CSS la consume tailwind
+// (fontFamily.sans / display = var(--font-inter)).
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap'
+});
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -38,8 +47,8 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className="scroll-smooth">
-      <body className="midsea-gradient">
+    <html lang={locale} className={`scroll-smooth ${inter.variable}`}>
+      <body className="midsea-gradient font-sans">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SessionProvider>{children}</SessionProvider>
         </NextIntlClientProvider>

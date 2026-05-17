@@ -15,8 +15,10 @@ export async function LandingFooter({ locale }: { locale: string }) {
       ]
     },
     {
-      heading: t('columnCompany'),
+      heading: t('columnIdentity'),
       links: [
+        { label: t('accreditation'), href: '#' },
+        { label: t('values'), href: '#' },
         { label: t('about'), href: '#' },
         { label: t('contact'), href: '#' }
       ]
@@ -41,9 +43,9 @@ export async function LandingFooter({ locale }: { locale: string }) {
             >
               <span
                 aria-hidden
-                className="inline-block h-8 w-8 rounded-full bg-gradient-to-br from-midsea-lagoon to-midsea-ocean shadow-wave"
+                className="inline-block h-8 w-8 rounded-full bg-gradient-to-br from-midsea-lagoon to-midsea-deep shadow-wave"
               />
-              Midsea
+              MIDSEA Academy
             </Link>
             <p className="mt-3 max-w-xs text-sm text-midsea-ink/70">{t('brandTagline')}</p>
           </div>

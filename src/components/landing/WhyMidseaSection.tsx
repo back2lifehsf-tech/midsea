@@ -4,6 +4,13 @@ import { FeatureCard } from './FeatureCard';
 const iconClass = 'h-6 w-6';
 
 const featureIcons = {
+  faith: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={iconClass}>
+      <path d="M12 3v18" />
+      <path d="M7 8h10" />
+      <path d="M5 14a7 7 0 0 0 14 0" />
+    </svg>
+  ),
   bilingual: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={iconClass}>
       <circle cx="12" cy="12" r="9" />
@@ -12,41 +19,29 @@ const featureIcons = {
       <path d="M12 3a14 14 0 0 0 0 18" />
     </svg>
   ),
-  tutor: (
+  flexible: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={iconClass}>
-      <rect x="4" y="7" width="16" height="13" rx="3" />
-      <line x1="12" y1="3" x2="12" y2="7" />
-      <circle cx="9" cy="13" r="1.2" />
-      <circle cx="15" cy="13" r="1.2" />
-      <path d="M9 17h6" />
+      <circle cx="12" cy="12" r="9" />
+      <polyline points="12 7 12 12 15 14" />
+      <path d="M20 4l-1.5 1.5" />
+      <path d="M4 4l1.5 1.5" />
     </svg>
   ),
-  gamification: (
+  accredited: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={iconClass}>
-      <path d="M7 4h10v4a5 5 0 0 1-10 0V4z" />
-      <path d="M7 6H4v2a3 3 0 0 0 3 3" />
-      <path d="M17 6h3v2a3 3 0 0 1-3 3" />
-      <path d="M10 13h4v3h-4z" />
-      <path d="M8 20h8" />
-    </svg>
-  ),
-  family: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={iconClass}>
-      <circle cx="9" cy="8" r="3" />
-      <circle cx="17" cy="9" r="2.5" />
-      <path d="M3 20c0-3 3-5 6-5s6 2 6 5" />
-      <path d="M13 19c0-2 2-3.5 4-3.5s4 1.5 4 3.5" />
+      <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" />
+      <polyline points="9 12 11 14 15 10" />
     </svg>
   )
 };
 
 export async function WhyMidseaSection({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'landing.why' });
-  const features: { key: 'bilingual' | 'tutor' | 'gamification' | 'family' }[] = [
+  const features: { key: 'faith' | 'bilingual' | 'flexible' | 'accredited' }[] = [
+    { key: 'faith' },
     { key: 'bilingual' },
-    { key: 'tutor' },
-    { key: 'gamification' },
-    { key: 'family' }
+    { key: 'flexible' },
+    { key: 'accredited' }
   ];
 
   return (

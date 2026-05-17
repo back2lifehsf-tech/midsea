@@ -29,9 +29,9 @@ export function LandingNav() {
         >
           <span
             aria-hidden
-            className="inline-block h-8 w-8 rounded-full bg-gradient-to-br from-midsea-lagoon to-midsea-ocean shadow-wave"
+            className="inline-block h-8 w-8 rounded-full bg-gradient-to-br from-midsea-lagoon to-midsea-deep shadow-wave"
           />
-          Midsea
+          MIDSEA Academy
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-1 text-sm md:flex">

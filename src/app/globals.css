@@ -4,8 +4,8 @@
 
 :root {
   color-scheme: light;
-  --bg: 232 246 244;
-  --fg: 10 31 44;
+  --bg: 238 241 255;
+  --fg: 0 0 0;
 }
 
 html,
@@ -24,8 +24,8 @@ body {
     @apply inline-flex items-center gap-2 rounded-full bg-midsea-foam px-3 py-1 text-sm font-medium text-midsea-deep;
   }
   .midsea-gradient {
-    background: radial-gradient(circle at 20% 10%, #3FB8AF22, transparent 50%),
-                radial-gradient(circle at 80% 0%, #FFC85733, transparent 45%),
-                linear-gradient(180deg, #E8F6F4 0%, #FFFFFF 100%);
+    background: radial-gradient(circle at 20% 10%, #0D948822, transparent 50%),
+                radial-gradient(circle at 80% 0%, #F9B21C26, transparent 45%),
+                linear-gradient(180deg, #EEF1FF 0%, #FFFFFF 100%);
   }
 }
