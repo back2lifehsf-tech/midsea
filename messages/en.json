@@ -1,0 +1,305 @@
+{
+  "meta": {
+    "title": "Midsea — Bilingual homeschooling LMS",
+    "description": "Homeschooling platform with separate spaces for parents and students."
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "forParents": "For Parents",
+      "forStudents": "For Students",
+      "enter": "Sign in",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "hero": {
+      "eyebrow": "Bilingual PreK-12 platform",
+      "headline": "Bilingual homeschooling, reimagined",
+      "subheadline": "PreK-12 curriculum in Spanish and English, personalized AI tutoring, and gamification that keeps your kids motivated. All in one platform.",
+      "ctaPrimary": "Start free",
+      "ctaSecondary": "See demo",
+      "tagAI": "AI Tutor",
+      "tagMath": "Math",
+      "tagScience": "Science",
+      "tagLanguage": "Languages",
+      "tagPoints": "+100 Nexos",
+      "visualAlt": "Learning composition with floating subjects"
+    },
+    "trust": {
+      "earlyAccess": "Early access",
+      "curriculum": "K-12 curriculum",
+      "bilingual": "Bilingual es/en",
+      "tutor": "AI Tutor 24/7"
+    },
+    "why": {
+      "heading": "Why Midsea?",
+      "subheading": "Four pillars built to stop homeschooling from feeling improvised.",
+      "bilingual": {
+        "title": "Native bilingual",
+        "body": "Learn in Spanish or English with no forced translations. Switch languages with one click."
+      },
+      "tutor": {
+        "title": "AI Tutor Sylvie",
+        "body": "Your personal copilot that explains, reviews, and answers questions in real time."
+      },
+      "gamification": {
+        "title": "Deep gamification",
+        "body": "Points, levels, badges, and rewards that keep motivation high."
+      },
+      "family": {
+        "title": "For the whole family",
+        "body": "One parent account, individual profiles for each child."
+      }
+    },
+    "curriculum": {
+      "heading": "A curriculum that grows with your child",
+      "subheading": "Common Core + LATAM standards, adapted to each family's pace and language.",
+      "tabs": {
+        "preK2": "PreK-2",
+        "g35": "3-5",
+        "g68": "6-8",
+        "g912": "9-12"
+      },
+      "preK2Body": "Foundations through play. Basic math, bilingual literacy, natural sciences, and art.",
+      "g35Body": "Intermediate reinforcement. Fractions, reading comprehension, basic history, language introduction.",
+      "g68Body": "Advanced preparation. Algebra, academic writing, physical sciences, geography.",
+      "g912Body": "Complete high school. Calculus, literature, chemistry, biology, world history, and electives.",
+      "subjects": {
+        "math": "Math",
+        "science": "Science",
+        "language": "Language",
+        "history": "History",
+        "art": "Art"
+      }
+    },
+    "learners": {
+      "heading": "Built for all learners",
+      "subheading": "Visual, kinesthetic, auditory, or mixed styles — Midsea adapts.",
+      "b1": "Short videos, step-by-step practice, and immediate rewards.",
+      "b2": "Flexible schedule: your child moves at their own pace.",
+      "b3": "Text-to-speech, dark mode, and accessibility tweaks.",
+      "b4": "Moderated safe community to practice social skills.",
+      "visualAlt": "Learning style icons"
+    },
+    "parentTools": {
+      "heading": "Tools that empower parents",
+      "subheading": "From manager to director: full control in five minutes a day.",
+      "b1": "Assign lessons and set personalized schedules.",
+      "b2": "Real-time progress tracking with downloadable reports.",
+      "b3": "Unified dashboard for all your kids.",
+      "b4": "Notifications when they need extra support.",
+      "visualAlt": "Parent dashboard preview"
+    },
+    "testimonials": {
+      "heading": "Families already trusting Midsea",
+      "subheading": "We're in early access. These are the first voices.",
+      "t1": {
+        "quote": "Midsea made our homeschooling bilingual effortlessly. My kids switch between Spanish and English naturally.",
+        "name": "María G.",
+        "location": "Madrid"
+      },
+      "t2": {
+        "quote": "The AI tutor explains hard concepts in a way no textbook has. My son finally understands fractions.",
+        "name": "Carlos R.",
+        "location": "Mexico City"
+      },
+      "t3": {
+        "quote": "Having progress tracking and reports in Spanish saves me hours every week. It's like having an educational assistant.",
+        "name": "Andrea V.",
+        "location": "Miami"
+      }
+    },
+    "pricing": {
+      "heading": "One subscription, the whole curriculum",
+      "subheading": "No long contracts. Cancel anytime.",
+      "popular": "Most popular",
+      "perMonth": "/mo",
+      "perYear": "/yr",
+      "oneTime": "one-time",
+      "cta": "Start trial",
+      "monthly": {
+        "name": "Monthly",
+        "price": "$29",
+        "body": "Full access, cancel anytime.",
+        "feat1": "Full K-12 curriculum",
+        "feat2": "Unlimited AI Tutor",
+        "feat3": "Up to 4 kids",
+        "feat4": "Email support"
+      },
+      "annual": {
+        "name": "Annual",
+        "price": "$290",
+        "body": "2 months free. Full access.",
+        "feat1": "Everything in Monthly",
+        "feat2": "Regulatory reports",
+        "feat3": "Offline mode (soon)",
+        "feat4": "Priority support"
+      },
+      "lifetime": {
+        "name": "Lifetime",
+        "price": "$590",
+        "body": "For the whole family, forever.",
+        "feat1": "Everything in Annual",
+        "feat2": "Lifetime access",
+        "feat3": "New subjects included",
+        "feat4": "Premium family account"
+      }
+    },
+    "finalCta": {
+      "heading": "Start the homeschooling of the future today",
+      "body": "No credit card. No commitments. Just learning.",
+      "cta": "Create free account"
+    },
+    "footer": {
+      "brandTagline": "Bilingual homeschooling with AI tutoring and gamification.",
+      "columnProduct": "Product",
+      "columnCompany": "Company",
+      "columnLegal": "Legal",
+      "features": "Features",
+      "pricing": "Pricing",
+      "forParents": "For parents",
+      "forStudents": "For students",
+      "about": "About",
+      "contact": "Contact",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "copyright": "© 2026 Midsea. All rights reserved."
+    }
+  },
+  "common": {
+    "comingSoon": "Coming soon",
+    "comingSoonBody": "This section will be available soon."
+  },
+  "demo": {
+    "heading": "Demo mode",
+    "subheading": "Iterate on the UI without Google OAuth or a database.",
+    "asParent": "Enter as Parent",
+    "asStudent": "Enter as Student",
+    "parentDescription": "Browse the parent dashboard with sample data.",
+    "studentDescription": "Browse the student space with demo lessons.",
+    "badge": "DEMO",
+    "devOnly": "Development only"
+  },
+  "subjects": {
+    "MATH": "Math",
+    "LANGUAGE_ARTS": "Language Arts",
+    "SCIENCE": "Science",
+    "SOCIAL_STUDIES": "Social Studies",
+    "FOREIGN_LANGUAGE": "Foreign Language",
+    "ELECTIVE": "Elective"
+  },
+  "nav": {
+    "switchLocale": "Español",
+    "signOut": "Sign out"
+  },
+  "auth": {
+    "loginTitle": "Welcome to Midsea",
+    "loginSubtitle": "Choose your role and sign in with your Google account.",
+    "signInWithGoogle": "Continue with Google",
+    "redirectingToGoogle": "Redirecting to Google…",
+    "signOut": "Sign out",
+    "signedInAs": "Signed in as {name}",
+    "privacyNote": "We only use your email to identify you. We never share it.",
+    "loading": "Loading session",
+    "errorTitle": "We couldn't sign you in",
+    "errorGeneric": "Something went wrong with Google. Please try again.",
+    "backHome": "Back to login"
+  },
+  "roleSelector": {
+    "parent": {
+      "tag": "Parents and guardians",
+      "title": "I'm a parent",
+      "description": "Track your kids' progress, assign lessons, plan the week and review reports.",
+      "cta": "Sign in as parent"
+    },
+    "student": {
+      "tag": "Students",
+      "title": "I'm a student",
+      "description": "Open today's lessons, complete exercises and earn Nexos. If you get stuck, ask for help inside the lesson.",
+      "cta": "Sign in as student"
+    }
+  },
+  "parent": {
+    "nav": {
+      "overview": "Overview",
+      "students": "My kids",
+      "planner": "Planner",
+      "reports": "Reports",
+      "settings": "Settings"
+    },
+    "dashboard": {
+      "heading": "Family dashboard",
+      "subheading": "Today at a glance",
+      "kidsHeading": "Your kids",
+      "weekHeading": "This week",
+      "alertsHeading": "Active alerts",
+      "addStudent": "Add a kid",
+      "assignLesson": "Assign lesson",
+      "openReport": "View report",
+      "noAlerts": "No alerts. Everyone is on track.",
+      "kidMinutesToday": "{minutes} min today",
+      "kidMastery": "{pct}% mastery",
+      "kidStuck": "Stuck on {topic}",
+      "weeklyMinutes": "Minutes per day (this week)",
+      "subjectMath": "Math",
+      "subjectLanguage": "Language Arts",
+      "subjectScience": "Science",
+      "subjectSocial": "Social Studies"
+    }
+  },
+  "student": {
+    "nav": {
+      "home": "Home",
+      "lessons": "Lessons",
+      "rewards": "Rewards",
+      "profile": "Profile"
+    },
+    "home": {
+      "greeting": "Hi, {name}!",
+      "subhead": "Here are today's lessons.",
+      "assignedHeading": "For today",
+      "completedHeading": "Already done",
+      "continueLabel": "Continue",
+      "startLabel": "Start",
+      "askForHelp": "Ask the tutor for help",
+      "minutesEstimate": "{minutes} min",
+      "noLessons": "No lessons assigned today. Take a break!",
+      "rewardPreview": "+{nexos} Nexos for mastering this lesson"
+    },
+    "tutor": {
+      "title": "Ask for help with this lesson",
+      "context": "You're working on: {topic}",
+      "placeholder": "Tell me where you got stuck…",
+      "send": "Send",
+      "thinking": "Thinking…",
+      "disclaimer": "This chat is shared with your parent. It's here to help you, not do the lesson for you.",
+      "back": "Back to the lesson",
+      "starters": {
+        "explain": "Explain this topic to me",
+        "stuck": "I don't get this question",
+        "example": "Give me an example"
+      }
+    },
+    "lesson": {
+      "backToHome": "Back to home",
+      "subjectLabel": "Subject",
+      "minutesEstimate": "{minutes} min",
+      "rewardPreview": "+{nexos} Nexos for mastering the lesson",
+      "masteryProgress": "Your current mastery",
+      "placeholderHeading": "Lesson content",
+      "placeholderBody": "Video, interactive activities and the assessment will live here. If you get stuck, tap Ask for help and Sylvie will guide you without giving the answer away."
+    }
+  },
+  "gamification": {
+    "nexosShort": "Nexos",
+    "lessonReward": "+{amount} Nexos for mastering the lesson",
+    "masteryRequired": "You need 80% mastery to earn Nexos",
+    "badgeUnlocked": "You unlocked the «{name}» badge!",
+    "currentLevel": "Level {level}"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "missingApiKey": "OPENAI_API_KEY is not configured on the server."
+  }
+}

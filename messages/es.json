@@ -1,0 +1,305 @@
+{
+  "meta": {
+    "title": "Midsea — LMS bilingüe para homeschooling",
+    "description": "Plataforma de homeschooling con espacios separados para padres y estudiantes."
+  },
+  "landing": {
+    "nav": {
+      "features": "Características",
+      "pricing": "Precios",
+      "forParents": "Para Padres",
+      "forStudents": "Para Estudiantes",
+      "enter": "Entrar",
+      "openMenu": "Abrir menú",
+      "closeMenu": "Cerrar menú"
+    },
+    "hero": {
+      "eyebrow": "Plataforma bilingüe PreK-12",
+      "headline": "Homeschooling bilingüe, reinventado",
+      "subheadline": "Currículo PreK-12 en español e inglés, tutoría AI personalizada y gamificación que mantiene a tus hijos motivados. Todo en una sola plataforma.",
+      "ctaPrimary": "Empieza gratis",
+      "ctaSecondary": "Ver demo",
+      "tagAI": "AI Tutor",
+      "tagMath": "Matemáticas",
+      "tagScience": "Ciencias",
+      "tagLanguage": "Idiomas",
+      "tagPoints": "+100 Nexos",
+      "visualAlt": "Composición de aprendizaje con materias flotantes"
+    },
+    "trust": {
+      "earlyAccess": "Acceso anticipado",
+      "curriculum": "Currículo K-12",
+      "bilingual": "Bilingüe es/en",
+      "tutor": "AI Tutor 24/7"
+    },
+    "why": {
+      "heading": "¿Por qué elegir Midsea?",
+      "subheading": "Cuatro pilares pensados para que el homeschooling deje de sentirse improvisado.",
+      "bilingual": {
+        "title": "Bilingüe nativo",
+        "body": "Aprende en español o inglés sin traducciones forzadas. Cambia de idioma con un clic."
+      },
+      "tutor": {
+        "title": "AI Tutor Sylvie",
+        "body": "Tu copiloto personal que explica, repasa y responde dudas en tiempo real."
+      },
+      "gamification": {
+        "title": "Gamificación profunda",
+        "body": "Puntos, niveles, badges y recompensas que mantienen la motivación alta."
+      },
+      "family": {
+        "title": "Para toda la familia",
+        "body": "Una cuenta para padres, perfiles individuales para cada hijo."
+      }
+    },
+    "curriculum": {
+      "heading": "Un currículo que crece con tu hijo",
+      "subheading": "Estándares Common Core + LATAM, adaptados al ritmo y al idioma de cada familia.",
+      "tabs": {
+        "preK2": "PreK-2",
+        "g35": "3-5",
+        "g68": "6-8",
+        "g912": "9-12"
+      },
+      "preK2Body": "Fundamentos con juego. Matemáticas básicas, lectoescritura bilingüe, ciencias naturales y arte.",
+      "g35Body": "Refuerzo intermedio. Fracciones, comprensión lectora, historia básica, introducción a idiomas.",
+      "g68Body": "Preparación avanzada. Álgebra, escritura académica, ciencias físicas, geografía.",
+      "g912Body": "Secundaria completa. Cálculo, literatura, química, biología, historia mundial y electivas.",
+      "subjects": {
+        "math": "Matemáticas",
+        "science": "Ciencias",
+        "language": "Lengua",
+        "history": "Historia",
+        "art": "Arte"
+      }
+    },
+    "learners": {
+      "heading": "Diseñado para todo tipo de aprendices",
+      "subheading": "Estilos visuales, kinestésicos, auditivos o mezclas: Midsea se adapta.",
+      "b1": "Videos cortos, práctica paso a paso y recompensas inmediatas.",
+      "b2": "Horario flexible: tu hijo avanza a su propio ritmo.",
+      "b3": "Texto a voz, modo oscuro y ajustes de accesibilidad.",
+      "b4": "Comunidad moderada segura para practicar habilidades sociales.",
+      "visualAlt": "Iconos de estilos de aprendizaje"
+    },
+    "parentTools": {
+      "heading": "Herramientas que empoderan a los padres",
+      "subheading": "Pasas de gestor a director: control total con cinco minutos al día.",
+      "b1": "Asigna lecciones y establece horarios personalizados.",
+      "b2": "Seguimiento de progreso en tiempo real con reportes descargables.",
+      "b3": "Dashboard unificado para todos tus hijos.",
+      "b4": "Notificaciones cuando necesitan apoyo extra.",
+      "visualAlt": "Vista previa del dashboard del padre"
+    },
+    "testimonials": {
+      "heading": "Familias que ya confían en Midsea",
+      "subheading": "Estamos en acceso anticipado. Estas son las primeras voces.",
+      "t1": {
+        "quote": "Midsea hizo que nuestro homeschooling fuera bilingüe sin esfuerzo. Mis hijos alternan entre español e inglés naturalmente.",
+        "name": "María G.",
+        "location": "Madrid"
+      },
+      "t2": {
+        "quote": "El AI tutor explica los conceptos difíciles de una forma que ningún libro ha logrado. Mi hijo por fin entiende fracciones.",
+        "name": "Carlos R.",
+        "location": "Ciudad de México"
+      },
+      "t3": {
+        "quote": "Tener el seguimiento de progreso y los reportes en español me ahorra horas semanales. Es como tener una asistente educativa.",
+        "name": "Andrea V.",
+        "location": "Miami"
+      }
+    },
+    "pricing": {
+      "heading": "Una suscripción, todo el currículo",
+      "subheading": "Sin contratos largos. Cancela cuando quieras.",
+      "popular": "Más popular",
+      "perMonth": "/mes",
+      "perYear": "/año",
+      "oneTime": "una vez",
+      "cta": "Comenzar prueba",
+      "monthly": {
+        "name": "Mensual",
+        "price": "$29",
+        "body": "Acceso completo, cancela cuando quieras.",
+        "feat1": "Currículo K-12 completo",
+        "feat2": "AI Tutor ilimitado",
+        "feat3": "Hasta 4 hijos",
+        "feat4": "Soporte por email"
+      },
+      "annual": {
+        "name": "Anual",
+        "price": "$290",
+        "body": "2 meses gratis. Acceso completo.",
+        "feat1": "Todo lo del plan mensual",
+        "feat2": "Reportes regulatorios",
+        "feat3": "Modo offline (pronto)",
+        "feat4": "Soporte prioritario"
+      },
+      "lifetime": {
+        "name": "Lifetime",
+        "price": "$590",
+        "body": "Para toda la familia, para siempre.",
+        "feat1": "Todo lo del plan anual",
+        "feat2": "Acceso de por vida",
+        "feat3": "Nuevas materias incluidas",
+        "feat4": "Cuenta familiar premium"
+      }
+    },
+    "finalCta": {
+      "heading": "Empieza el homeschooling del futuro hoy",
+      "body": "Sin tarjeta de crédito. Sin compromisos. Solo aprendizaje.",
+      "cta": "Crear cuenta gratis"
+    },
+    "footer": {
+      "brandTagline": "Homeschooling bilingüe con tutoría AI y gamificación.",
+      "columnProduct": "Producto",
+      "columnCompany": "Compañía",
+      "columnLegal": "Legal",
+      "features": "Características",
+      "pricing": "Precios",
+      "forParents": "Para padres",
+      "forStudents": "Para estudiantes",
+      "about": "Sobre nosotros",
+      "contact": "Contacto",
+      "terms": "Términos",
+      "privacy": "Privacidad",
+      "copyright": "© 2026 Midsea. Todos los derechos reservados."
+    }
+  },
+  "common": {
+    "comingSoon": "Próximamente",
+    "comingSoonBody": "Esta sección estará disponible pronto."
+  },
+  "demo": {
+    "heading": "Modo de prueba",
+    "subheading": "Para iterar la UI sin Google OAuth ni base de datos.",
+    "asParent": "Entrar como Padre",
+    "asStudent": "Entrar como Estudiante",
+    "parentDescription": "Explora el panel del padre con datos de muestra.",
+    "studentDescription": "Explora el espacio del estudiante con lecciones demo.",
+    "badge": "DEMO",
+    "devOnly": "Solo para desarrollo"
+  },
+  "subjects": {
+    "MATH": "Matemáticas",
+    "LANGUAGE_ARTS": "Lengua",
+    "SCIENCE": "Ciencias",
+    "SOCIAL_STUDIES": "Sociales",
+    "FOREIGN_LANGUAGE": "Idioma extranjero",
+    "ELECTIVE": "Electiva"
+  },
+  "nav": {
+    "switchLocale": "English",
+    "signOut": "Cerrar sesión"
+  },
+  "auth": {
+    "loginTitle": "Bienvenido a Midsea",
+    "loginSubtitle": "Elige tu rol y entra con tu cuenta de Google.",
+    "signInWithGoogle": "Continuar con Google",
+    "redirectingToGoogle": "Redirigiendo a Google…",
+    "signOut": "Cerrar sesión",
+    "signedInAs": "Conectado como {name}",
+    "privacyNote": "Solo usamos tu email para identificarte. Nunca lo compartimos.",
+    "loading": "Cargando sesión",
+    "errorTitle": "No pudimos iniciar sesión",
+    "errorGeneric": "Algo salió mal con Google. Inténtalo de nuevo.",
+    "backHome": "Volver al login"
+  },
+  "roleSelector": {
+    "parent": {
+      "tag": "Padres y tutores",
+      "title": "Soy padre o madre",
+      "description": "Gestiona el progreso de tus hijos, asigna lecciones, planifica la semana y revisa reportes.",
+      "cta": "Entrar como padre"
+    },
+    "student": {
+      "tag": "Estudiantes",
+      "title": "Soy estudiante",
+      "description": "Abre tus lecciones del día, completa ejercicios y gana Nexos. Si te atascas, puedes pedir ayuda dentro de la lección.",
+      "cta": "Entrar como estudiante"
+    }
+  },
+  "parent": {
+    "nav": {
+      "overview": "Resumen",
+      "students": "Mis hijos",
+      "planner": "Planificador",
+      "reports": "Reportes",
+      "settings": "Ajustes"
+    },
+    "dashboard": {
+      "heading": "Panel de la familia",
+      "subheading": "Resumen de hoy",
+      "kidsHeading": "Tus hijos",
+      "weekHeading": "Esta semana",
+      "alertsHeading": "Alertas activas",
+      "addStudent": "Agregar hijo",
+      "assignLesson": "Asignar lección",
+      "openReport": "Ver reporte",
+      "noAlerts": "Sin alertas. Todos avanzan bien.",
+      "kidMinutesToday": "{minutes} min hoy",
+      "kidMastery": "{pct}% de dominio",
+      "kidStuck": "Atascado en {topic}",
+      "weeklyMinutes": "Minutos por día (esta semana)",
+      "subjectMath": "Matemáticas",
+      "subjectLanguage": "Lengua",
+      "subjectScience": "Ciencias",
+      "subjectSocial": "Sociales"
+    }
+  },
+  "student": {
+    "nav": {
+      "home": "Inicio",
+      "lessons": "Lecciones",
+      "rewards": "Recompensas",
+      "profile": "Perfil"
+    },
+    "home": {
+      "greeting": "¡Hola, {name}!",
+      "subhead": "Estas son tus lecciones de hoy.",
+      "assignedHeading": "Para hoy",
+      "completedHeading": "Ya terminaste",
+      "continueLabel": "Continuar",
+      "startLabel": "Empezar",
+      "askForHelp": "Pedir ayuda al tutor",
+      "minutesEstimate": "{minutes} min",
+      "noLessons": "No tienes lecciones asignadas hoy. ¡Date un descanso!",
+      "rewardPreview": "+{nexos} Nexos si dominas la lección"
+    },
+    "tutor": {
+      "title": "Pide ayuda con esta lección",
+      "context": "Estás trabajando en: {topic}",
+      "placeholder": "Escribe en qué te atascaste…",
+      "send": "Enviar",
+      "thinking": "Pensando…",
+      "disclaimer": "Este chat se comparte con tu mama o papa. Es para ayudarte, no para hacer la lección por ti.",
+      "back": "Volver a la lección",
+      "starters": {
+        "explain": "Explícame este tema",
+        "stuck": "No entiendo la pregunta",
+        "example": "Dame un ejemplo"
+      }
+    },
+    "lesson": {
+      "backToHome": "Volver al inicio",
+      "subjectLabel": "Materia",
+      "minutesEstimate": "{minutes} min",
+      "rewardPreview": "+{nexos} Nexos si dominas la lección",
+      "masteryProgress": "Tu dominio actual",
+      "placeholderHeading": "Contenido de la lección",
+      "placeholderBody": "Aquí irán el video, las actividades interactivas y la evaluación. Si te atascas, pulsa el botón Pedir ayuda y Sylvie te orienta sin darte la respuesta."
+    }
+  },
+  "gamification": {
+    "nexosShort": "Nexos",
+    "lessonReward": "+{amount} Nexos por dominar la lección",
+    "masteryRequired": "Necesitas 80% para ganar Nexos",
+    "badgeUnlocked": "¡Lograste el logro «{name}»!",
+    "currentLevel": "Nivel {level}"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Inténtalo de nuevo.",
+    "missingApiKey": "Falta configurar OPENAI_API_KEY en el servidor."
+  }
+}

@@ -30,6 +30,10 @@ yarn-error.log*
 .idea/
 *.swp
 *.swo
+.claude/
+
+# Build artifacts
+tsconfig.tsbuildinfo
 
 # OS
 Thumbs.db

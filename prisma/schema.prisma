@@ -1,0 +1,185 @@
+// Midsea — modelo de dominio v1 (ver PRD.md secciones 1.4 y 3)
+// Source of truth para parent/student/curriculum/Nexos.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Locale {
+  es
+  en
+}
+
+enum Role {
+  PARENT
+  STUDENT
+  ADMIN
+}
+
+enum Subject {
+  MATH
+  LANGUAGE_ARTS
+  SCIENCE
+  SOCIAL_STUDIES
+  FOREIGN_LANGUAGE
+  ELECTIVE
+}
+
+enum LessonStatus {
+  LOCKED
+  AVAILABLE
+  IN_PROGRESS
+  MASTERED
+}
+
+enum NexosReason {
+  LESSON_MASTERY
+  BADGE
+  STREAK
+  PARENT_GRANT
+  STORE_PURCHASE
+  ADJUSTMENT
+}
+
+model Family {
+  id          String   @id @default(cuid())
+  name        String
+  locale      Locale   @default(es)
+  createdAt   DateTime @default(now())
+  parents     Parent[]
+  students    Student[]
+}
+
+model Parent {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  familyId  String
+  createdAt DateTime @default(now())
+
+  @@index([familyId])
+}
+
+model Student {
+  id              String          @id @default(cuid())
+  displayName     String
+  birthDate       DateTime
+  gradeLevel      Int             // 0 = PreK, 1..12
+  preferredLocale Locale          @default(es)
+  family          Family          @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  familyId        String
+  createdAt       DateTime        @default(now())
+
+  progress        LessonProgress[]
+  ledger          NexosEntry[]
+  earnedBadges    EarnedBadge[]
+  tutorSessions   TutorSession[]
+
+  @@index([familyId])
+}
+
+model Lesson {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  subject     Subject
+  gradeLevel  Int
+  // Contenido bilingue: PRD seccion 3.3 — el espanol es la fuente, ingles es adaptacion cultural.
+  titleEs     String
+  titleEn     String
+  summaryEs   String
+  summaryEn   String
+  estMinutes  Int          @default(15)
+  rewardNexos Int          @default(100)
+  orderIndex  Int          @default(0)
+  createdAt   DateTime     @default(now())
+
+  progress    LessonProgress[]
+
+  @@index([subject, gradeLevel])
+}
+
+model LessonProgress {
+  id          String       @id @default(cuid())
+  student     Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId   String
+  lesson      Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId    String
+  status      LessonStatus @default(AVAILABLE)
+  masteryPct  Int          @default(0) // 0..100
+  attempts    Int          @default(0)
+  lastAttempt DateTime?
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([studentId, lessonId])
+  @@index([studentId, status])
+}
+
+model NexosEntry {
+  id        String      @id @default(cuid())
+  student   Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  amount    Int         // positivo = gana, negativo = gasta
+  reason    NexosReason
+  // Metadata libre: lessonId, badgeId, storeItemId, etc.
+  refId     String?
+  note      String?
+  createdAt DateTime    @default(now())
+
+  @@index([studentId, createdAt])
+}
+
+model Badge {
+  id          String        @id @default(cuid())
+  code        String        @unique
+  nameEs      String
+  nameEn      String
+  descriptionEs String
+  descriptionEn String
+  iconKey     String        // referencia a public/assets/badges/<key>.svg
+  rewardNexos Int           @default(0)
+
+  earned      EarnedBadge[]
+}
+
+model EarnedBadge {
+  id        String   @id @default(cuid())
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  badgeId   String
+  earnedAt  DateTime @default(now())
+
+  @@unique([studentId, badgeId])
+  @@index([studentId])
+}
+
+model TutorSession {
+  id         String       @id @default(cuid())
+  student    Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId  String
+  locale     Locale
+  topic      String?
+  createdAt  DateTime     @default(now())
+  endedAt    DateTime?
+
+  messages   TutorMessage[]
+
+  @@index([studentId, createdAt])
+}
+
+model TutorMessage {
+  id        String       @id @default(cuid())
+  session   TutorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String
+  role      String       // "user" | "assistant" | "system"
+  content   String       @db.Text
+  createdAt DateTime     @default(now())
+
+  @@index([sessionId, createdAt])
+}
