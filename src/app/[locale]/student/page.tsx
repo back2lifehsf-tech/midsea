@@ -1,34 +1,98 @@
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import type { Subject } from '@prisma/client';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ProgressBar } from '@/components/gamification/ProgressBar';
 import { requireStudentSpaceAccess } from '@/lib/auth/session';
 import { getActiveStudent } from '@/lib/auth/active-student';
 import { prisma } from '@/lib/prisma';
-import { DEMO_LESSONS, DEMO_LUCIA_PROGRESS, type DemoSubject } from '@/lib/demo/data';
+import { DEMO_LESSONS, DEMO_LUCIA_PROGRESS } from '@/lib/demo/data';
+import {
+  INTENT_KEYS,
+  intentIcons,
+  intentTone,
+  type IntentKey
+} from '@/components/student/intentVisuals';
 
-type ViewState = 'available' | 'inProgress' | 'completed';
+// Intent-based dashboard. Reemplaza el lesson grid por 4 entradas de intencion
+// (CLAUDE.md seccion 7.1, AI_TUTOR_SPEC.md seccion 7). El estudiante no piensa
+// "donde esta la materia X", piensa "que necesito ahora".
+//
+// Los datos siguen viniendo de Lesson + LessonProgress sin cambios de schema —
+// solo presentados de forma distinta (no grid de materias, sino contexto de
+// "donde estabas" + "logros recientes" alrededor de las intenciones).
 
-interface LessonView {
-  slug: string;
-  title: string;
-  subjectLabel: string;
-  estMinutes: number;
-  rewardNexos: number;
-  state: ViewState;
-  masteryPct?: number;
+interface DashboardData {
+  inProgress: { slug: string; titleEs: string; titleEn: string; masteryPct: number; attempts: number } | null;
+  recentMastered: Array<{ slug: string; titleEs: string; titleEn: string }>;
+  reviewableCount: number;
 }
 
-function statusToState(status: string): ViewState {
-  if (status === 'MASTERED') return 'completed';
-  if (status === 'IN_PROGRESS') return 'inProgress';
-  return 'available';
+async function loadDashboardData(
+  activeStudentId: string,
+  isDemo: boolean
+): Promise<DashboardData> {
+  if (isDemo) {
+    const inProgressP = DEMO_LUCIA_PROGRESS.find((p) => p.status === 'IN_PROGRESS');
+    const inProgressLesson = inProgressP ? DEMO_LESSONS.find((l) => l.slug === inProgressP.slug) : null;
+    const masteredP = DEMO_LUCIA_PROGRESS.filter((p) => p.status === 'MASTERED');
+    return {
+      inProgress:
+        inProgressP && inProgressLesson
+          ? {
+              slug: inProgressLesson.slug,
+              titleEs: inProgressLesson.titleEs,
+              titleEn: inProgressLesson.titleEn,
+              masteryPct: inProgressP.masteryPct,
+              attempts: inProgressP.attempts
+            }
+          : null,
+      recentMastered: masteredP
+        .map((p) => DEMO_LESSONS.find((l) => l.slug === p.slug))
+        .filter((l): l is NonNullable<typeof l> => Boolean(l))
+        .map((l) => ({ slug: l.slug, titleEs: l.titleEs, titleEn: l.titleEn })),
+      reviewableCount: masteredP.length
+    };
+  }
+
+  const [inProgress, recentMastered, masteredCount] = await Promise.all([
+    prisma.lessonProgress.findFirst({
+      where: { studentId: activeStudentId, status: 'IN_PROGRESS' },
+      orderBy: { lastAttempt: 'desc' },
+      include: { lesson: { select: { slug: true, titleEs: true, titleEn: true } } }
+    }),
+    prisma.lessonProgress.findMany({
+      where: { studentId: activeStudentId, status: 'MASTERED' },
+      orderBy: { updatedAt: 'desc' },
+      take: 5,
+      include: { lesson: { select: { slug: true, titleEs: true, titleEn: true } } }
+    }),
+    prisma.lessonProgress.count({
+      where: { studentId: activeStudentId, status: 'MASTERED' }
+    })
+  ]);
+
+  return {
+    inProgress: inProgress
+      ? {
+          slug: inProgress.lesson.slug,
+          titleEs: inProgress.lesson.titleEs,
+          titleEn: inProgress.lesson.titleEn,
+          masteryPct: inProgress.masteryPct,
+          attempts: inProgress.attempts
+        }
+      : null,
+    recentMastered: recentMastered.map((p) => ({
+      slug: p.lesson.slug,
+      titleEs: p.lesson.titleEs,
+      titleEn: p.lesson.titleEn
+    })),
+    reviewableCount: masteredCount
+  };
 }
 
-export default async function StudentHomePage({
+export default async function StudentDashboardPage({
   params: { locale }
 }: {
   params: { locale: string };
@@ -39,126 +103,136 @@ export default async function StudentHomePage({
     redirect(`/${locale}/parent`);
   }
 
-  const [tHome, tSubjects] = await Promise.all([
-    getTranslations({ locale, namespace: 'student.home' }),
-    getTranslations({ locale, namespace: 'subjects' })
+  const [tDash, tIntents] = await Promise.all([
+    getTranslations({ locale, namespace: 'student.dashboard' }),
+    getTranslations({ locale, namespace: 'student.intents' })
   ]);
 
   const isEs = locale !== 'en';
-  const subjectLabel = (s: Subject | DemoSubject) => tSubjects(s);
+  const data = await loadDashboardData(activeStudent.id, activeStudent.isDemo);
 
-  let lessons: LessonView[];
-  if (activeStudent.isDemo) {
-    lessons = DEMO_LUCIA_PROGRESS.map((p) => {
-      const lesson = DEMO_LESSONS.find((l) => l.slug === p.slug)!;
-      return {
-        slug: lesson.slug,
-        title: isEs ? lesson.titleEs : lesson.titleEn,
-        subjectLabel: subjectLabel(lesson.subject),
-        estMinutes: lesson.estMinutes,
-        rewardNexos: lesson.rewardNexos,
-        state: statusToState(p.status),
-        masteryPct: p.masteryPct
-      };
-    });
-  } else {
-    const progress = await prisma.lessonProgress.findMany({
-      where: {
-        studentId: activeStudent.id,
-        status: { in: ['AVAILABLE', 'IN_PROGRESS', 'MASTERED'] }
-      },
-      include: { lesson: true },
-      orderBy: [{ status: 'asc' }, { lesson: { orderIndex: 'asc' } }]
-    });
-    lessons = progress.map((p) => ({
-      slug: p.lesson.slug,
-      title: isEs ? p.lesson.titleEs : p.lesson.titleEn,
-      subjectLabel: subjectLabel(p.lesson.subject),
-      estMinutes: p.lesson.estMinutes,
-      rewardNexos: p.lesson.rewardNexos,
-      state: statusToState(p.status),
-      masteryPct: p.masteryPct
-    }));
-  }
+  // Stuck hint: si hay leccion in-progress con >= 1 intento, sugiere ayuda contextual.
+  const stuckTopic = data.inProgress && data.inProgress.attempts >= 1
+    ? (isEs ? data.inProgress.titleEs : data.inProgress.titleEn)
+    : null;
 
-  const assigned = lessons.filter((l) => l.state !== 'completed');
-  const completed = lessons.filter((l) => l.state === 'completed');
+  // Review hint: cuenta cuanto hay reviewable (proxy hasta tener spaced repetition real).
+  const reviewableCount = data.reviewableCount;
+
+  const intentHint = (key: IntentKey): string => {
+    if (key === 'stuck' && stuckTopic) {
+      return tIntents('stuck.hintActive', { topic: stuckTopic });
+    }
+    if (key === 'review' && reviewableCount > 0) {
+      return tIntents('review.hintActive', { count: reviewableCount });
+    }
+    return tIntents(`${key}.hint`);
+  };
 
   return (
-    <div className="space-y-8">
-      <header>
+    <div className="space-y-10">
+      <header className="space-y-2">
         <h1 className="font-display text-3xl font-bold text-midsea-deep">
-          {tHome('greeting', { name: activeStudent.displayName })}
+          {tDash('greeting', { name: activeStudent.displayName })}
         </h1>
-        <p className="mt-1 text-sm text-midsea-ink/70">{tHome('subhead')}</p>
+        <p className="text-base text-midsea-ink/70">{tDash('subheading')}</p>
       </header>
 
-      <section aria-labelledby="assigned-heading" className="space-y-3">
-        <h2 id="assigned-heading" className="font-display text-xl font-semibold text-midsea-deep">
-          {tHome('assignedHeading')}
+      <section aria-labelledby="intents-heading" className="space-y-4">
+        <h2 id="intents-heading" className="font-display text-xl font-semibold text-midsea-deep">
+          {tDash('intentsHeading')}
         </h2>
-        {assigned.length === 0 ? (
-          <Card>
-            <p className="text-sm text-midsea-ink/70">{tHome('noLessons')}</p>
-          </Card>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2">
-            {assigned.map((lesson) => (
-              <Card key={lesson.slug}>
-                <p className="text-xs uppercase tracking-wide text-midsea-ocean">
-                  {lesson.subjectLabel}
-                </p>
-                <p className="mt-1 font-display text-lg font-semibold text-midsea-deep">
-                  {lesson.title}
-                </p>
-                <p className="mt-1 text-xs text-midsea-ink/60">
-                  {tHome('minutesEstimate', { minutes: lesson.estMinutes })} ·{' '}
-                  {tHome('rewardPreview', { nexos: lesson.rewardNexos })}
-                </p>
-
-                {lesson.state === 'inProgress' && typeof lesson.masteryPct === 'number' ? (
-                  <div className="mt-3">
-                    <ProgressBar value={lesson.masteryPct} label={`${lesson.masteryPct}%`} />
-                  </div>
-                ) : null}
-
-                <div className="mt-4">
-                  <Button
-                    as={Link}
-                    href={`/${locale}/student/lessons/${lesson.slug}`}
-                    variant="primary"
-                  >
-                    {lesson.state === 'inProgress' ? tHome('continueLabel') : tHome('startLabel')}
-                  </Button>
+        <div className="grid gap-4 md:grid-cols-2">
+          {INTENT_KEYS.map((key) => {
+            const tone = intentTone[key];
+            return (
+              <Link
+                key={key}
+                href={`/${locale}/student/${key}`}
+                className={`group flex flex-col gap-3 rounded-2xl bg-white p-6 ring-1 shadow-wave transition ${tone.ringClass} ${tone.bgAccent} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2`}
+              >
+                <div className={`grid h-12 w-12 place-items-center rounded-2xl ${tone.iconClass}`}>
+                  {intentIcons[key]}
                 </div>
-              </Card>
-            ))}
-          </div>
-        )}
+                <div>
+                  <h3 className="font-display text-lg font-bold text-midsea-deep">
+                    {tIntents(`${key}.title`)}
+                  </h3>
+                  <p className="mt-1 text-sm text-midsea-ink/75">{tIntents(`${key}.body`)}</p>
+                </div>
+                <p className="mt-auto text-xs text-midsea-ink/60">{intentHint(key)}</p>
+              </Link>
+            );
+          })}
+        </div>
       </section>
 
-      {completed.length > 0 ? (
-        <section aria-labelledby="completed-heading" className="space-y-3">
-          <h2 id="completed-heading" className="font-display text-xl font-semibold text-midsea-deep">
-            {tHome('completedHeading')}
+      {data.inProgress ? (
+        <section aria-labelledby="resume-heading" className="space-y-3">
+          <h2 id="resume-heading" className="font-display text-xl font-semibold text-midsea-deep">
+            {tDash('resumeHeading')}
           </h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            {completed.map((lesson) => (
-              <Card key={lesson.slug} className="opacity-70">
-                <p className="text-xs uppercase tracking-wide text-midsea-ocean">
-                  {lesson.subjectLabel}
-                </p>
-                <p className="mt-1 font-display text-lg font-semibold text-midsea-deep">
-                  {lesson.title}
-                </p>
-                {typeof lesson.masteryPct === 'number' ? (
-                  <p className="mt-1 text-xs text-midsea-ink/60">{lesson.masteryPct}%</p>
-                ) : null}
-              </Card>
-            ))}
-          </div>
+          <Card>
+            <p className="text-sm text-midsea-ink/60">{tDash('resumeContext')}</p>
+            <p className="mt-2 font-display text-lg font-semibold text-midsea-deep">
+              {isEs ? data.inProgress.titleEs : data.inProgress.titleEn}
+            </p>
+            <div className="mt-3 max-w-md">
+              <ProgressBar
+                value={data.inProgress.masteryPct}
+                label={`${data.inProgress.masteryPct}%`}
+              />
+              <p className="mt-1 text-xs text-midsea-ink/60">
+                {tDash('masteryLabel', { pct: data.inProgress.masteryPct })}
+              </p>
+            </div>
+            <div className="mt-4">
+              <Button
+                as={Link}
+                href={`/${locale}/student/lessons/${data.inProgress.slug}`}
+                variant="primary"
+              >
+                {tDash('resume')}
+              </Button>
+            </div>
+          </Card>
         </section>
       ) : null}
+
+      {data.recentMastered.length > 0 ? (
+        <section aria-labelledby="recent-heading" className="space-y-3">
+          <h2 id="recent-heading" className="font-display text-xl font-semibold text-midsea-deep">
+            {tDash('recentHeading')}
+          </h2>
+          <ul className="flex flex-wrap gap-2">
+            {data.recentMastered.map((l) => (
+              <li
+                key={l.slug}
+                className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm text-midsea-deep ring-1 ring-midsea-lagoon/40"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                  className="h-4 w-4 text-midsea-lagoon"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>{isEs ? l.titleEs : l.titleEn}</span>
+                <span className="text-xs text-midsea-ink/50">{tDash('completedTag')}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : data.inProgress ? null : (
+        <Card>
+          <p className="text-sm text-midsea-ink/70">{tDash('noActivity')}</p>
+        </Card>
+      )}
     </div>
   );
 }

@@ -294,6 +294,52 @@
       "masteryProgress": "Tu dominio actual",
       "placeholderHeading": "Contenido de la lección",
       "placeholderBody": "Aquí irán el video, las actividades interactivas y la evaluación. Si te atascas, pulsa el botón Pedir ayuda y Sylvie te orienta sin darte la respuesta."
+    },
+    "dashboard": {
+      "greeting": "¿Qué necesitas hoy, {name}?",
+      "subheading": "Elige por dónde empezar. Sylvie te acompaña en cualquiera.",
+      "intentsHeading": "¿Qué quieres hacer?",
+      "resumeHeading": "Continúa donde estabas",
+      "resumeContext": "Ibas por aquí — retomamos cuando quieras.",
+      "resume": "Continuar",
+      "recentHeading": "Logros recientes",
+      "noActivity": "Aún no tienes actividad. Elige una intención arriba para empezar.",
+      "masteryLabel": "{pct}% dominado",
+      "completedTag": "Dominado"
+    },
+    "intents": {
+      "stuck": {
+        "title": "Estoy atascado",
+        "body": "Cuéntale a Sylvie en qué te trabaste y te ayuda paso a paso.",
+        "hint": "Sin frustración pendiente ahora — entra cuando lo necesites.",
+        "hintActive": "Tu último intento en «{topic}» no salió. Sylvie puede orientarte.",
+        "pageBody": "Aquí Sylvie identifica tu lección actual, lee tus últimos intentos y te guía con pistas — sin darte la respuesta. Por ahora, dentro de cualquier lección encuentras el botón «Pedir ayuda al tutor» que abre el mismo flujo contextual.",
+        "comingSoon": "Flujo dedicado próximamente"
+      },
+      "prep": {
+        "title": "Practicar para una prueba",
+        "body": "Sylvie genera un plan adaptativo para tu próxima evaluación.",
+        "hint": "Sin pruebas próximas registradas.",
+        "hintActive": "Prueba próxima en {days} días — Sylvie puede armar plan.",
+        "pageBody": "Aquí Sylvie diagnostica con un assessment IRT corto, identifica brechas y arma un plan de 3-5 días con micro-lecciones y quizzes. Pendiente: motor IRT y agenda integrada con el calendario del padre.",
+        "comingSoon": "Diagnóstico adaptativo próximamente"
+      },
+      "explore": {
+        "title": "Aprender algo nuevo",
+        "body": "Sigue tu curiosidad. Pregunta y descubre.",
+        "hint": "¿Por qué el cielo es azul? ¿Cómo vuela un avión?",
+        "pageBody": "Aquí preguntas lo que se te ocurra y Sylvie mapea la respuesta al currículo: te muestra el concepto, sugiere un experimento o video corto, y lo conecta con lecciones formales relacionadas. Pendiente: mapeo competencia ↔ curiosidad.",
+        "comingSoon": "Descubrimiento guiado próximamente"
+      },
+      "review": {
+        "title": "Revisar lo que sé",
+        "body": "Refuerza tu dominio con repaso espaciado.",
+        "hint": "Sin temas para repasar hoy.",
+        "hintActive": "{count} conceptos para repasar hoy.",
+        "pageBody": "Aquí Sylvie usa repetición espaciada para programar repasos basados en cuándo aprendiste algo y cuántas veces lo fallaste. Pendiente: motor de spaced repetition (SM-2 o similar) y vista de mapa de mastery.",
+        "comingSoon": "Repetición espaciada próximamente"
+      },
+      "backToDashboard": "Volver al inicio"
     }
   },
   "gamification": {
