@@ -115,18 +115,41 @@ export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' 
         })
       });
 
-      if (!res.ok || !res.body) {
+      // Si el servidor devolvio un error explicito (JSON con `errorMessage`),
+      // lo mostramos textual al estudiante en vez del fallback generico.
+      if (!res.ok) {
+        let detail = '';
+        try {
+          const payload = (await res.json()) as { errorMessage?: string; error?: string };
+          detail = payload.errorMessage ?? payload.error ?? '';
+        } catch {
+          /* no JSON */
+        }
+        appendAssistantToken(assistantId, detail || t('error.generic'));
+        return;
+      }
+      if (!res.body) {
         appendAssistantToken(assistantId, t('error.generic'));
         return;
       }
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let received = 0;
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
         const token = decoder.decode(value, { stream: true });
-        appendAssistantToken(assistantId, token);
+        if (token) {
+          received += token.length;
+          appendAssistantToken(assistantId, token);
+        }
+      }
+      // Stream cerrado sin un solo token: algo se rompio en upstream y se
+      // perdio silenciosamente. Mostramos el fallback en vez de dejar el
+      // bubble vacio (causa raiz del bug "Sylvie no responde nada").
+      if (received === 0) {
+        appendAssistantToken(assistantId, t('error.generic'));
       }
     } catch (err) {
       if ((err as Error).name !== 'AbortError') {

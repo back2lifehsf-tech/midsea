@@ -37,3 +37,5 @@ tsconfig.tsbuildinfo
 
 # OS
 Thumbs.db
+
+.vercel
