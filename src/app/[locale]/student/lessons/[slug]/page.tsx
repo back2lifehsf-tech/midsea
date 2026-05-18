@@ -3,17 +3,19 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { ProgressBar } from '@/components/gamification/ProgressBar';
-import { LessonHelpPanel } from '@/components/tutoring/LessonHelpPanel';
+import { LessonSurface } from '@/components/tutoring/LessonSurface';
 import { requireStudentSpaceAccess } from '@/lib/auth/session';
 import { getActiveStudent } from '@/lib/auth/active-student';
 import { prisma } from '@/lib/prisma';
 import { DEMO_LESSONS, DEMO_LUCIA_PROGRESS } from '@/lib/demo/data';
-import type { Locale } from '@/i18n';
+import type { LessonContext } from '@/lib/tutor/LessonContext';
 
 interface LessonRender {
+  id: string;
+  slug: string;
   titleEs: string;
   titleEn: string;
-  subject: string; // Subject enum value as string
+  subject: string;
   gradeLevel: number;
   estMinutes: number;
   rewardNexos: number;
@@ -26,6 +28,8 @@ async function loadLessonForDemo(slug: string): Promise<LessonRender | null> {
   if (!lesson) return null;
   const progress = DEMO_LUCIA_PROGRESS.find((p) => p.slug === slug);
   return {
+    id: lesson.slug, // demo: usamos slug como id; no hay Prisma
+    slug: lesson.slug,
     titleEs: lesson.titleEs,
     titleEn: lesson.titleEn,
     subject: lesson.subject,
@@ -44,6 +48,8 @@ async function loadLessonReal(slug: string, studentId: string): Promise<LessonRe
     where: { studentId_lessonId: { studentId, lessonId: lesson.id } }
   });
   return {
+    id: lesson.id,
+    slug: lesson.slug,
     titleEs: lesson.titleEs,
     titleEn: lesson.titleEn,
     subject: lesson.subject,
@@ -69,18 +75,25 @@ export default async function LessonDetailPage({
     : await loadLessonReal(slug, activeStudent.id);
   if (!data) notFound();
 
-  const [tLesson, tTutor, tHome, tSubjects] = await Promise.all([
+  const [tLesson, tSubjects] = await Promise.all([
     getTranslations({ locale, namespace: 'student.lesson' }),
-    getTranslations({ locale, namespace: 'student.tutor' }),
-    getTranslations({ locale, namespace: 'student.home' }),
     getTranslations({ locale, namespace: 'subjects' })
   ]);
 
   const isEs = locale !== 'en';
   const title = isEs ? data.titleEs : data.titleEn;
   const subject = tSubjects(data.subject);
-  const safeLocale: Locale = locale === 'en' ? 'en' : 'es';
   const studentFirstName = activeStudent.displayName.split(/\s+/)[0];
+
+  const lessonCtx: LessonContext = {
+    lessonId: data.id,
+    slug: data.slug,
+    titleEs: data.titleEs,
+    titleEn: data.titleEn,
+    subject: data.subject,
+    gradeLevel: data.gradeLevel,
+    estMinutes: data.estMinutes
+  };
 
   return (
     <div className="space-y-6">
@@ -113,37 +126,13 @@ export default async function LessonDetailPage({
         <p className="mt-2 text-sm text-midsea-ink/70">{tLesson('placeholderBody')}</p>
         <div
           aria-hidden
-          className="mt-6 grid h-48 place-items-center rounded-xl bg-midsea-foam text-sm text-midsea-ink/40"
+          className="mt-6 grid h-40 place-items-center rounded-xl bg-midsea-foam text-sm text-midsea-ink/40"
         >
           {tLesson('placeholderHeading')}
         </div>
       </Card>
 
-      <div className="sticky bottom-4 z-30 flex justify-end pr-1">
-        <LessonHelpPanel
-          locale={safeLocale}
-          topic={title}
-          gradeLevel={data.gradeLevel}
-          studentFirstName={studentFirstName}
-          labels={{
-            ask: tHome('askForHelp'),
-            panelTitle: tTutor('title'),
-            context: tTutor('context', { topic: title }),
-            disclaimer: tTutor('disclaimer'),
-            close: tTutor('back'),
-            chat: {
-              placeholder: tTutor('placeholder'),
-              send: tTutor('send'),
-              thinking: tTutor('thinking'),
-              starters: [
-                tTutor('starters.explain'),
-                tTutor('starters.stuck'),
-                tTutor('starters.example')
-              ]
-            }
-          }}
-        />
-      </div>
+      <LessonSurface lesson={lessonCtx} studentFirstName={studentFirstName} />
     </div>
   );
 }

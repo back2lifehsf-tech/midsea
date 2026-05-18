@@ -307,6 +307,56 @@
       "masteryLabel": "{pct}% mastered",
       "completedTag": "Mastered"
     },
+    "sylvie": {
+      "open": "Open Sylvie",
+      "openWithUnread": "Sylvie has a suggestion for you",
+      "close": "Close",
+      "minimize": "Minimize",
+      "expand": "Expand to full screen",
+      "focusTitle": "Talk to Sylvie",
+      "send": "Send",
+      "thinking": "Thinking…",
+      "clearHistory": "Clear conversation",
+      "disclaimer": "This conversation is shared with your parent. Sylvie guides you, she doesn't hand you the answer.",
+      "placeholder": {
+        "default": "What do you want to talk about?",
+        "lesson": "What confuses you about «{topic}»?"
+      },
+      "action": {
+        "hint": "Give me a hint",
+        "example": "Give me an example",
+        "explainAgain": "Explain it differently"
+      },
+      "actionPrompt": {
+        "hint": "Can you give me a hint for this exercise without telling me the answer?",
+        "example": "Give me a similar example so I can understand better.",
+        "explainAgain": "Can you explain this in a simpler way?"
+      },
+      "proactive": {
+        "errors": "Looks like this is getting tricky. Need a hint?",
+        "timeExceeded": "You've been on this for a while. Want me to walk you through it?"
+      },
+      "error": {
+        "generic": "Something went wrong. Try again."
+      }
+    },
+    "exercises": {
+      "progress": "Question {current} of {total}",
+      "askSylvie": "Ask Sylvie",
+      "askSylvieBig": "Talk to Sylvie",
+      "next": "Next",
+      "finish": "Finish",
+      "feedback": {
+        "correct": "Correct! Nicely done.",
+        "incorrect": "Not yet. Try again or ask Sylvie for a hint."
+      },
+      "completed": {
+        "title": "You finished the exercises!",
+        "body": "Nice work. Run them again to reinforce, or review with Sylvie.",
+        "restart": "Start over",
+        "askSylvie": "Review with Sylvie"
+      }
+    },
     "intents": {
       "stuck": {
         "title": "I'm stuck",

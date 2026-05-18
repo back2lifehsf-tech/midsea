@@ -45,11 +45,43 @@ const config: Config = {
         floatY: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-6px)' }
+        },
+        // Avatar Sylvie keyframes (estados idle/explaining/celebrating/resting)
+        breathe: {
+          '0%, 100%': { transform: 'scale(0.98)' },
+          '50%': { transform: 'scale(1.02)' }
+        },
+        blink: {
+          '0%, 92%, 100%': { transform: 'scaleY(1)' },
+          '95%, 97%': { transform: 'scaleY(0.1)' }
+        },
+        thinkDot: {
+          '0%, 80%, 100%': { transform: 'translateY(0)', opacity: '0.4' },
+          '40%': { transform: 'translateY(-3px)', opacity: '1' }
+        },
+        bounceSoft: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' }
+        },
+        zzzFloat: {
+          '0%': { transform: 'translateY(0)', opacity: '0' },
+          '20%': { opacity: '1' },
+          '100%': { transform: 'translateY(-10px)', opacity: '0' }
+        },
+        sparkleSpin: {
+          '0%, 100%': { transform: 'scale(0.7) rotate(0deg)', opacity: '0.5' },
+          '50%': { transform: 'scale(1) rotate(20deg)', opacity: '1' }
         }
       },
       animation: {
         ripple: 'ripple 1.2s ease-out infinite',
-        floatY: 'floatY 3.5s ease-in-out infinite'
+        floatY: 'floatY 3.5s ease-in-out infinite',
+        breathe: 'breathe 3.5s ease-in-out infinite',
+        blink: 'blink 5s ease-in-out infinite',
+        thinkDot: 'thinkDot 1.2s ease-in-out infinite',
+        bounceSoft: 'bounceSoft 1.4s ease-in-out infinite',
+        zzzFloat: 'zzzFloat 2.4s ease-in-out infinite',
+        sparkleSpin: 'sparkleSpin 1.6s ease-in-out infinite'
       }
     }
   },

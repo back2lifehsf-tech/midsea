@@ -307,6 +307,56 @@
       "masteryLabel": "{pct}% dominado",
       "completedTag": "Dominado"
     },
+    "sylvie": {
+      "open": "Abrir a Sylvie",
+      "openWithUnread": "Sylvie tiene una sugerencia para ti",
+      "close": "Cerrar",
+      "minimize": "Minimizar",
+      "expand": "Expandir a pantalla completa",
+      "focusTitle": "Habla con Sylvie",
+      "send": "Enviar",
+      "thinking": "Pensando…",
+      "clearHistory": "Borrar conversación",
+      "disclaimer": "Esta conversación se comparte con tu mamá o papá. Sylvie te orienta, no te da la respuesta.",
+      "placeholder": {
+        "default": "¿Sobre qué quieres conversar?",
+        "lesson": "¿Qué te confunde de «{topic}»?"
+      },
+      "action": {
+        "hint": "Dame una pista",
+        "example": "Dame un ejemplo",
+        "explainAgain": "Explícame de otra forma"
+      },
+      "actionPrompt": {
+        "hint": "¿Me puedes dar una pista para este ejercicio sin darme la respuesta?",
+        "example": "Dame un ejemplo parecido para entender mejor.",
+        "explainAgain": "¿Puedes explicarme esto de otra forma, más sencilla?"
+      },
+      "proactive": {
+        "errors": "Veo que esto se está complicando. ¿Necesitas una pista?",
+        "timeExceeded": "Llevas un rato en este paso. ¿Quieres que te explique algo?"
+      },
+      "error": {
+        "generic": "Hubo un problema. Inténtalo de nuevo."
+      }
+    },
+    "exercises": {
+      "progress": "Ejercicio {current} de {total}",
+      "askSylvie": "Preguntar a Sylvie",
+      "askSylvieBig": "Hablar con Sylvie",
+      "next": "Siguiente",
+      "finish": "Terminar",
+      "feedback": {
+        "correct": "¡Correcto! Bien pensado.",
+        "incorrect": "Aún no. Vuelve a intentarlo o pide una pista a Sylvie."
+      },
+      "completed": {
+        "title": "¡Terminaste los ejercicios!",
+        "body": "Buen trabajo. Puedes repetirlos para reforzar o repasar con Sylvie.",
+        "restart": "Empezar de nuevo",
+        "askSylvie": "Revisar con Sylvie"
+      }
+    },
     "intents": {
       "stuck": {
         "title": "Estoy atascado",

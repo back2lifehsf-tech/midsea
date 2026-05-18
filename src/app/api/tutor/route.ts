@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
-import { getOpenAI, TUTOR_MODEL, buildSylvieSystemPrompt } from '@/lib/openai';
+import { getOpenAI, TUTOR_MODEL } from '@/lib/openai';
+import { buildSylvieSystemPrompt } from '@/lib/tutor/prompts/sylvie-system';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -14,7 +15,15 @@ interface TutorRequest {
   messages: IncomingMessage[];
   studentFirstName?: string;
   gradeLevel?: number;
+  // Contexto curricular (puede llegar como lessonTitle o legacy `topic`).
+  lessonTitle?: string;
   topic?: string;
+  subject?: string;
+  // Senales de sesion (opcional — Sylvie las usa para personalizar).
+  currentExercise?: number;
+  totalExercises?: number;
+  consecutiveErrors?: number;
+  msSinceLastAttempt?: number;
 }
 
 export async function POST(req: NextRequest) {
@@ -42,7 +51,12 @@ export async function POST(req: NextRequest) {
     locale,
     studentFirstName: body.studentFirstName,
     gradeLevel: body.gradeLevel,
-    topic: body.topic
+    lessonTitle: body.lessonTitle ?? body.topic,
+    subject: body.subject,
+    currentExercise: body.currentExercise,
+    totalExercises: body.totalExercises,
+    consecutiveErrors: body.consecutiveErrors,
+    msSinceLastAttempt: body.msSinceLastAttempt
   });
 
   const client = getOpenAI();

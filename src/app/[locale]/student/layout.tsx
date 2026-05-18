@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { NexosBadge } from '@/components/gamification/NexosBadge';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { UserMenu } from '@/components/auth/UserMenu';
+import { SylvieWidget } from '@/components/tutoring/SylvieWidget';
 import { requireStudentSpaceAccess } from '@/lib/auth/session';
 import { getActiveStudent } from '@/lib/auth/active-student';
 import { prisma } from '@/lib/prisma';
@@ -79,6 +80,7 @@ export default async function StudentLayout({
         </div>
       </div>
       {children}
+      <SylvieWidget />
     </div>
   );
 }
