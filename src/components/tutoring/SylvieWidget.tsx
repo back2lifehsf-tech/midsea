@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
 import { useTutorStore } from '@/lib/tutor/sylvie-state';
 import { SylvieAvatar } from './SylvieAvatar';
 import { SylvieChat } from './SylvieChat';
@@ -21,6 +22,7 @@ import { SylvieChat } from './SylvieChat';
  */
 export function SylvieWidget() {
   const t = useTranslations('student.sylvie');
+  const pathname = usePathname();
 
   const widgetOpen = useTutorStore((s) => s.widgetOpen);
   const widgetMode = useTutorStore((s) => s.widgetMode);
@@ -46,6 +48,13 @@ export function SylvieWidget() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [widgetOpen, widgetMode, closeWidget, setWidgetMode]);
+
+  // Epic 02 §5: en /stuck, Sylvie vive como pantalla completa (StuckChat).
+  // El widget flotante de v1 sigue activo en el resto del student space
+  // (dashboard, lessons) hasta que Epic 03 unifique ambas superficies.
+  if (pathname && /\/student\/stuck(\/|$)/.test(pathname)) {
+    return null;
+  }
 
   // collapsed → botón flotante
   if (!widgetOpen) {
