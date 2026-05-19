@@ -1,14 +1,18 @@
 // Seed idempotente para desarrollo local. Corre con:
 //   npx prisma db seed
-// (requiere DATABASE_URL en .env y migraciones aplicadas).
+// (requiere DATABASE_URL en .env y schema aplicado).
 //
-// Source of truth para slugs/titulos: src/lib/demo/lessons.ts.
-// Mantenemos esto en sync para que el shell del estudiante siga renderizando
-// los mismos contenidos cuando lo cableemos a DB.
+// Epic 01 §5 — credenciales determinísticas:
+//   parent  → email demo@midsea.test  password demo1234
+//   student → Sofía (gr3, PIN 1234, avatar fox)
+//   student → Mateo (gr5, PIN 5678, avatar owl)
 
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
+
+const SALT_ROUNDS = 10;
 
 const lessons = [
   {
@@ -115,52 +119,70 @@ async function main() {
     });
   }
 
-  // 3) Family + Parent demo. Email placeholder para no chocar con cuentas Google
-  // reales. El flujo de NextAuth.signIn crea Familys/Parents propios al iniciar
-  // sesion con Google; este es solo el dataset de desarrollo local.
-  const demoParentEmail = 'demo@midsea.local';
+  // 3) Family + Parent demo. Credenciales fijas para dev (Epic 01 §5):
+  //    email: demo@midsea.test · password: demo1234
+  const demoParentEmail = 'demo@midsea.test';
+  const demoParentPasswordHash = await bcrypt.hash('demo1234', SALT_ROUNDS);
   let demoParent = await prisma.parent.findUnique({ where: { email: demoParentEmail } });
   if (!demoParent) {
     const family = await prisma.family.create({
-      data: { name: 'Familia demo', locale: 'es' }
+      data: { name: 'Familia Demo', locale: 'es' }
     });
     demoParent = await prisma.parent.create({
       data: {
         email: demoParentEmail,
-        name: 'Padre Demo',
+        name: 'Demo Parent',
+        passwordHash: demoParentPasswordHash,
         familyId: family.id
       }
     });
+  } else {
+    // Asegurar que el passwordHash esté actualizado (si el seed corrió antes de
+    // Epic 01 sin password).
+    if (!demoParent.passwordHash) {
+      await prisma.parent.update({
+        where: { id: demoParent.id },
+        data: { passwordHash: demoParentPasswordHash }
+      });
+    }
   }
 
-  // 4) Students — mismos nombres que el shell del parent overview.
-  const lucia = await upsertStudent(demoParent.familyId, {
-    displayName: 'Lucía',
+  // 4) Students con PIN + avatar. Epic 01 DoD:
+  //    Sofía (gr3, PIN 1234, fox) y Mateo (gr5, PIN 5678, owl).
+  const sofiaPinHash = await bcrypt.hash('1234', SALT_ROUNDS);
+  const mateoPinHash = await bcrypt.hash('5678', SALT_ROUNDS);
+
+  const sofia = await upsertStudent(demoParent.familyId, {
+    displayName: 'Sofía',
     birthDate: new Date('2017-06-15'),
     gradeLevel: 3,
-    preferredLocale: 'es'
+    preferredLocale: 'es',
+    pinHash: sofiaPinHash,
+    avatarKey: 'fox'
   });
   await upsertStudent(demoParent.familyId, {
     displayName: 'Mateo',
     birthDate: new Date('2015-03-10'),
     gradeLevel: 5,
-    preferredLocale: 'es'
+    preferredLocale: 'es',
+    pinHash: mateoPinHash,
+    avatarKey: 'owl'
   });
 
-  // 5) LessonProgress de Lucía — replica el estado del shell.
-  const luciaProgress = [
+  // 5) LessonProgress de Sofía — replica el estado del shell.
+  const sofiaProgress = [
     { slug: 'improper-fractions', status: 'IN_PROGRESS', masteryPct: 45, attempts: 1 },
     { slug: 'addition-with-carrying', status: 'MASTERED', masteryPct: 92, attempts: 2 },
     { slug: 'treasure-island-ch-3', status: 'AVAILABLE', masteryPct: 0, attempts: 0 },
     { slug: 'water-cycle', status: 'AVAILABLE', masteryPct: 0, attempts: 0 }
   ];
-  for (const p of luciaProgress) {
+  for (const p of sofiaProgress) {
     const lesson = await prisma.lesson.findUnique({ where: { slug: p.slug } });
     if (!lesson) continue;
     await prisma.lessonProgress.upsert({
-      where: { studentId_lessonId: { studentId: lucia.id, lessonId: lesson.id } },
+      where: { studentId_lessonId: { studentId: sofia.id, lessonId: lesson.id } },
       create: {
-        studentId: lucia.id,
+        studentId: sofia.id,
         lessonId: lesson.id,
         status: p.status,
         masteryPct: p.masteryPct,
@@ -178,7 +200,7 @@ async function main() {
   // 6) NexosEntry — total 1240 para que coincida con el NexosBadge del shell.
   // 12 mastery x 100 + 1 streak x 40. Idempotente: solo si no hay entries.
   const existingEntries = await prisma.nexosEntry.count({
-    where: { studentId: lucia.id }
+    where: { studentId: sofia.id }
   });
   if (existingEntries === 0) {
     const masteredLesson = await prisma.lesson.findUnique({
@@ -186,7 +208,7 @@ async function main() {
     });
     await prisma.nexosEntry.create({
       data: {
-        studentId: lucia.id,
+        studentId: sofia.id,
         amount: 100,
         reason: 'LESSON_MASTERY',
         refId: masteredLesson?.id,
@@ -196,7 +218,7 @@ async function main() {
     for (let i = 0; i < 11; i++) {
       await prisma.nexosEntry.create({
         data: {
-          studentId: lucia.id,
+          studentId: sofia.id,
           amount: 100,
           reason: 'LESSON_MASTERY',
           note: `Lección histórica #${i + 1}`
@@ -205,7 +227,7 @@ async function main() {
     }
     await prisma.nexosEntry.create({
       data: {
-        studentId: lucia.id,
+        studentId: sofia.id,
         amount: 40,
         reason: 'STREAK',
         note: 'Racha de 5 días'
@@ -213,16 +235,16 @@ async function main() {
     });
   }
 
-  // 7) EarnedBadge — Lucía gana "first-lesson".
+  // 7) EarnedBadge — Sofía gana "first-lesson".
   const firstLessonBadge = await prisma.badge.findUnique({
     where: { code: 'first-lesson' }
   });
   if (firstLessonBadge) {
     await prisma.earnedBadge.upsert({
       where: {
-        studentId_badgeId: { studentId: lucia.id, badgeId: firstLessonBadge.id }
+        studentId_badgeId: { studentId: sofia.id, badgeId: firstLessonBadge.id }
       },
-      create: { studentId: lucia.id, badgeId: firstLessonBadge.id },
+      create: { studentId: sofia.id, badgeId: firstLessonBadge.id },
       update: {}
     });
   }
@@ -230,8 +252,10 @@ async function main() {
   console.log('Seed completo:');
   console.log(`  ${lessons.length} lessons (upsert por slug)`);
   console.log(`  ${badges.length} badges (upsert por code)`);
-  console.log(`  1 family + 1 parent (${demoParentEmail}) + 2 students (Lucía gr3, Mateo gr5)`);
-  console.log(`  Lucía: 4 LessonProgress, ~13 NexosEntry (total 1240), 1 EarnedBadge`);
+  console.log(`  1 family "Familia Demo" + 1 parent ${demoParentEmail} (pwd: demo1234)`);
+  console.log(`  Sofía  (gr3, PIN 1234, avatar fox)`);
+  console.log(`  Mateo  (gr5, PIN 5678, avatar owl)`);
+  console.log(`  Sofía: 4 LessonProgress, ~13 NexosEntry (total 1240), 1 EarnedBadge`);
 }
 
 main()

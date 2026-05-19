@@ -43,7 +43,7 @@ export async function PricingSection({ locale }: { locale: string }) {
                 t(`${plan.key}.feat4`)
               ]}
               ctaLabel={t('cta')}
-              ctaHref={`/${locale}/login`}
+              ctaHref={`/${locale}/signup`}
               popularLabel={plan.popular ? t('popular') : undefined}
             />
           ))}

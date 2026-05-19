@@ -56,12 +56,15 @@ model Family {
 }
 
 model Parent {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
-  familyId  String
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  // bcrypt hash. Nullable: parents que firmaron con Google OAuth no tienen
+  // password local. Epic 01 §3a: Credentials Provider para email+password.
+  passwordHash String?
+  family       Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  familyId     String
+  createdAt    DateTime @default(now())
 
   @@index([familyId])
 }
@@ -72,6 +75,11 @@ model Student {
   birthDate       DateTime
   gradeLevel      Int             // 0 = PreK, 1..12
   preferredLocale Locale          @default(es)
+  // bcrypt hash de PIN de 4 dígitos. Epic 01 §3b: niños K-2 no tienen email,
+  // entran eligiendo avatar + PIN. Nullable mientras el padre no asigna PIN.
+  pinHash         String?
+  // Identificador del avatar (referencia a src/lib/auth/avatars.ts).
+  avatarKey       String?
   family          Family          @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId        String
   createdAt       DateTime        @default(now())

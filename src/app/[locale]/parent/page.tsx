@@ -122,7 +122,9 @@ export default async function ParentOverviewPage({
           <h2 id="kids-heading" className="font-display text-xl font-semibold text-midsea-deep">
             {t('kidsHeading')}
           </h2>
-          <Button variant="ghost">{t('addStudent')}</Button>
+          <Button as={Link} href={`/${locale}/parent/students/new`} variant="ghost">
+            {t('addStudent')}
+          </Button>
         </div>
         {kids.length === 0 ? (
           <Card>

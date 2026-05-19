@@ -97,7 +97,7 @@ export async function HeroSection({ locale }: { locale: string }) {
           <p className="max-w-xl text-base text-midsea-ink/75 sm:text-lg">{t('subheadline')}</p>
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
-              href={`/${locale}/login`}
+              href={`/${locale}/signup`}
               className="inline-flex items-center justify-center rounded-2xl bg-midsea-lagoon px-6 py-3 text-base font-semibold text-white shadow-wave transition hover:bg-midsea-ocean focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-midsea-ocean focus-visible:ring-offset-2"
             >
               {t('ctaPrimary')}

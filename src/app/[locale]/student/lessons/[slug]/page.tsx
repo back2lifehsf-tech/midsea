@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { ProgressBar } from '@/components/gamification/ProgressBar';
 import { LessonSurface } from '@/components/tutoring/LessonSurface';
-import { requireStudentSpaceAccess } from '@/lib/auth/session';
-import { getActiveStudent } from '@/lib/auth/active-student';
+import { requireStudent } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { DEMO_LESSONS, DEMO_LUCIA_PROGRESS } from '@/lib/demo/data';
 import type { LessonContext } from '@/lib/tutor/LessonContext';
@@ -66,9 +65,7 @@ export default async function LessonDetailPage({
 }: {
   params: { locale: string; slug: string };
 }) {
-  const parent = await requireStudentSpaceAccess(locale);
-  const activeStudent = await getActiveStudent(parent);
-  if (!activeStudent) notFound();
+  const activeStudent = await requireStudent(locale);
 
   const data = activeStudent.isDemo
     ? await loadLessonForDemo(slug)

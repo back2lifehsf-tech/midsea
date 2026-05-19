@@ -23,6 +23,10 @@ const SKIP_FILES = new Set([
   'setup-guide.md',
   'package.json'
 ]);
+// Subpaths que documentan reglas/protocolos (epic specs, retros) y que pueden
+// referenciar el nombre viejo en contexto de prohibición. Match por path
+// relativo desde la raíz, no por basename.
+const SKIP_PATH_PREFIXES = ['docs/prompts/', 'docs\\prompts\\'];
 const PATTERN = /edunexo/i;
 
 let hits = 0;
@@ -43,6 +47,8 @@ async function walk(dir) {
       continue;
     }
     if (SKIP_FILES.has(entry.name)) continue;
+    const rel = relative(ROOT, full).replace(/\\/g, '/');
+    if (SKIP_PATH_PREFIXES.some((p) => rel.startsWith(p.replace(/\\/g, '/')))) continue;
     const info = await stat(full);
     if (info.size > 2_000_000) continue;
     const content = await readFile(full, 'utf8').catch(() => '');

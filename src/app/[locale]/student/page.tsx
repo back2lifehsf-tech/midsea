@@ -1,11 +1,9 @@
 import { getTranslations } from 'next-intl/server';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ProgressBar } from '@/components/gamification/ProgressBar';
-import { requireStudentSpaceAccess } from '@/lib/auth/session';
-import { getActiveStudent } from '@/lib/auth/active-student';
+import { requireStudent } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { DEMO_LESSONS, DEMO_LUCIA_PROGRESS } from '@/lib/demo/data';
 import {
@@ -97,11 +95,7 @@ export default async function StudentDashboardPage({
 }: {
   params: { locale: string };
 }) {
-  const parent = await requireStudentSpaceAccess(locale);
-  const activeStudent = await getActiveStudent(parent);
-  if (!activeStudent) {
-    redirect(`/${locale}/parent`);
-  }
+  const activeStudent = await requireStudent(locale);
 
   const [tDash, tIntents] = await Promise.all([
     getTranslations({ locale, namespace: 'student.dashboard' }),
