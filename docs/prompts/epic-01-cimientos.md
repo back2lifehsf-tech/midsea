@@ -217,4 +217,31 @@ Empieza por el PASO 0 ahora.
 
 ## Pendientes para Epic 02
 
-*(Esta sección se llena al cerrar el epic con cualquier TODO que haya quedado.)*
+### Deferidos por scope (no fueron blockers del DoD del Epic 01)
+
+- **Playwright e2e smoke.** Pendiente instalar `@playwright/test` + browsers (~300MB). El happy path documentado:
+  `signup padre → crear estudiante con PIN → logout → /student-login → seleccionar avatar → entrar con PIN`.
+  Instalar con `npm i -D @playwright/test && npx playwright install --with-deps chromium` y poner el spec en `tests/e2e/auth-happy-path.spec.ts`.
+- **Route group folder refactor.** Decisión #6 del epic original (`parent/`→`(parent)/parent/`, `student/`→`(student)/student/`) NO se aplicó. Justificación: los route groups de Next.js no cambian URL, los segmentos `/parent/*` y `/student/*` siguen necesarios. Refactor cosmético sin valor funcional; ~17 archivos a mover. Si se quiere, agendar como chore aparte.
+- **`@auth/prisma-adapter`.** Decisión #2 del epic original. Saltado porque NextAuth con JWT strategy (decisión #7) no requiere DB sessions/verification tables. Si se quiere por purismo o para email-verification flow futuro, instalar y configurar.
+- **`requireStudentSpaceAccess` deprecated alias.** Sigue exportado por compatibilidad — borrar cuando ningún caller lo importe (grep confirma: no quedaron callers, pero el símbolo está vivo).
+
+### Migrations / DB hygiene
+
+- **Prod DB schema.** Los `ALTER TABLE` que aplicamos a la DB dev (Parent.passwordHash, Student.pinHash, Student.avatarKey) deben aplicarse a producción antes/durante el merge de `feature/epic-01-cimientos` a `main`. Todas son columnas nullable, sin riesgo de data loss. Comando:
+  ```sql
+  ALTER TABLE "Parent"  ADD COLUMN IF NOT EXISTS "passwordHash" TEXT;
+  ALTER TABLE "Student" ADD COLUMN IF NOT EXISTS "pinHash"      TEXT;
+  ALTER TABLE "Student" ADD COLUMN IF NOT EXISTS "avatarKey"    TEXT;
+  ```
+- **Prisma migrations propias.** El repo usa `prisma db push` (sin historial de migrations). En Epic 02 conviene formalizar `prisma/migrations/` y mover seed schema sync a `prisma migrate deploy`.
+
+### Mejoras de seguridad para PIN (Epic 03 idealmente)
+
+- Rate limit / lock-out por estudiante en `verifyPin` (campos `pinAttemptsCount`, `pinLockedUntil`).
+- El espacio de PINs de 4 dígitos (10^4) es chico — el lock-out es lo que sostiene la seguridad real.
+
+### Demo mode coexistente
+
+- Conservado (`midsea_demo_role` cookie + localStorage). El epic no lo mencionaba; queda como atajo dev. En producción no es riesgo porque las paginas auth-gated ya validan rol vía `requireParent`/`requireStudent`; demo solo aplica si la cookie está set, lo que solo pasa si el usuario click voluntariamente en "Modo de prueba" en /login. Si se quiere quitar antes de GA, eliminar `src/lib/auth/demo-*.ts` + `src/components/auth/DemoLogin.tsx` + ramas demo en `session.ts` y `data.ts`.
+
