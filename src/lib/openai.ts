@@ -15,6 +15,6 @@ export function getOpenAI(): OpenAI {
 
 export const TUTOR_MODEL = process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
 
-// El system prompt de Sylvie vive ahora en src/lib/tutor/prompts/sylvie-system.ts.
+// El system prompt de Angela vive ahora en src/lib/tutor/prompts/angela-system.ts.
 // Re-export para que consumidores existentes no rompan.
-export { buildSylvieSystemPrompt } from './tutor/prompts/sylvie-system';
+export { buildAngelaSystemPrompt } from './tutor/prompts/angela-system';

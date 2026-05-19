@@ -2,17 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useTutorStore, setStreaming } from '@/lib/tutor/sylvie-state';
-import { SylvieAvatar } from './SylvieAvatar';
+import { useTutorStore, setStreaming } from '@/lib/tutor/angela-state';
+import { AngelaAvatar } from './AngelaAvatar';
 
 /**
- * SylvieChat — UI de conversación con la tutora. Reemplaza ChatTutor.
+ * AngelaChat — UI de conversación con la tutora. Reemplaza ChatTutor.
  *
  * Diferencias clave vs ChatTutor:
- *  - Estado vive en Zustand (compartido con SylvieWidget) en vez de useState local.
+ *  - Estado vive en Zustand (compartido con AngelaWidget) en vez de useState local.
  *  - Lee contexto curricular + señales de sesión del store para enriquecer el
  *    payload a `/api/tutor` (currentExercise, consecutiveErrors, etc.).
- *  - Renderiza mensajes proactivos (`role: 'sylvie-proactive'`) con styling
+ *  - Renderiza mensajes proactivos (`role: 'angela-proactive'`) con styling
  *    distinto del chat normal.
  *  - Historia persistida via store (localStorage, últimas 20).
  *  - Action buttons inline: pedir pista, ejemplo, explicar de otra forma.
@@ -20,9 +20,9 @@ import { SylvieAvatar } from './SylvieAvatar';
  * `mode='expanded'` (popover del widget) vs `mode='focus'` (pantalla completa)
  * solo cambia el styling — la lógica es la misma.
  */
-export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' }) {
+export function AngelaChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' }) {
   const locale = useLocale();
-  const t = useTranslations('student.sylvie');
+  const t = useTranslations('student.angela');
 
   const messages = useTutorStore((s) => s.messages);
   const isStreaming = useTutorStore((s) => s.isStreaming);
@@ -33,7 +33,7 @@ export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' 
   const finishStreaming = useTutorStore((s) => s.finishStreaming);
   const recordInteraction = useTutorStore((s) => s.recordInteraction);
   const consumeProactive = useTutorStore((s) => s.consumeProactive);
-  const setSylvieState = useTutorStore((s) => s.setSylvieState);
+  const setAngelaState = useTutorStore((s) => s.setAngelaState);
   const hydrateFromStorage = useTutorStore((s) => s.hydrateFromStorage);
   const clearHistory = useTutorStore((s) => s.clearHistory);
 
@@ -47,14 +47,14 @@ export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' 
   }, [hydrateFromStorage]);
 
   // 2) Si hay una intervención proactiva pendiente, la materializamos como
-  //    mensaje de Sylvie en el chat. La cookie/UI ya marcó "leído".
+  //    mensaje de Angela en el chat. La cookie/UI ya marcó "leído".
   useEffect(() => {
     if (!pendingProactive) return;
     const trigger = consumeProactive();
     if (!trigger) return;
     try {
       const content = t(`proactive.${trigger.messageKey}`, trigger.messageParams ?? {});
-      addMessage({ role: 'sylvie-proactive', content, ruleId: trigger.ruleId });
+      addMessage({ role: 'angela-proactive', content, ruleId: trigger.ruleId });
     } catch {
       // Si la key no existe (no debería), no rompemos.
     }
@@ -77,7 +77,7 @@ export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' 
     // string vacío en el payload al backend.
     const snapshotBefore = useTutorStore.getState();
     const messagesForRequest = snapshotBefore.messages
-      .filter((m) => m.role !== 'sylvie-proactive')
+      .filter((m) => m.role !== 'angela-proactive')
       .map((m) => ({
         role: m.role === 'assistant' ? ('assistant' as const) : ('user' as const),
         content: m.content
@@ -86,7 +86,7 @@ export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' 
 
     const assistantId = addMessage({ role: 'assistant', content: '' });
     setStreaming(true);
-    setSylvieState('explaining');
+    setAngelaState('explaining');
     setInput('');
 
     const ctrl = new AbortController();
@@ -147,7 +147,7 @@ export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' 
       }
       // Stream cerrado sin un solo token: algo se rompio en upstream y se
       // perdio silenciosamente. Mostramos el fallback en vez de dejar el
-      // bubble vacio (causa raiz del bug "Sylvie no responde nada").
+      // bubble vacio (causa raiz del bug "Angela no responde nada").
       if (received === 0) {
         appendAssistantToken(assistantId, t('error.generic'));
       }
@@ -207,11 +207,11 @@ export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' 
         }}
         className="flex gap-2"
       >
-        <label className="sr-only" htmlFor="sylvie-input">
+        <label className="sr-only" htmlFor="angela-input">
           {placeholder}
         </label>
         <input
-          id="sylvie-input"
+          id="angela-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={placeholder}
@@ -243,11 +243,11 @@ export function SylvieChat({ mode = 'expanded' }: { mode?: 'expanded' | 'focus' 
 function EmptyState({ lessonTitle }: { lessonTitle: string | null }) {
   return (
     <div className="grid place-items-center py-6 text-center">
-      <SylvieAvatar state="active" size="md" />
+      <AngelaAvatar state="active" size="md" />
       <p className="mt-3 text-sm text-midsea-ink/70">
         {lessonTitle
-          ? `Sylvie está lista para ayudarte con «${lessonTitle}».`
-          : 'Sylvie está aquí cuando la necesites.'}
+          ? `Angela está lista para ayudarte con «${lessonTitle}».`
+          : 'Angela está aquí cuando la necesites.'}
       </p>
     </div>
   );
@@ -257,7 +257,7 @@ function MessageBubble({
   message,
   thinkingLabel
 }: {
-  message: { id: string; role: 'user' | 'assistant' | 'sylvie-proactive'; content: string };
+  message: { id: string; role: 'user' | 'assistant' | 'angela-proactive'; content: string };
   thinkingLabel: string;
 }) {
   if (message.role === 'user') {
@@ -267,7 +267,7 @@ function MessageBubble({
       </div>
     );
   }
-  if (message.role === 'sylvie-proactive') {
+  if (message.role === 'angela-proactive') {
     return (
       <div className="mr-auto flex max-w-[85%] items-start gap-2 rounded-2xl rounded-bl-sm bg-midsea-coral/10 px-4 py-2 text-sm text-midsea-deep ring-1 ring-midsea-coral/30">
         <span aria-hidden className="mt-0.5 inline-block h-2 w-2 shrink-0 rounded-full bg-midsea-coral" />

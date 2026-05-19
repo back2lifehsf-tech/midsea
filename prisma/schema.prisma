@@ -1,5 +1,12 @@
 // Midsea — modelo de dominio v1 (ver PRD.md secciones 1.4 y 3)
-// Source of truth para parent/student/curriculum/Nexos.
+// Source of truth para parent/student/curriculum/COIN.
+//
+// Rebrand Nexos → COIN: el código Prisma usa nombres nuevos (CoinEntry,
+// CoinReason, rewardCoin) pero las tablas/columnas/enum types en DB
+// se mapean a los nombres viejos (NexosEntry, NexosReason, rewardNexos)
+// via @@map / @map para evitar una migration breaking en prod. La
+// rename física de la DB queda para cuando estabilicemos esquema
+// post-PMF.
 
 generator client {
   provider = "prisma-client-js"
@@ -37,13 +44,15 @@ enum LessonStatus {
   MASTERED
 }
 
-enum NexosReason {
+enum CoinReason {
   LESSON_MASTERY
   BADGE
   STREAK
   PARENT_GRANT
   STORE_PURCHASE
   ADJUSTMENT
+
+  @@map("NexosReason")
 }
 
 model Family {
@@ -85,9 +94,10 @@ model Student {
   createdAt       DateTime        @default(now())
 
   progress        LessonProgress[]
-  ledger          NexosEntry[]
+  ledger          CoinEntry[]
   earnedBadges    EarnedBadge[]
   tutorSessions   TutorSession[]
+  tutorUsage      TutorUsageDaily[]
 
   @@index([familyId])
 }
@@ -103,7 +113,7 @@ model Lesson {
   summaryEs   String
   summaryEn   String
   estMinutes  Int          @default(15)
-  rewardNexos Int          @default(100)
+  rewardCoin  Int          @default(100) @map("rewardNexos")
   orderIndex  Int          @default(0)
   createdAt   DateTime     @default(now())
 
@@ -128,18 +138,19 @@ model LessonProgress {
   @@index([studentId, status])
 }
 
-model NexosEntry {
+model CoinEntry {
   id        String      @id @default(cuid())
   student   Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId String
   amount    Int         // positivo = gana, negativo = gasta
-  reason    NexosReason
+  reason    CoinReason
   // Metadata libre: lessonId, badgeId, storeItemId, etc.
   refId     String?
   note      String?
   createdAt DateTime    @default(now())
 
   @@index([studentId, createdAt])
+  @@map("NexosEntry")
 }
 
 model Badge {
@@ -150,7 +161,7 @@ model Badge {
   descriptionEs String
   descriptionEn String
   iconKey     String        // referencia a public/assets/badges/<key>.svg
-  rewardNexos Int           @default(0)
+  rewardCoin  Int           @default(0) @map("rewardNexos")
 
   earned      EarnedBadge[]
 }
@@ -187,7 +198,27 @@ model TutorMessage {
   sessionId String
   role      String       // "user" | "assistant" | "system"
   content   String       @db.Text
+  // Epic 02 §3: tokens consumidos + modelo por turno. JSON libre para
+  // permitir extender con latency, cost estimate, etc. sin nueva migration.
+  metadata  Json?
   createdAt DateTime     @default(now())
 
   @@index([sessionId, createdAt])
+}
+
+// Epic 02 §1.7 + §3.9: rate limit por estudiante + telemetría de costos.
+// Una fila por (estudiante, día UTC). El bump del contador es upsert
+// atómico; ver src/lib/tutor/rate-limit.ts.
+model TutorUsageDaily {
+  id         String   @id @default(cuid())
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId  String
+  date       DateTime @db.Date
+  msgCount   Int      @default(0)
+  tokensUsed Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([studentId, date])
+  @@index([studentId])
 }

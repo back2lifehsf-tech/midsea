@@ -47,14 +47,14 @@ const icons = {
   )
 };
 
-type ChipTone = 'deep' | 'lagoon' | 'coral' | 'sun' | 'nexos';
+type ChipTone = 'deep' | 'lagoon' | 'coral' | 'sun' | 'coin';
 
 const toneClasses: Record<ChipTone, string> = {
   deep: 'text-midsea-deep',
   lagoon: 'text-midsea-lagoon',
   coral: 'text-midsea-coral',
   sun: 'text-midsea-sun',
-  nexos: 'text-nexos-dark'
+  coin: 'text-coin-dark'
 };
 
 function Chip({
@@ -152,7 +152,7 @@ export async function HeroSection({ locale }: { locale: string }) {
             className="-bottom-2 left-1/2 -translate-x-1/2"
             icon={icons.accredited}
             label={t('tagAccredited')}
-            tone="nexos"
+            tone="coin"
             delay="1.6s"
           />
         </div>

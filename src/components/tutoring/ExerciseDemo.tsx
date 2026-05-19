@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useTutorStore } from '@/lib/tutor/sylvie-state';
+import { useTutorStore } from '@/lib/tutor/angela-state';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
 // MCQ demo hardcoded por slug. Sin Prisma, sin runtime data. Sirve para
-// disparar la intervención proactiva de Sylvie (consecutiveErrors >= 2) y
+// disparar la intervención proactiva de Angela (consecutiveErrors >= 2) y
 // dar al estudiante algo concreto que hacer hasta que armemos el sistema
 // real de ejercicios.
 
@@ -170,7 +170,7 @@ export function ExerciseDemo({ slug }: { slug: string }) {
             {t('completed.restart')}
           </Button>
           <Button variant="ghost" onClick={() => openWidget('focus')}>
-            {t('completed.askSylvie')}
+            {t('completed.askAngela')}
           </Button>
         </div>
       </Card>
@@ -209,7 +209,7 @@ export function ExerciseDemo({ slug }: { slug: string }) {
           onClick={() => openWidget('focus')}
           className="text-xs text-midsea-ocean hover:underline"
         >
-          {t('askSylvie')}
+          {t('askAngela')}
         </button>
       </div>
 
@@ -257,7 +257,7 @@ export function ExerciseDemo({ slug }: { slug: string }) {
             </Button>
             {feedback === 'incorrect' ? (
               <Button variant="ghost" onClick={() => openWidget('focus')}>
-                {t('askSylvie')}
+                {t('askAngela')}
               </Button>
             ) : null}
           </div>

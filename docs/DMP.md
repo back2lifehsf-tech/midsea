@@ -100,8 +100,8 @@ La isla 3D y el avatar son su mayor activo de marca. Onboarding: padre crea cuen
 **Vulnerabilidades explotables por Midsea.**
 1. Atado el ICP US Hispanic que ya paga Miacademy con frustración por la barrera idiomática del niño (30-40% de comprensión perdida según PRD §1.2).
 2. K-12 integrado en una plataforma elimina la fricción del salto a MiaPrep.
-3. Sustituir "padre asigna manualmente" por "Sylvie planifica y padre aprueba en 5 min".
-4. Mastery-gated economy: Nexos solo con 80%+ corrige el bug pedagógico de "gold por completar".
+3. Sustituir "padre asigna manualmente" por "Angela planifica y padre aprueba en 5 min".
+4. Mastery-gated economy: Coin solo con 80%+ corrige el bug pedagógico de "gold por completar".
 
 **Rechazo estratégico.**
 *No copiar:* la isla 3D con paths visuales pre-renderizados. Es costosa de producir, congela el currículo y se vuelve obsoleta. Midsea debe usar **canvas de competencias dinámico** (React-Flow / TLDraw) que se reconfigura por estudiante. *No copiar:* el modelo de "gold = compra cosmética cerrada". El marketplace estudiante-estudiante de Midsea es superior pero más complejo; si no se valida con usuarios, retroceder a tienda cerrada estilo Miacademy en v1 es aceptable. *No copiar:* la separación K-8 / High School. La integración K-12 es un diferenciador.
@@ -133,13 +133,13 @@ Visualmente moderna 2023+. Avatar "Max" estático (no dinámico, no emocional). 
 *Vulnerabilidades:* (a) Max AI no tiene memoria persistente — cada conversación reinicia; (b) navegación jerárquica forza al estudiante a recordar "esto va en Biología U3", contradice navegación por intención; (c) MaxPoints son cosméticos, no atados a mastery; (d) Profe Express no escala (5 preguntas/mes); (e) sin parent copilot real — los padres son audiencia secundaria; (f) chileno-céntrico, sin variantes es-419/es-ES/es-MX.
 
 **Vulnerabilidades explotables por Midsea.**
-1. **El gap del tutor con memoria.** Sylvie con `StudentContextEngine` persistente es directamente la antítesis de Max AI. Demoable lado-a-lado.
+1. **El gap del tutor con memoria.** Angela con `StudentContextEngine` persistente es directamente la antítesis de Max AI. Demoable lado-a-lado.
 2. **Navegación por intención** (`/stuck`, `/prep`, `/explore`, `/review`) vs navegación jerárquica. Reduce la carga cognitiva del estudiante en momentos de frustración.
 3. **Parent Copilot** como audiencia primaria, no secundaria.
 4. **Bilingüismo** para captar el segmento US Hispanic y familias en España/Argentina/México que Wited no atiende con variantes culturales.
 
 **Rechazo estratégico.**
-*No copiar:* el modelo Profe Express. Es un fallback costoso que erosiona el ROI del AI tutor. Si Sylvie no resuelve la duda, el siguiente paso debe ser un **Study Pod sincrónico** (3-4 estudiantes con debilidades complementarias) o una **clase grupal pequeña**, no un ticket a humano. *No copiar:* la separación entre "Inicio" y "Aprender" como secciones independientes. Midsea unifica todo en un canvas de competencias activo. *No copiar:* las calificaciones tabulares Excel-style. El padre debe ver insights ("Hoy María dominó fracciones equivalentes con 85%, mañana viene improper fractions"), no tablas crudas.
+*No copiar:* el modelo Profe Express. Es un fallback costoso que erosiona el ROI del AI tutor. Si Angela no resuelve la duda, el siguiente paso debe ser un **Study Pod sincrónico** (3-4 estudiantes con debilidades complementarias) o una **clase grupal pequeña**, no un ticket a humano. *No copiar:* la separación entre "Inicio" y "Aprender" como secciones independientes. Midsea unifica todo en un canvas de competencias activo. *No copiar:* las calificaciones tabulares Excel-style. El padre debe ver insights ("Hoy María dominó fracciones equivalentes con 85%, mañana viene improper fractions"), no tablas crudas.
 
 ---
 
@@ -169,7 +169,7 @@ Reviews recurrentes: "buena cobertura, UI anticuada". No hay avatar emocional. O
 
 **Vulnerabilidades explotables por Midsea.**
 1. El ICP "padre técnicamente competente que ya paga T4L" es captable demostrando reducción de tiempo parental (3h → 20 min/día con Parent Copilot).
-2. Gamificación con propósito pedagógico (Nexos por mastery) ataca directamente el dolor de "mi hijo se aburre en T4L".
+2. Gamificación con propósito pedagógico (Coin por mastery) ataca directamente el dolor de "mi hijo se aburre en T4L".
 3. Bilingüismo: padres hispanos pagando T4L en inglés y traduciendo en casa son target obvio.
 
 **Rechazo estratégico.**
@@ -231,7 +231,7 @@ Filosofía mastery-based con sesiones cortas (15 min) — explícitamente diseñ
 B2C con pricing premium ($60-90/mes/niño). Expansión geográfica activa. Partnerships con colegios y campañas educativas con marcas patrocinadoras. Funding: Series B+ de Inveready, Bonsai Partners y otros *(verificar 2025-2026)*. Equipo fundador técnico-académico fuerte.
 
 **UX/UI.**
-Visualmente sobrio, minimalista, optimizado para concentración. No hay avatares emocionales como Sylvie. La gamificación es funcional: medallas, ranking, "ejercicios de bonus". Onboarding: assessment inicial corto que calibra el perfil del niño. Reporte semanal automático al padre por email es activo de marca clave.
+Visualmente sobrio, minimalista, optimizado para concentración. No hay avatares emocionales como Angela. La gamificación es funcional: medallas, ranking, "ejercicios de bonus". Onboarding: assessment inicial corto que calibra el perfil del niño. Reporte semanal automático al padre por email es activo de marca clave.
 
 **Ventajas y debilidades.**
 *Moats:* (a) datos de calibración acumulados durante 15+ años — barrera de entrada material; (b) brand en España y LATAM premium; (c) publicaciones académicas que validan eficacia; (d) algoritmo propietario probado.
@@ -239,12 +239,12 @@ Visualmente sobrio, minimalista, optimizado para concentración. No hay avatares
 
 **Vulnerabilidades explotables por Midsea.**
 1. Smartick es **complemento**, Midsea es **plataforma completa**. El padre que paga Smartick aún tiene 8 materias por resolver.
-2. Sylvie como tutor conversacional con detección emocional cubre una dimensión (explicación adaptativa en lenguaje natural) que el algoritmo de Smartick no aborda.
+2. Angela como tutor conversacional con detección emocional cubre una dimensión (explicación adaptativa en lenguaje natural) que el algoritmo de Smartick no aborda.
 3. Parent Copilot con reportes regulatorios + planificación semanal de **toda** la vida educativa es ortogonal al producto de Smartick.
 4. Multi-modalidad (voz para pre-lectores, diagramas generados, video) supera el formato exclusivamente texto+ejercicio de Smartick.
 
 **Rechazo estratégico.**
-*No copiar:* el modelo "15 min/día por matemáticas como sesión cerrada". Midsea es horizontal a través del currículo y abierto en duración; las micro-lecciones son la unidad atómica pero el flujo no se cierra. *Adaptación diferenciada:* el assessment inicial calibrante es excelente — Midsea lo incorpora vía IRT propio, pero como **lead magnet gratuito** (PRD §2.5) para captura, no como producto. *No copiar:* explicaciones pre-grabadas. Las explicaciones de Sylvie son generadas dinámicamente y adaptadas al perfil cognitivo, lo cual es estructuralmente diferente y, a largo plazo, escala mejor cuando el costo de inferencia LLM cae.
+*No copiar:* el modelo "15 min/día por matemáticas como sesión cerrada". Midsea es horizontal a través del currículo y abierto en duración; las micro-lecciones son la unidad atómica pero el flujo no se cierra. *Adaptación diferenciada:* el assessment inicial calibrante es excelente — Midsea lo incorpora vía IRT propio, pero como **lead magnet gratuito** (PRD §2.5) para captura, no como producto. *No copiar:* explicaciones pre-grabadas. Las explicaciones de Angela son generadas dinámicamente y adaptadas al perfil cognitivo, lo cual es estructuralmente diferente y, a largo plazo, escala mejor cuando el costo de inferencia LLM cae.
 
 ---
 
@@ -258,7 +258,7 @@ Visualmente sobrio, minimalista, optimizado para concentración. No hay avatares
 | Idioma principal | Inglés | Español Chile | Inglés | Español MX | Español ES + Inglés | **Español nativo + Inglés escalado** |
 | AI Tutor | No | Chatbot sin memoria | No | No | Algoritmo adaptativo (no conversacional) | **Agente conversacional + adaptativo con memoria** |
 | Navegación | Mapa visual jerárquico | Sidebar jerárquica | Catálogo grado/materia | Por examen | Sesión secuencial | **Por intención (`/stuck`, `/prep`, `/explore`, `/review`)** |
-| Gamificación | Cosmética profunda (avatares, gold, tienda) | Cosmética (MaxPoints, desafíos aislados) | Mínima | Mínima | Funcional (medallas) | **Mastery-gated (Nexos al 80%+)** |
+| Gamificación | Cosmética profunda (avatares, gold, tienda) | Cosmética (MaxPoints, desafíos aislados) | Mínima | Mínima | Funcional (medallas) | **Mastery-gated (Coin al 80%+)** |
 | Parent Dashboard | Básico, manual | Débil | Reportes funcionales | Mínimo | Email semanal | **Parent Copilot con planificación AI** |
 | Reportes regulatorios | Vía MiaPrep | No | Plantillas | No aplica | No | **Auto-generados por país/estado** |
 | Comunidad | Newspaper + clubs pre-moderados | Social mínima | No | Foros básicos | No | **Study Pods + Newspaper + Clanes moderados** |
@@ -300,7 +300,7 @@ Visualmente sobrio, minimalista, optimizado para concentración. No hay avatares
 **TAM realista.** Universo accesible: ~6M familias homeschoolers en LATAM en horizonte de 5 años (penetración subiendo desde <0.5% actual a 1-2% conservador), ~500K familias homeschoolers hispanas en EE.UU., ~200K en España. Asumiendo ARPU $35/mes y 3% de penetración real al año 5: **TAM target $750M-1.2B**. Mercados adyacentes: microescuelas hispanas (~25K esperadas a 2030), tutoring complementario (gigantesco pero fragmentado).
 
 **Moat defensible en tres capas.**
-1. **Datos de aprendizaje hispanohablante.** Cada interacción de Sylvie genera datos sobre cómo aprenden niños en español. A los 18 meses de operación, este dataset es irreproducible por un competidor anglosajón.
+1. **Datos de aprendizaje hispanohablante.** Cada interacción de Angela genera datos sobre cómo aprenden niños en español. A los 18 meses de operación, este dataset es irreproducible por un competidor anglosajón.
 2. **Contenido culturalmente situado.** No es traducción literal; es producción con consultores educativos por país. La biblioteca compuesta es difícil de replicar.
 3. **Comunidad y network effects.** Study Pods y marketplace estudiantil generan retención y referral orgánico. Cada estudiante adicional aumenta el valor del producto para los demás.
 
@@ -337,9 +337,9 @@ Visualmente sobrio, minimalista, optimizado para concentración. No hay avatares
 | Tutor con memoria persistente | `StudentContextEngine` con datos en Postgres + Redis para hot-context, embeddings vectoriales (pgvector) para recuperar interacciones relevantes. |
 | Adaptación cognitiva en tiempo real | `CognitiveAdapter` que recibe perfil del estudiante (visual/auditivo/kinestésico) y reformatea la salida del LLM. Function calling sobre OpenAI para emitir acciones estructuradas. |
 | Detección emocional | `EmotionDetector` ligero (heurísticas sobre velocidad de respuesta + análisis léxico + patrones de error) — no requiere modelo separado en v1. |
-| Mastery-gated economy | Eventos de dominio (`CompetencyMastered`) emiten Nexos. No se otorgan por completitud ni por tiempo. Separación clara entre `learning` y `gamification` por eventos. |
+| Mastery-gated economy | Eventos de dominio (`CompetencyMastered`) emiten Coin. No se otorgan por completitud ni por tiempo. Separación clara entre `learning` y `gamification` por eventos. |
 | Navegación por intención | Rutas de Next.js modeladas como **estados intencionales** (`/stuck`, `/prep`, `/explore`, `/review`), no como jerarquías curriculares. El currículo es metadata bajo las intenciones. |
-| Bilingüismo y code-switching | Source of truth de contenido en español; pipeline de localización cultural a inglés; prompts de Sylvie por idioma; detección del idioma del estudiante a nivel de turno conversacional. |
+| Bilingüismo y code-switching | Source of truth de contenido en español; pipeline de localización cultural a inglés; prompts de Angela por idioma; detección del idioma del estudiante a nivel de turno conversacional. |
 | Reportes regulatorios automáticos | Domain service `RegulatoryReporter` con templates por jurisdicción (FL, TX, MX-SEP, ES-LOMLOE, AR, CO). Composable desde MasteryMap y horas registradas. |
 
 ### 5.2 Trade-offs intencionales (qué sacrificar para ser único)
@@ -354,11 +354,11 @@ Visualmente sobrio, minimalista, optimizado para concentración. No hay avatares
 
 ```
 Canvas del Estudiante (no grid de materias)
-├── Sylvie siempre presente (avatar contextual)
+├── Angela siempre presente (avatar contextual)
 ├── Plan de hoy (3-5 acciones priorizadas por AI)
 ├── 4 botones de intención: /stuck · /prep · /explore · /review
 ├── MasteryMap (visualización de competencias dominadas/en progreso)
-└── Studio (Study Pods, tienda Nexos, perfil)
+└── Studio (Study Pods, tienda Coin, perfil)
 
 Parent Copilot (no admin panel)
 ├── Estado emocional del hijo hoy (😊/😐/😔)
@@ -374,16 +374,16 @@ Parent Copilot (no admin panel)
 
 ### 6.1 Diferenciadores a construir PRIMERO (MVP estratégico v1)
 
-1. **Sylvie con memoria persistente y navegación por intención.** Es el diferenciador único más visible y demoable. Sin esto, Midsea es "otra plataforma de homeschooling".
+1. **Angela con memoria persistente y navegación por intención.** Es el diferenciador único más visible y demoable. Sin esto, Midsea es "otra plataforma de homeschooling".
 2. **Assessment AI inicial (lead magnet).** Captura emails y calibra MasteryMap desde día 1. Wedge sharpest del PRD §2.5.
 3. **Parent Copilot v1.** Resumen diario en 5 min + planificador semanal aprobable. Resuelve el dolor más doloroso de la audiencia decisora.
-4. **Mastery-gated Nexos + tienda parental-controlada.** Bug pedagógico de Miacademy/Wited convertido en feature.
+4. **Mastery-gated Coin + tienda parental-controlada.** Bug pedagógico de Miacademy/Wited convertido en feature.
 5. **Currículo K-6 en español neutro (es-419).** Profundidad mastery antes que amplitud.
 6. **Reportes regulatorios para 2 jurisdicciones piloto (México-SEP y Florida).** Demuestra el compliance angle a partners.
 
 ### 6.2 Diferenciadores "nice to have" post-PMF
 
-- Avatar 3D animado de Sylvie con Rive (v1 puede vivir con Lottie + estados visuales).
+- Avatar 3D animado de Angela con Rive (v1 puede vivir con Lottie + estados visuales).
 - Marketplace estudiante-estudiante (riesgo regulatorio y de moderación; postergar).
 - Study Pods sincrónicos (requiere base de usuarios crítica).
 - VR/AR labs (v3+).
@@ -395,7 +395,7 @@ Parent Copilot (no admin panel)
 
 1. **¿Los padres confiarán en planes generados por AI?** Validar con 20 entrevistas profundas + 5 sesiones de Wizard-of-Oz antes de invertir en `CurriculumContextEngine` completo.
 2. **¿La navegación por intención reduce o aumenta carga cognitiva en niños K-2?** Test de usabilidad obligatorio con pre-lectores. Si fracasa, segmentar UX por edad (K-2 con avatar dominante, 3+ con canvas).
-3. **¿Los Nexos por mastery son tan motivantes como gold por completitud?** A/B test en cohorte temprana. Si no, considerar híbrido (Nexos por completitud + bonus por mastery).
+3. **¿Los Coin por mastery son tan motivantes como gold por completitud?** A/B test en cohorte temprana. Si no, considerar híbrido (Coin por completitud + bonus por mastery).
 4. **¿El code-switching del tutor sorprende o confunde a familias monolingües-de-español?** Validar antes de exponer la feature por default.
 5. **¿El precio $29/mes Core captura suficiente valor en LATAM?** A/B test con $19, $29, $39 en países priorizados.
 

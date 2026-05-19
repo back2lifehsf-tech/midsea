@@ -3,9 +3,9 @@ import type { Config } from 'tailwindcss';
 // Paleta oficial MIDSEA Academy:
 //   #1800AA azul profundo  → midsea-deep / midsea-ocean
 //   #0D9488 teal           → midsea-lagoon
-//   #F9B21C naranja        → midsea-coral / nexos
+//   #F9B21C naranja        → midsea-coral / coin
 //   #000000 negro          → midsea-ink
-//   Derivados: foam (bg claro), sun (naranja claro), nexos-dark.
+//   Derivados: foam (bg claro), sun (naranja claro), coin-dark.
 
 const config: Config = {
   content: [
@@ -25,7 +25,7 @@ const config: Config = {
           sun: '#FCD46F',
           ink: '#000000'
         },
-        nexos: {
+        coin: {
           DEFAULT: '#F9B21C',
           dark: '#C88500'
         }
@@ -46,7 +46,7 @@ const config: Config = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-6px)' }
         },
-        // Avatar Sylvie keyframes (estados idle/explaining/celebrating/resting)
+        // Avatar Angela keyframes (estados idle/explaining/celebrating/resting)
         breathe: {
           '0%, 100%': { transform: 'scale(0.98)' },
           '50%': { transform: 'scale(1.02)' }

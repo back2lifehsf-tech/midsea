@@ -1,13 +1,13 @@
 'use client';
 
-import type { SylvieState } from '@/lib/tutor/sylvie-state';
+import type { AngelaState } from '@/lib/tutor/angela-state';
 
 /**
- * SylvieAvatar — cara kawaii de la tutora AI de MIDSEA Academy.
+ * AngelaAvatar — cara kawaii de la tutora AI de MIDSEA Academy.
  *
  * Implementacion v1: SVG + CSS keyframes (no Lottie). Cuando lleguen assets
  * `.json` reales podemos swap del render interno manteniendo este API:
- *   <SylvieAvatar state="idle" size="md" />
+ *   <AngelaAvatar state="idle" size="md" />
  *
  * Estados (AI_TUTOR_SPEC seccion 2.2):
  *   - idle:        breathing sutil, parpadeo ocasional
@@ -19,14 +19,14 @@ import type { SylvieState } from '@/lib/tutor/sylvie-state';
  *
  * Sizes via wrapper Tailwind: sm = 40px, md = 64px, lg = 96px.
  */
-export function SylvieAvatar({
+export function AngelaAvatar({
   state = 'idle',
   size = 'md',
   onClick,
   className = '',
   ariaLabel
 }: {
-  state?: SylvieState;
+  state?: AngelaState;
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
   className?: string;
@@ -68,7 +68,7 @@ export function SylvieAvatar({
           : ''
       } ${className}`}
     >
-      {/* Pulse exterior cuando Sylvie esta sugiriendo (AI_TUTOR_SPEC 6.3 — pulse animation) */}
+      {/* Pulse exterior cuando Angela esta sugiriendo (AI_TUTOR_SPEC 6.3 — pulse animation) */}
       {state === 'suggesting' ? (
         <span
           aria-hidden
@@ -83,28 +83,28 @@ export function SylvieAvatar({
         className={`relative h-full w-full ${breatheClass}`}
       >
         <defs>
-          <radialGradient id="sylvie-aura" cx="50%" cy="50%" r="50%">
+          <radialGradient id="angela-aura" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#0D9488" stopOpacity="0.35" />
             <stop offset="100%" stopColor="#0D9488" stopOpacity="0" />
           </radialGradient>
-          <linearGradient id="sylvie-face" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="angela-face" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#FCD46F" />
             <stop offset="100%" stopColor="#F9B21C" />
           </linearGradient>
-          <radialGradient id="sylvie-shine" cx="35%" cy="30%" r="35%">
+          <radialGradient id="angela-shine" cx="35%" cy="30%" r="35%">
             <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.55" />
             <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
           </radialGradient>
         </defs>
 
         {/* aura */}
-        <circle cx="50" cy="50" r="49" fill="url(#sylvie-aura)" className={auraOpacity} />
+        <circle cx="50" cy="50" r="49" fill="url(#angela-aura)" className={auraOpacity} />
 
         {/* face */}
-        <circle cx="50" cy="50" r="36" fill="url(#sylvie-face)" />
+        <circle cx="50" cy="50" r="36" fill="url(#angela-face)" />
 
         {/* shine */}
-        <circle cx="50" cy="50" r="36" fill="url(#sylvie-shine)" />
+        <circle cx="50" cy="50" r="36" fill="url(#angela-shine)" />
 
         {/* cheeks */}
         <ellipse cx="29" cy="62" rx="5" ry="3.5" fill="#FF9FB1" opacity="0.75" />

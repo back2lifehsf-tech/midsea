@@ -2,12 +2,13 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useTutorStore } from '@/lib/tutor/sylvie-state';
-import { SylvieAvatar } from './SylvieAvatar';
-import { SylvieChat } from './SylvieChat';
+import { usePathname } from 'next/navigation';
+import { useTutorStore } from '@/lib/tutor/angela-state';
+import { AngelaAvatar } from './AngelaAvatar';
+import { AngelaChat } from './AngelaChat';
 
 /**
- * SylvieWidget — shell flotante que mantiene a Sylvie disponible desde
+ * AngelaWidget — shell flotante que mantiene a Angela disponible desde
  * cualquier pantalla del espacio del estudiante.
  *
  * Tres modos (en el store: widgetMode):
@@ -19,12 +20,13 @@ import { SylvieChat } from './SylvieChat';
  * cualquier `openWidget('focus')` desde una página (p.ej. "Pedir ayuda" en la
  * lesson detail) lo abre con contexto ya seteado.
  */
-export function SylvieWidget() {
-  const t = useTranslations('student.sylvie');
+export function AngelaWidget() {
+  const t = useTranslations('student.angela');
+  const pathname = usePathname();
 
   const widgetOpen = useTutorStore((s) => s.widgetOpen);
   const widgetMode = useTutorStore((s) => s.widgetMode);
-  const sylvieState = useTutorStore((s) => s.sylvieState);
+  const angelaState = useTutorStore((s) => s.angelaState);
   const hasUnread = useTutorStore((s) => s.hasUnreadProactive);
   const openWidget = useTutorStore((s) => s.openWidget);
   const closeWidget = useTutorStore((s) => s.closeWidget);
@@ -47,6 +49,13 @@ export function SylvieWidget() {
     return () => window.removeEventListener('keydown', onKey);
   }, [widgetOpen, widgetMode, closeWidget, setWidgetMode]);
 
+  // Epic 02 §5: en /stuck, Angela vive como pantalla completa (StuckChat).
+  // El widget flotante de v1 sigue activo en el resto del student space
+  // (dashboard, lessons) hasta que Epic 03 unifique ambas superficies.
+  if (pathname && /\/student\/stuck(\/|$)/.test(pathname)) {
+    return null;
+  }
+
   // collapsed → botón flotante
   if (!widgetOpen) {
     return (
@@ -58,8 +67,8 @@ export function SylvieWidget() {
               className="absolute -right-0.5 -top-0.5 z-10 h-3.5 w-3.5 rounded-full bg-midsea-coral ring-2 ring-white animate-pulse"
             />
           ) : null}
-          <SylvieAvatar
-            state={hasUnread ? 'suggesting' : sylvieState}
+          <AngelaAvatar
+            state={hasUnread ? 'suggesting' : angelaState}
             size="md"
             onClick={() => openWidget('expanded')}
             ariaLabel={hasUnread ? t('openWithUnread') : t('open')}
@@ -76,7 +85,7 @@ export function SylvieWidget() {
       <div className="fixed inset-0 z-50 flex flex-col bg-white" role="dialog" aria-modal="true">
         <header className="flex items-center justify-between border-b border-midsea-ocean/10 px-5 py-3">
           <div className="flex items-center gap-3">
-            <SylvieAvatar state={sylvieState} size="sm" />
+            <AngelaAvatar state={angelaState} size="sm" />
             <h2 className="font-display text-lg font-bold text-midsea-deep">{t('focusTitle')}</h2>
           </div>
           <div className="flex items-center gap-1">
@@ -99,7 +108,7 @@ export function SylvieWidget() {
         </header>
         <div className="flex-1 overflow-hidden p-4 sm:p-6">
           <div className="mx-auto h-full max-w-3xl">
-            <SylvieChat mode="focus" />
+            <AngelaChat mode="focus" />
           </div>
         </div>
         <footer className="border-t border-midsea-ocean/10 px-5 py-3 text-[11px] text-midsea-ink/60">
@@ -113,14 +122,14 @@ export function SylvieWidget() {
   return (
     <div
       role="dialog"
-      aria-label="Sylvie chat"
+      aria-label="Angela chat"
       className="fixed bottom-6 right-6 z-40 w-[min(380px,calc(100vw-2rem))]"
     >
       <div className="overflow-hidden rounded-2xl bg-white shadow-wave ring-1 ring-midsea-ocean/15">
         <header className="flex items-center justify-between border-b border-midsea-ocean/10 px-4 py-2.5">
           <div className="flex items-center gap-2">
-            <SylvieAvatar state={sylvieState} size="sm" />
-            <span className="font-display text-sm font-bold text-midsea-deep">Sylvie</span>
+            <AngelaAvatar state={angelaState} size="sm" />
+            <span className="font-display text-sm font-bold text-midsea-deep">Angela</span>
           </div>
           <div className="flex items-center gap-1">
             <button
@@ -142,7 +151,7 @@ export function SylvieWidget() {
           </div>
         </header>
         <div className="p-3">
-          <SylvieChat mode="expanded" />
+          <AngelaChat mode="expanded" />
         </div>
       </div>
     </div>

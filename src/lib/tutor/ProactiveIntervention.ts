@@ -21,10 +21,10 @@ export interface InterventionInput {
 
 export interface InterventionResult {
   ruleId: 'consecutive-errors' | 'time-exceeded';
-  messageKey: string; // referencia al namespace student.sylvie.proactive
+  messageKey: string; // referencia al namespace student.angela.proactive
   messageParams?: Record<string, string | number>;
-  // Estado al que Sylvie deberia transicionar al disparar esta intervencion.
-  sylvieState: 'suggesting';
+  // Estado al que Angela deberia transicionar al disparar esta intervencion.
+  angelaState: 'suggesting';
 }
 
 // Cooldown: una vez que disparamos una rule, no la volvemos a disparar hasta
@@ -46,7 +46,7 @@ export function evaluateProactive(input: InterventionInput): InterventionResult 
       ruleId: 'consecutive-errors',
       messageKey: 'errors',
       messageParams: { count: session.consecutiveErrors },
-      sylvieState: 'suggesting'
+      angelaState: 'suggesting'
     };
   }
 
@@ -61,7 +61,7 @@ export function evaluateProactive(input: InterventionInput): InterventionResult 
       return {
         ruleId: 'time-exceeded',
         messageKey: 'timeExceeded',
-        sylvieState: 'suggesting'
+        angelaState: 'suggesting'
       };
     }
   }

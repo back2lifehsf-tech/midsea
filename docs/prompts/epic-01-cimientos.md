@@ -7,17 +7,17 @@
 
 ## Contexto del epic
 
-**Epic:** Construir los cimientos del producto que desbloquean toda la implementación posterior. Sin esto, no se puede demostrar nada a usuarios ni a inversores, y todas las features siguientes (Sylvie, Lesson Player, Parent Copilot) dependen de tener un usuario autenticado con locale resuelto.
+**Epic:** Construir los cimientos del producto que desbloquean toda la implementación posterior. Sin esto, no se puede demostrar nada a usuarios ni a inversores, y todas las features siguientes (Angela, Lesson Player, Parent Copilot) dependen de tener un usuario autenticado con locale resuelto.
 
 **Duración estimada:** 5-7 días de trabajo enfocado.
 
 **Estado actual del repo (verificado el 2026-05-18):**
 - Next.js 14.2 + TS + Tailwind configurados.
-- Prisma schema completo con modelos `Family`, `Parent`, `Student`, `Lesson`, `LessonProgress`, `NexosEntry`, `Badge`, `EarnedBadge`, `TutorSession`, `TutorMessage`.
+- Prisma schema completo con modelos `Family`, `Parent`, `Student`, `Lesson`, `LessonProgress`, `CoinEntry`, `Badge`, `EarnedBadge`, `TutorSession`, `TutorMessage`.
 - `src/lib/i18n/config.ts` define locales `[es, en]` con `defaultLocale = 'es'`.
 - `src/middleware.ts` configurado para next-intl con `localePrefix: 'always'`.
-- `src/lib/gamification/engine.ts` ya implementa la regla de mastery ≥ 80% para Nexos.
-- Primitivas UI: `Button`, `Card`, `LocaleSwitcher`, `NexosBadge`, `ProgressBar`.
+- `src/lib/gamification/engine.ts` ya implementa la regla de mastery ≥ 80% para Coin.
+- Primitivas UI: `Button`, `Card`, `LocaleSwitcher`, `CoinBadge`, `ProgressBar`.
 - **NO existe:** carpeta `src/app/`, diccionarios `messages/`, integración NextAuth, ningún flujo de auth, ni ninguna ruta funcional.
 - Dependencias ya instaladas: `next-auth@^4.24`, `next-intl@^3.20`, `openai@^4.67`, `zustand@^4.5`, `@tanstack/react-query@^5.59`, `@prisma/client@^5.20`.
 
@@ -36,10 +36,10 @@
 8. Tests unitarios para utilidades de auth y al menos un test e2e smoke (con Playwright si está instalado, si no, lo dejas anotado).
 
 **Alcance del epic — OUT (no construir todavía):**
-- ❌ Sylvie / motor de tutor AI (Epic 03).
+- ❌ Angela / motor de tutor AI (Epic 03).
 - ❌ Lesson player o cualquier UI de aprendizaje real (Epic 04).
 - ❌ Parent Copilot con planificación AI (Epic 02).
-- ❌ Tienda de Nexos, marketplace, badges UI (Epic 05).
+- ❌ Tienda de Coin, marketplace, badges UI (Epic 05).
 - ❌ Assessments adaptativos IRT (Epic 06).
 - ❌ Seed masivo de lecciones K-6 (Epic 04).
 - ❌ Reportes regulatorios (Epic 07).
@@ -99,9 +99,9 @@ Antes de marcar el epic como completado, todo lo siguiente debe ser cierto:
 ## Guardrails (no scope creep)
 
 Si Claude Code se ve tentado a:
-- Construir Sylvie o cualquier chat IA → **NO**. Es Epic 03. Detente y pregunta.
+- Construir Angela o cualquier chat IA → **NO**. Es Epic 03. Detente y pregunta.
 - Agregar lessons UI / lesson player → **NO**. Es Epic 04. Placeholder con texto "Próximamente".
-- Refactorizar el motor de Nexos → **NO**. Ya está en producción-ready en `src/lib/gamification/engine.ts`. Si necesitas usarlo, úsalo; no lo toques.
+- Refactorizar el motor de Coin → **NO**. Ya está en producción-ready en `src/lib/gamification/engine.ts`. Si necesitas usarlo, úsalo; no lo toques.
 - Modificar `prisma/schema.prisma` agregando modelos nuevos → **PREGUNTA PRIMERO**. El schema actual cubre todo lo que necesita este epic.
 - Instalar libraries de UI complejas (shadcn/ui, mantine, chakra) → **NO** en este epic. Usa los primitives en `src/components/ui/`. shadcn/ui llegará cuando los componentes existentes empiecen a quedarse cortos (Epic 03+).
 - Implementar Clerk en vez de NextAuth → **NO**. Decisión tomada arriba.
