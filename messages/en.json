@@ -430,7 +430,9 @@
         "timeExceeded": "You've been on this for a while. Want me to walk you through it?"
       },
       "error": {
-        "generic": "Something went wrong. Try again."
+        "generic": "Something went wrong. Try again.",
+        "openai": "Something tangled my thoughts. Can you try again in a minute?",
+        "rateLimit": "We've talked a lot today — come back tomorrow. I'll rest up and explain everything again."
       }
     },
     "exercises": {

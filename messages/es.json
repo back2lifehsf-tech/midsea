@@ -430,7 +430,9 @@
         "timeExceeded": "Llevas un rato en este paso. ¿Quieres que te explique algo?"
       },
       "error": {
-        "generic": "Hubo un problema. Inténtalo de nuevo."
+        "generic": "Hubo un problema. Inténtalo de nuevo.",
+        "openai": "Algo me confundió en la cabeza. ¿Puedes intentar de nuevo en un minuto?",
+        "rateLimit": "Hoy hemos hablado mucho — vuelve mañana, descansaré bien y te explico todo otra vez."
       }
     },
     "exercises": {

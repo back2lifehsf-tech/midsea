@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { getTranslations } from 'next-intl/server';
 import { authOptions } from '@/app/api/auth/options';
 import { loadStudentTutorContext } from '@/lib/tutor/StudentContextEngine';
 import {
@@ -51,15 +52,6 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const MSG_MAX_LEN = 2000;
-
-const ANGELA_RATE_LIMIT_ES =
-  'Hoy hemos hablado mucho — vuelve mañana, descansaré bien y te explico todo otra vez.';
-const ANGELA_RATE_LIMIT_EN =
-  "We've talked a lot today — come back tomorrow. I'll rest up and explain everything again.";
-const ANGELA_ERROR_ES =
-  'Algo me confundió en la cabeza. ¿Puedes intentar de nuevo en un minuto?';
-const ANGELA_ERROR_EN =
-  'Something tangled my thoughts. Can you try again in a minute?';
 
 function jsonError(status: number, code: string): Response {
   return new Response(JSON.stringify({ error: code }), {
@@ -121,13 +113,19 @@ export async function POST(req: NextRequest) {
   }
   const locale = ctx.student.locale;
 
+  // Pre-cargo strings de fallback en el idioma del estudiante. next-intl
+  // resuelve contra el bundle del locale (messages/{es,en}.json) y nos
+  // permite mantener cero strings hardcodeados en el servidor.
+  const tErr = await getTranslations({
+    locale,
+    namespace: 'student.angela.error'
+  });
+
   try {
     await consumeOneOrThrow(studentId);
   } catch (e) {
     if (e instanceof RateLimitedError) {
-      return sseStaticMessage(
-        locale === 'en' ? ANGELA_RATE_LIMIT_EN : ANGELA_RATE_LIMIT_ES
-      );
+      return sseStaticMessage(tErr('rateLimit'));
     }
     console.error('[tutor] rate-limit error:', e);
     return jsonError(500, 'rate_limit_failed');
@@ -159,7 +157,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     console.error('[tutor] openai create failed:', e);
-    return sseStaticMessage(locale === 'en' ? ANGELA_ERROR_EN : ANGELA_ERROR_ES);
+    return sseStaticMessage(tErr('openai'));
   }
 
   const enc = new TextEncoder();
@@ -208,9 +206,7 @@ export async function POST(req: NextRequest) {
         console.error('[tutor] stream error:', e);
         controller.enqueue(
           enc.encode(
-            `data: ${JSON.stringify({
-              error: locale === 'en' ? ANGELA_ERROR_EN : ANGELA_ERROR_ES
-            })}\n\n`
+            `data: ${JSON.stringify({ error: tErr('openai') })}\n\n`
           )
         );
       } finally {

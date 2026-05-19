@@ -205,4 +205,64 @@ Empieza por el PASO -1 ahora.
 
 ## Pendientes para Epic 03
 
-*(Esta sección se llena al cerrar el epic con cualquier TODO que haya quedado.)*
+### Limpieza de v1 (sylvie-v1) — no se borró en Epic 02
+Los archivos del branch viejo `feature/sylvie-v1` fueron *renombrados* a Angela pero NO eliminados porque siguen montados desde rutas en producción (`student/layout.tsx` monta `AngelaWidget`; `lessons/[slug]/page.tsx` usa `LessonSurface`). El epic 02 sólo cubrió `/stuck`. Para Epic 03:
+- Decidir si el "Pedir ayuda al tutor" dentro de la lección abre el nuevo `StuckChat` reutilizable, o si vive como mini-chat aparte.
+- Borrar el widget flotante `AngelaWidget` (contradice CLAUDE.md §5.4 — Sylvie en mobile = bottom sheet o pantalla completa, no modal flotante).
+- Eliminar `LessonContext.ts`, `ProactiveIntervention.ts`, `angela-state.ts`, `prompts/angela-system.ts`. Eran scaffolding sin uso real del LLM.
+- Endpoint viejo `src/app/api/tutor/route.ts` (no es el `/chat` nuevo): revisar si tiene callers; si no, borrar.
+
+### Rename físico de DB (Nexos → Coin)
+Schema usa `@@map("NexosEntry")`, `@@map("NexosReason")`, `@map("rewardNexos")` para preservar nombres viejos en DB. Cuando estabilicemos esquema post-PMF:
+- `ALTER TABLE "NexosEntry" RENAME TO "CoinEntry";`
+- `ALTER TYPE "NexosReason" RENAME TO "CoinReason";`
+- `ALTER TABLE "Lesson" RENAME COLUMN "rewardNexos" TO "rewardCoin";`
+- `ALTER TABLE "Badge" RENAME COLUMN "rewardNexos" TO "rewardCoin";`
+- Renombrar índices y constraints asociados (no se renombran automáticamente).
+- Quitar todas las @@map / @map del schema.
+
+### Branch name vs rebrand
+La feature branch sigue siendo `feature/epic-02-sylvie-mvp` por consistencia con PR refs ya creados. No se renombra para evitar romper webhooks de Vercel — el contenido sí está rebranded.
+
+### Memoria semántica
+v1 carga literal últimos 20 turnos del estudiante. Cuando un estudiante tenga >50 sesiones, el contexto se vuelve ruidoso. Epic 03+:
+- Embeddings de turnos relevantes con pgvector (Supabase soporta).
+- Retrieval por similitud al mensaje actual en vez de cronológico.
+- Resumen periódico ("Angela aprendió que María bate 80% en fracciones pero falla en geometría") como contexto persistente comprimido.
+
+### Cognitive profile + emotion detection
+Per `AI_TUTOR_SPEC §4.2` y §2.2 — no construido en v1:
+- `CognitiveAdapter`: detectar y adaptar formato (visual/auditivo/kinestésico) según historial.
+- `EmotionDetector`: clasificar turno del estudiante (frustrado/curioso/aburrido) por velocidad de respuesta + texto.
+- Estados emocionales del avatar (alerta/descanso) — v1 solo tiene los 4 funcionales (idle/thinking/speaking/celebrating).
+
+### CurriculumContext + Actions
+Cuando exista contenido K-6 real (Epic 04):
+- `CurriculumContextEngine`: sabe qué lección está activa, prerequisitos, próximos pasos.
+- `ActionParser`: detectar `[VISUAL: diagrama]`, `[EXERCISE: tipo]`, `[ALERT: razón]` en el stream y disparar UI orchestration.
+- Function calling de OpenAI para tools (lookup competencia, lanzar ejercicio, alertar padre).
+
+### Rate limiting
+- Hardening con Redis (sliding window real) cuando dejemos Postgres-only.
+- Cap configurable por familia/plan (gratis vs Pro vs Family).
+- Exponer al padre cuántos mensajes lleva el hijo (transparencia de uso).
+
+### Tests E2E
+Playwright sigue pendiente desde Epic 01:
+- Smoke happy path: login → student → /stuck → mandar mensaje → recibir stream → recargar → chat vacío (UI clean per-visit).
+- Memory: mensaje #1 ("me gustan los gatos") → recargar → mensaje #2 ("¿qué animal mencioné?") → Angela referencia gatos.
+- Rate limit: simular 51 mensajes → mensaje #51 devuelve string de cap.
+
+### UI: separar memoria backend vs UI
+Decisión tomada en Epic 02 tras feedback del usuario: la UI del chat empieza limpia cada visita; la memoria vive solo en backend (StudentContextEngine carga últimos 20 turnos al endpoint, no a la UI). Epic 03 puede revisitar:
+- ¿Botón "ver historial completo"? (No por defecto — distrae al niño).
+- ¿Conversation list para el padre? (transparencia algorítmica del AI_TUTOR_SPEC §8.2).
+
+### Vitest cold-start flake
+Primer `vitest run` después de cambios en `src/` falla con "Cannot read properties of undefined (reading 'config')" en el primer test file. Segundo run siempre pasa. Documentar / abrir issue upstream / migrar a vitest workspaces.
+
+### Cleanup demo mode
+Heredado de Epic 01 Pendientes. Demo cookies + `DEMO_PARENT_CONTEXT` siguen en el código aunque la UI demo se borró. Decisión de equipo: ¿borramos por completo o mantenemos como modo de prueba interno?
+
+### Prisma migrations formales
+Heredado de Epic 01. Seguimos en `prisma db push` + raw SQL ad-hoc (mismo patrón en Epic 02 para `metadata` + `TutorUsageDaily`). Mover a `prisma migrate dev` con carpeta `prisma/migrations/` versionada.
