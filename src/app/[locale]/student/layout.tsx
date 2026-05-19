@@ -1,12 +1,12 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { NexosBadge } from '@/components/gamification/NexosBadge';
+import { CoinBadge } from '@/components/gamification/CoinBadge';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { UserMenu } from '@/components/auth/UserMenu';
-import { SylvieWidget } from '@/components/tutoring/SylvieWidget';
+import { AngelaWidget } from '@/components/tutoring/AngelaWidget';
 import { requireStudent } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
-import { DEMO_TOTAL_NEXOS } from '@/lib/demo/data';
+import { DEMO_TOTAL_COIN } from '@/lib/demo/data';
 
 // Memory project-midsea-framing: el AI tutor NO es entrada de nav principal,
 // solo boton contextual dentro de una leccion del estudiante.
@@ -31,15 +31,15 @@ export default async function StudentLayout({
     { key: 'profile', href: `/${locale}/student/profile` }
   ];
 
-  let totalNexos: number;
+  let totalCoin: number;
   if (activeStudent.isDemo) {
-    totalNexos = DEMO_TOTAL_NEXOS;
+    totalCoin = DEMO_TOTAL_COIN;
   } else {
-    const agg = await prisma.nexosEntry.aggregate({
+    const agg = await prisma.coinEntry.aggregate({
       where: { studentId: activeStudent.id },
       _sum: { amount: true }
     });
-    totalNexos = agg._sum.amount ?? 0;
+    totalCoin = agg._sum.amount ?? 0;
   }
 
   return (
@@ -69,13 +69,13 @@ export default async function StudentLayout({
           </nav>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <NexosBadge amount={totalNexos} />
+          <CoinBadge amount={totalCoin} />
           <LocaleSwitcher />
           <UserMenu callbackUrl={`/${locale}/student`} />
         </div>
       </div>
       {children}
-      <SylvieWidget />
+      <AngelaWidget />
     </div>
   );
 }

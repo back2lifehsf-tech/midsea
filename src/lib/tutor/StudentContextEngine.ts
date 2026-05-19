@@ -3,13 +3,13 @@ import { prisma } from '@/lib/prisma';
 import type { StudentTutorContext, TutorMessageDto, TutorRole } from './types';
 
 /**
- * Carga el contexto persistente del estudiante para Sylvie. Epic 02 §1.
+ * Carga el contexto persistente del estudiante para Angela. Epic 02 §1.
  *
  * Devuelve identidad mínima (nombre, grado, locale) + los últimos N mensajes
- * que el estudiante haya tenido con Sylvie en CUALQUIER sesión previa.
+ * que el estudiante haya tenido con Angela en CUALQUIER sesión previa.
  *
  * El prepend de estos mensajes al historial de la conversación activa es
- * lo que hace que Sylvie tenga "memoria entre días" — la antítesis de Max
+ * lo que hace que Angela tenga "memoria entre días" — la antítesis de Max
  * AI de Wited (DMP §2.2). Sin embedding/RAG en v1: cargar literal los
  * últimos N basta para grados K-6 con sesiones cortas.
  *

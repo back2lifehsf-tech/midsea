@@ -195,8 +195,8 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 
 **Fortaleza:** El sistema de recompensas parentales es GENIAL. El padre puede incentivar comportamientos positivos.
 **Midsea:** Mantener y mejorar:
-- Sylvie sugiere recompensas basadas en esfuerzo detectado
-- "Nexos remaining today" → limitar por día para control parental
+- Angela sugiere recompensas basadas en esfuerzo detectado
+- "Coin remaining today" → limitar por día para control parental
 - Agregar recompensas por "Logros de Transferencia" (aplicar al mundo real)
 
 ### 2.4 SETTINGS DEL ESTUDIANTE (00:52)
@@ -210,7 +210,7 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 **Fortaleza:** Granularidad de permisos. Control parental detallado.
 **Midsea:** Agregar:
 - Control de economía: aprobación de compras, límites de gasto
-- "Sylvie permissions": cuándo puede intervenir, qué datos ve
+- "Angela permissions": cuándo puede intervenir, qué datos ve
 - "Panic button" settings: notificar cuando frustración detectada
 - Control de Study Pods: aprobar grupos, ver conversaciones
 
@@ -233,7 +233,7 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 **Midsea:** Mejorar:
 - Vista de "Ruta de Competencias" en vez de lista de cursos
 - Progreso visual por competencia, no solo por curso
-- Sylvie sugiere qué cursos agregar basado en intereses del niño
+- Angela sugiere qué cursos agregar basado en intereses del niño
 - "Mundos temáticos" desbloqueables por progreso
 
 ### 2.6 ATTENDANCE (02:33)
@@ -307,8 +307,8 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 
 **Fortaleza:** Streaks y leaderboards son MUY motivadores.
 **Midsea:** Mantener y mejorar:
-- "0/113" es abrumador → cambiar a "3/5 tareas de hoy" (Sylvie decide cuántas)
-- Sylvie sugiere qué hacer next basado en energía/hora del día
+- "0/113" es abrumador → cambiar a "3/5 tareas de hoy" (Angela decide cuántas)
+- Angela sugiere qué hacer next basado en energía/hora del día
 - Agregar "racha de mastery" (no solo de actividad)
 - Leaderboard por competencia, no solo por tiempo
 
@@ -323,10 +323,10 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 
 **Fortaleza:** Cards visuales atractivas. Recompensa clara.
 **Midsea:** Mejorar:
-- "+100 Gold" por cualquier actividad → "+100 Nexos por mastery (80%+)"
+- "+100 Gold" por cualquier actividad → "+100 Coin por mastery (80%+)"
 - Dificultad adaptativa visible
 - Tiempo estimado por actividad
-- Sylvie explica por qué esta actividad ahora
+- Angela explica por qué esta actividad ahora
 
 ### 2.12 DENTRO DE UNA LECCIÓN (04:25)
 
@@ -343,10 +343,10 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 
 **Fortaleza:** Formato slide-by-slide claro. Múltiples formatos (PDF, video, práctica).
 **Midsea:** Mejorar:
-- Sylvie explicando cada slide con voz si el niño lo necesita
+- Angela explicando cada slide con voz si el niño lo necesita
 - Interactividad (arrastrar, seleccionar, escribir) en vez de solo lectura
 - Checkpoints de comprensión entre slides
-- "Modo focus": Sylvie guía paso a paso si el niño está atascado
+- "Modo focus": Angela guía paso a paso si el niño está atascado
 
 ### 2.13 QUIZ / ASSESSMENT (05:37)
 
@@ -359,10 +359,10 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 
 **Fortaleza:** Audio por opción es excelente para accesibilidad.
 **Midsea:** Mejorar:
-- Sylvie detecta si el niño está atascado y ofrece pista proactiva
+- Angela detecta si el niño está atascado y ofrece pista proactiva
 - IRT adaptativo: si falla, pregunta más fácil; si acierta, más difícil
 - Explicación inmediata del error, no solo "incorrecto"
-- "Modo tutor": Sylvie explica el concepto antes de continuar
+- "Modo tutor": Angela explica el concepto antes de continuar
 
 ### 2.14 ALL LESSONS (05:54)
 
@@ -380,7 +380,7 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 **Midsea:** Mejorar:
 - "Mundos Temáticos" (Ciudad STEM, Bosque Literario, etc.)
 - Mundos desbloqueables por progreso
-- Recomendaciones de Sylvie basadas en intereses
+- Recomendaciones de Angela basadas en intereses
 
 ### 2.15 MY WORLD (06:12)
 
@@ -390,7 +390,7 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 
 **Fortaleza:** EL diferenciador visual más fuerte de Miacademy. El mundo reduce ansiedad y da sensación de aventura.
 **Midsea:** MANTENER y mejorar:
-- Hacerlo más interactivo (Sylvie aparece en el mundo)
+- Hacerlo más interactivo (Angela aparece en el mundo)
 - Mundos temáticos por materia (Laboratorio Químico, Bosque Literario)
 - Study Pods como "casas" en el mundo donde se encuentran amigos
 - "Portales" a desafíos y competencias
@@ -485,11 +485,11 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 
 **Fortaleza:** Transparencia de transacciones. Leaderboard motivador.
 **Midsea:** Mejorar:
-- "Gold por completar" → "Nexos por mastery (80%+)"
+- "Gold por completar" → "Coin por mastery (80%+)"
 - "Sinks" de economía: la moneda debe tener valor (no solo acumularse)
 - Trading entre estudiantes con moderación
-- "Impuestos": donar Nexos a proyectos comunitarios
-- "Inversión": invertir Nexos en "mejorar tu mundo"
+- "Impuestos": donar Coin a proyectos comunitarios
+- "Inversión": invertir Coin en "mejorar tu mundo"
 
 ---
 
@@ -500,29 +500,29 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 | **LOGIN** | Simple, un rol | Padre/Estudiante separado | Padre/Estudiante/Tutor con avatares personalizados |
 | **NAV PADRE** | Tabs básicas (Calificaciones, Estadísticas) | Tabs completas + recompensas + control | Parent Copilot AI: dashboard predictivo de 5 min con acciones sugeridas |
 | **NAV ESTUDIANTE** | Sidebar jerárquica (Inicio→Aprender→Materia) | Top nav + mundo 3D + learning path | Navegación por intención (/stuck, /prep, /explore, /review) + mundo 3D |
-| **MUNDO VISUAL** | Ninguno (grid de materias) | Isla 3D con edificios interactivos | Mundos temáticos por materia + canvas de competencias + Sylvie en el mundo |
+| **MUNDO VISUAL** | Ninguno (grid de materias) | Isla 3D con edificios interactivos | Mundos temáticos por materia + canvas de competencias + Angela en el mundo |
 | **PROGRESO** | % por materia (0%, 100%, 94%) | Streaks + leaderboard + 0/113 tasks | MasteryMap (constelación de competencias) + streaks de mastery |
-| **GAMIFICACIÓN** | MaxPoints por puzzles aislados (pérdida por error) | Gold + tienda + mascotas + shop + clanes | Nexos por mastery + Portafolio de Habilidades + mascotas conectadas al aprendizaje |
-| **ECONOMÍA** | Puntos por puzzles (tóxico) | Gold por lección + competencias + sinks limitados | Nexos por mastery + marketplace estudiante + sinks reales + trading |
+| **GAMIFICACIÓN** | MaxPoints por puzzles aislados (pérdida por error) | Gold + tienda + mascotas + shop + clanes | Coin por mastery + Portafolio de Habilidades + mascotas conectadas al aprendizaje |
+| **ECONOMÍA** | Puntos por puzzles (tóxico) | Gold por lección + competencias + sinks limitados | Coin por mastery + marketplace estudiante + sinks reales + trading |
 | **MASCOTAS** | Ninguna (solo avatar estático Max) | Pet World virtual con stats y cuidado | Mascotas que crecen con mastery + representan competencias + breaks |
 | **TIENDA** | MaxPoints shop (cursos genéricos) | My Shop + Design Studio + marketplace | Marketplace con productos educativos creados por estudiantes + moderación AI |
 | **COMUNIDAD** | No tiene | Newspaper + comentarios predefinidos + clubs | Newspaper + Study Pods + Clanes + Debate Club + moderación AI |
 | **VIDEOS** | No tiene | UGC estudiantil (trending/new/top) | UGC + desafíos temáticos + video-respuestas + moderación AI |
 | **AMIGOS** | No tiene | My Friends controlado + mail + regalos | Study Pods emparejados por debilidades complementarias + mentores |
-| **AI TUTOR** | Max AI (chatbot reactivo, sin contexto, avatar estático) | **NO TIENE** | Sylvie: proactiva, memoria persistente, perfil cognitivo, 7 estados de avatar, multimodal |
+| **AI TUTOR** | Max AI (chatbot reactivo, sin contexto, avatar estático) | **NO TIENE** | Angela: proactiva, memoria persistente, perfil cognitivo, 7 estados de avatar, multimodal |
 | **PERSONALIZACIÓN** | Ninguna (perfil básico: nombre, curso) | Self-paced pasivo (elige qué hacer) | AI adaptativo: formato, ritmo, dificultad según perfil cognitivo |
 | **OFFLINE** | No tiene | Descarga de lecciones + worksheets | Offline mode + worksheets PDF generados por IA personalizados |
-| **ASSESSMENTS** | Quiz tradicional (checkmarks lineales) | Quiz con audio por opción + paginación | IRT adaptativo + explicación inmediata del error + Sylvie interviene |
-| **CELEBRACIONES** | Trofeo estático + mensaje genérico | Animaciones + gold + desbloqueo visual | Celebraciones contextuales con Sylvie + desbloqueos de mundo + mascotas |
+| **ASSESSMENTS** | Quiz tradicional (checkmarks lineales) | Quiz con audio por opción + paginación | IRT adaptativo + explicación inmediata del error + Angela interviene |
+| **CELEBRACIONES** | Trofeo estático + mensaje genérico | Animaciones + gold + desbloqueo visual | Celebraciones contextuales con Angela + desbloqueos de mundo + mascotas |
 | **REPORTES PADRE** | Tabla Excel con notas N°1-N°5 (datos crudos) | Report card detallado + attendance + gradebook | Reportes regulatorios automáticos + insights predictivos + Mapa de Riesgo |
-| **CONTROL PARENTAL** | Ninguno (solo ver notas) | Recompensas gold + permisos + límites de tiempo | Parent Copilot: aprobación de compras + Sylvie permissions + panic button |
+| **CONTROL PARENTAL** | Ninguno (solo ver notas) | Recompensas gold + permisos + límites de tiempo | Parent Copilot: aprobación de compras + Angela permissions + panic button |
 | **BILINGÜE** | Español (Chile) | Solo inglés | Español nativo + inglés toggle + code-switching natural |
 | **CURRÍCULO** | Segundo medio (Chile, materias tradicionales) | K-8 (MiaPrep separado $394/mes) | K-12 integrado + latinoamericano + IB PYP/MYP opcional |
 | **PRECIO** | No visible | $45/mes flat (hasta 4 hijos) | $29 Core / $45 Pro / $69 Family (4 hijos) |
 | **STREAKS** | "En racha" badge simple | 39 Day Streak + leaderboard global | Streaks de mastery + racha por competencia + leaderboard por habilidad |
 | **LEADERBOARD** | No tiene | Longest Learning Streaks + Gold Competition | Leaderboard por competencia + Clanes + ranking por "aplicación al mundo real" |
 | **SOCIAL** | No tiene | Friends + Shops + Newspaper + Clubs | Study Pods + Clanes + Mentores + Debate Club + moderación AI |
-| **ACCESIBILIDAD** | Ninguna | Audio por opción (text-to-speech) | Audio + voice input + Sylvie explica en formato preferido + contraste AA |
+| **ACCESIBILIDAD** | Ninguna | Audio por opción (text-to-speech) | Audio + voice input + Angela explica en formato preferido + contraste AA |
 
 ---
 
@@ -530,7 +530,7 @@ Wited es una plataforma chilena de apoyo escolar para "Segundo Medio" (equivalen
 
 Estos son elementos que NI Wited NI Miacademy tienen:
 
-### 4.1. Sylvie — Tutor AI Proactivo
+### 4.1. Angela — Tutor AI Proactivo
 - **NO** es un chatbot que espera a que preguntes (como Max AI)
 - **NO** es ausente (como Miacademy)
 - Es un **agente autónomo** que:
@@ -544,7 +544,7 @@ Estos son elementos que NI Wited NI Miacademy tienen:
 ### 4.2. Navegación por Intención
 - En vez de "Inicio → Aprender → Matemática → Grado 5 → Unidad 3 → Tema 2"
 - El estudiante dice: "Estoy atascado", "Practicar para prueba", "Aprender algo nuevo", "Revisar lo que sé"
-- Sylvie maneja el resto
+- Angela maneja el resto
 
 ### 4.3. MasteryMap — Constelación de Competencias
 - En vez de "Matemática 75%" (qué significa eso?)
@@ -561,7 +561,7 @@ Estos son elementos que NI Wited NI Miacademy tienen:
   - Uno domina geometría pero lucha con álgebra
   - Otro domina álgebra pero lucha con geometría
   - Se ayudan mutuamente con moderación AI
-- Sylvie actúa como moderadora: detecta malentendidos, sugiere intervenciones
+- Angela actúa como moderadora: detecta malentendidos, sugiere intervenciones
 
 ### 4.5. Parent Copilot — Dashboard Predictivo
 - No es "tu hijo completó 3 ejercicios" (Wited) ni "180 hrs de estudio" (Miacademy)
@@ -576,7 +576,7 @@ Estos son elementos que NI Wited NI Miacademy tienen:
 ### 4.7. Bilingüe Nativo
 - No traducción literal
 - Contenido adaptado culturalmente
-- Code-switching natural: si el estudiante mezcla español e inglés, Sylvie sigue el lead
+- Code-switching natural: si el estudiante mezcla español e inglés, Angela sigue el lead
 - Toggle a nivel de familia, no por lección
 
 ---
@@ -585,7 +585,7 @@ Estos son elementos que NI Wited NI Miacademy tienen:
 
 ### 5.1. Qué copiar de Wited (porque lo hace bien)
 1. **Chat con avatar** — Mantener, pero hacerlo proactivo y con memoria
-2. **Profe Express** — Mantener como escalón superior, pero Sylvie resuelve 90% en tiempo real
+2. **Profe Express** — Mantener como escalón superior, pero Angela resuelve 90% en tiempo real
 3. **Grid de materias** — Mantener como vista alternativa, pero no principal
 4. **Desafíos** — Mantener, pero conectar con currículo y sin pérdida de puntos
 
@@ -603,17 +603,17 @@ Estos son elementos que NI Wited NI Miacademy tienen:
 
 ### 5.3. Qué descartar de Wited (porque lo hace mal)
 1. **Navegación jerárquica** — Reemplazar por navegación por intención
-2. **Max AI sin contexto** — Reemplazar por Sylvie con memoria persistente
+2. **Max AI sin contexto** — Reemplazar por Angela con memoria persistente
 3. **Progreso por materia** — Reemplazar por MasteryMap de competencias
 4. **Calificaciones tabulares** — Reemplazar por dashboard predictivo
 5. **Estadísticas de actividad** — Reemplazar por métricas de aprendizaje
-6. **Gamificación tóxica** — Reemplazar por Nexos por mastery
+6. **Gamificación tóxica** — Reemplazar por Coin por mastery
 7. **Perfil básico** — Reemplazar por perfil cognitivo
 
 ### 5.4. Qué descartar de Miacademy (porque lo hace mal)
-1. **Gold por completar** — Cambiar a Nexos por mastery (80%+)
+1. **Gold por completar** — Cambiar a Coin por mastery (80%+)
 2. **Self-paced pasivo** — Agregar AI que guía y adapta
-3. **Sin AI tutor** — Agregar Sylvie (diferenciador principal)
+3. **Sin AI tutor** — Agregar Angela (diferenciador principal)
 4. **Solo inglés** — Agregar español nativo + bilingüe
 5. **K-8 solo** — Integrar K-12 desde el inicio
 6. **MiaPrep separado y caro** — Unificar en una plataforma
@@ -627,13 +627,13 @@ Estos son elementos que NI Wited NI Miacademy tienen:
 ### Fase 1: Fundamentos (Semanas 1-3)
 - [ ] Auth multi-rol (estudiante, padre, tutor)
 - [ ] Mundo 3D básico (isla con paths de lecciones)
-- [ ] Sylvie avatar con 3 estados (idle, active, explaining)
+- [ ] Angela avatar con 3 estados (idle, active, explaining)
 - [ ] Chat básico con streaming
 - [ ] Streaks y leaderboard básico
 - [ ] Grid de materias (vista alternativa)
 
 ### Fase 2: Core de Aprendizaje (Semanas 4-6)
-- [ ] Flujo /stuck: foto/texto → Sylvie identifica → explicación → ejercicio
+- [ ] Flujo /stuck: foto/texto → Angela identifica → explicación → ejercicio
 - [ ] Mascotas virtuales conectadas al progreso
 - [ ] Tienda/My Shop básico
 - [ ] Recompensas parentales
@@ -649,7 +649,7 @@ Estos son elementos que NI Wited NI Miacademy tienen:
 - [ ] Parent Copilot v1 (informacional)
 
 ### Fase 4: Avanzado (Semanas 11-14)
-- [ ] Sylvie con 7 estados completos (Rive)
+- [ ] Angela con 7 estados completos (Rive)
 - [ ] Flujo /explore: búsqueda semántica + rutas de descubrimiento
 - [ ] Dashboard predictivo (Mapa de Riesgo, Índice de Confianza)
 - [ ] IRT adaptativo en assessments
@@ -657,7 +657,7 @@ Estos son elementos que NI Wited NI Miacademy tienen:
 - [ ] Reportes regulatorios automáticos
 
 ### Fase 5: Pulido (Semanas 15+)
-- [ ] Sylvie moderadora de Study Pods
+- [ ] Angela moderadora de Study Pods
 - [ ] Generación de worksheets personalizados (PDF)
 - [ ] Mundos temáticos por materia
 - [ ] Logros de Transferencia
@@ -670,14 +670,14 @@ Estos son elementos que NI Wited NI Miacademy tienen:
 
 | Término | Definición |
 |---------|-----------|
-| **Sylvie** | Tutor AI de Midsea. Agente autónomo con memoria, perfil cognitivo y contexto curricular. |
-| **Nexos** | Moneda virtual de Midsea. Se gana por mastery (80%+), no por tiempo ni completar. |
+| **Angela** | Tutor AI de Midsea. Agente autónomo con memoria, perfil cognitivo y contexto curricular. |
+| **Coin** | Moneda virtual de Midsea. Se gana por mastery (80%+), no por tiempo ni completar. |
 | **MasteryMap** | Mapa visual de competencias del estudiante. Nodos conectados, niveles 0-4. |
 | **Study Pod** | Grupo de 3-4 estudiantes emparejados por debilidades complementarias. |
 | **Parent Copilot** | Dashboard del padre con planificación AI, alertas proactivas y reportes regulatorios. |
 | **Logro de Transferencia** | Recompensa por aplicar conocimiento al mundo real (foto, video, proyecto). |
 | **IRT** | Item Response Theory. Algoritmo para assessments adaptativos. |
-| **ProactiveHint** | Sugerencia no-intrusiva de Sylvie cuando detecta dificultad. |
+| **ProactiveHint** | Sugerencia no-intrusiva de Angela cuando detecta dificultad. |
 | **Streak de Mastery** | Racha de lecciones completadas con mastery (80%+), no solo completadas. |
 | **Mundo Temático** | Mundo 3D dedicado a una materia (Laboratorio Químico, Bosque Literario). |
 

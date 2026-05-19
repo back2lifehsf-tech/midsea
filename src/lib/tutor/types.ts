@@ -1,5 +1,5 @@
 /**
- * Tipos compartidos del motor de Sylvie. Epic 02 §1.
+ * Tipos compartidos del motor de Angela. Epic 02 §1.
  *
  * Mantengo estos tipos desacoplados de Prisma para que el route handler y
  * los componentes UI puedan consumirlos sin arrastrar el cliente de DB.

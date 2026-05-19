@@ -63,8 +63,8 @@ export const intentTone: Record<IntentKey, IntentTone> = {
     bgAccent: 'bg-midsea-lagoon/5'
   },
   review: {
-    ringClass: 'ring-nexos/50 hover:ring-nexos',
-    iconClass: 'bg-nexos/15 text-nexos-dark',
-    bgAccent: 'bg-nexos/5'
+    ringClass: 'ring-coin/50 hover:ring-coin',
+    iconClass: 'bg-coin/15 text-coin-dark',
+    bgAccent: 'bg-coin/5'
   }
 };

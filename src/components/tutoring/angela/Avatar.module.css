@@ -1,4 +1,4 @@
-/* Animaciones SVG del avatar de Sylvie. Epic 02 §4.
+/* Animaciones SVG del avatar de Angela. Epic 02 §4.
  * 4 estados funcionales (no emocionales — esos son Epic 03):
  *   idle        respiración sutil
  *   thinking    puntos flotando arriba (loading)
@@ -19,7 +19,7 @@
 
 /* idle */
 .idle .body {
-  animation: sylvie-breathe 3s ease-in-out infinite;
+  animation: angela-breathe 3s ease-in-out infinite;
   transform-origin: 48px 60px;
 }
 
@@ -28,7 +28,7 @@
   opacity: 1;
 }
 .thinking .thinkDots circle {
-  animation: sylvie-think-pulse 1.2s ease-in-out infinite;
+  animation: angela-think-pulse 1.2s ease-in-out infinite;
 }
 .thinking .thinkDots circle:nth-child(2) {
   animation-delay: 0.15s;
@@ -39,21 +39,21 @@
 
 /* speaking */
 .speaking .mouth {
-  animation: sylvie-mouth-talk 0.32s ease-in-out infinite alternate;
+  animation: angela-mouth-talk 0.32s ease-in-out infinite alternate;
   transform-origin: 48px 60px;
 }
 
 /* celebrating */
 .celebrating .body {
-  animation: sylvie-bounce 0.5s ease-out infinite alternate;
+  animation: angela-bounce 0.5s ease-out infinite alternate;
   transform-origin: 48px 80px;
 }
 .celebrating .sparkles {
   opacity: 1;
-  animation: sylvie-sparkle 1s ease-in-out infinite;
+  animation: angela-sparkle 1s ease-in-out infinite;
 }
 
-@keyframes sylvie-breathe {
+@keyframes angela-breathe {
   0%,
   100% {
     transform: scale(1);
@@ -63,7 +63,7 @@
   }
 }
 
-@keyframes sylvie-think-pulse {
+@keyframes angela-think-pulse {
   0%,
   100% {
     opacity: 0.3;
@@ -75,7 +75,7 @@
   }
 }
 
-@keyframes sylvie-mouth-talk {
+@keyframes angela-mouth-talk {
   0% {
     transform: scaleY(1);
   }
@@ -84,7 +84,7 @@
   }
 }
 
-@keyframes sylvie-bounce {
+@keyframes angela-bounce {
   0% {
     transform: translateY(0);
   }
@@ -93,7 +93,7 @@
   }
 }
 
-@keyframes sylvie-sparkle {
+@keyframes angela-sparkle {
   0%,
   100% {
     opacity: 0.5;

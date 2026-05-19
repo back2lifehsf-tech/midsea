@@ -10,7 +10,7 @@
 
 1. **PRD.md** (raíz) — Estrategia de producto, ICP, roadmap. **Leer antes de cualquier tarea.**
 2. **docs/DMP.md** — Documento Maestro de Posicionamiento Competitivo: análisis de 5 competidores, UVP por audiencia, priorización estratégica. **Consultar antes de decisiones de feature que toquen diferenciación, UX core o pricing.** No leer para bugs triviales o ajustes UI sin implicaciones estratégicas: es contexto caro (~4,200 palabras).
-3. **docs/AI_TUTOR_SPEC.md** — Especificación técnica del tutor AI "Sylvie" y experiencia estudiante. **Leer antes de tocar cualquier código en `src/lib/tutor/` o `src/app/[locale]/(student)/`.**
+3. **docs/AI_TUTOR_SPEC.md** — Especificación técnica del tutor AI "Angela" y experiencia estudiante. **Leer antes de tocar cualquier código en `src/lib/tutor/` o `src/app/[locale]/(student)/`.**
 4. **Este archivo (CLAUDE.md)** — Reglas de código, stack, estructura, convenciones. **Leer siempre.**
 
 **Jerarquía de conflictos:** PRD.md > docs/DMP.md > docs/AI_TUTOR_SPEC.md > CLAUDE.md
@@ -42,7 +42,7 @@
 | **AI** | OpenAI SDK (GPT-4o-mini → GPT-4o) | Streaming, function calling, vision |
 | **i18n** | next-intl | Español nativo, inglés escalado, es-419/es-ES |
 | **Estado UI** | Zustand + TanStack Query | Local state + server state sync |
-| **Animaciones** | Framer Motion + Rive (avatar Sylvie) | Fluidas, interactivas, performantes |
+| **Animaciones** | Framer Motion + Rive (avatar Angela) | Fluidas, interactivas, performantes |
 | **Canvas/Workspace** | React-Flow / TLDraw (futuro) | Mapa de competencias visual |
 
 ---
@@ -65,7 +65,7 @@ src/
         review/                 # "Revisar lo que sé" — spaced repetition
         classes/                # Clases grupales/particulares
         tools/                  # Herramientas (calculadora, notas, etc.)
-        store/                  # Tienda Nexos
+        store/                  # Tienda Coin
         profile/                # Perfil del estudiante
       (parent)/                 # Layout del padre
         dashboard/              # Parent Copilot — 5 min overview
@@ -80,14 +80,14 @@ src/
         content/                # Micro-lecciones
   components/
     ui/                         # Componentes base (shadcn/ui style)
-    tutoring/                   # Sylvie: avatar, chat, widget, hints
+    tutoring/                   # Angela: avatar, chat, widget, hints
     gamification/               # Badges, niveles, progreso, tienda
     learning/                   # Canvas de competencias, micro-lecciones
     auth/                       # Login, registro, multi-rol
     parent/                     # Componentes del dashboard parental
   lib/
     tutor/                      # Motor del tutor AI
-      SylvieStateMachine.ts     # Máquina de estados del avatar
+      AngelaStateMachine.ts     # Máquina de estados del avatar
       StudentContextEngine.ts   # Perfil cognitivo persistente
       CurriculumContextEngine.ts # Contexto curricular en tiempo real
       SessionContextEngine.ts   # Contexto de sesión volátil
@@ -104,7 +104,7 @@ src/
   hooks/                        # Custom React hooks
 public/
   assets/
-    sylvie/                     # Animaciones Rive/Lottie del avatar
+    angela/                     # Animaciones Rive/Lottie del avatar
     badges/                     # Iconos de logros
     worlds/                     # Ilustraciones de mundos temáticos
 ```
@@ -116,10 +116,10 @@ public/
 ### 5.1. i18n Primero
 - **TODO texto de UI usa `t('key')` de next-intl.**
 - Nunca hardcodees strings en español o inglés.
-- Las keys deben ser semánticas: `t('tutor.sylvie.greeting')`, no `t('text_1')`.
+- Las keys deben ser semánticas: `t('tutor.angela.greeting')`, no `t('text_1')`.
 
 ### 5.2. AI Streaming
-- Respuestas de Sylvie **palabra por palabra** (SSE streaming).
+- Respuestas de Angela **palabra por palabra** (SSE streaming).
 - Nunca esperes JSON completo antes de mostrar algo al usuario.
 - Usar `ActionParser` para detectar acciones (visual, ejercicio, alerta) del stream.
 
@@ -158,7 +158,7 @@ public/
 
 ### 6.3. API-First & Event-Driven
 - Cada dominio expone una API REST/GraphQL interna.
-- Eventos: `CompetencyUnlocked`, `StudyPodMatched`, `AssessmentCompleted`, `SylvieIntervened`.
+- Eventos: `CompetencyUnlocked`, `StudyPodMatched`, `AssessmentCompleted`, `AngelaIntervened`.
 
 ---
 
@@ -231,15 +231,15 @@ npm run test
 
 | Término | Definición |
 |---------|-----------|
-| **Sylvie** | Tutor AI de Midsea. Agente autónomo con memoria, perfil cognitivo y contexto curricular. |
+| **Angela** | Tutor AI de Midsea. Agente autónomo con memoria, perfil cognitivo y contexto curricular. |
 | **Competencia** | Habilidad demostrable y medible (ej: "Resuelve ecuaciones lineales con dos incógnitas"). |
 | **Ruta de Aprendizaje** | Secuencia adaptativa de competencias para alcanzar un objetivo. |
 | **Micro-lección** | Unidad de contenido de 3-10 minutos, con un solo objetivo de aprendizaje. |
-| **Nexos** | Moneda virtual de Midsea. Se gana por mastery (80%+), no por tiempo. |
+| **Coin** | Moneda virtual de Midsea. Se gana por mastery (80%+), no por tiempo. |
 | **MasteryMap** | Mapa de competencias del estudiante. Nivel 0-4 por concepto. |
 | **Parent Copilot** | Dashboard del padre con planificación AI, alertas proactivas y reportes regulatorios. |
 | **Study Pod** | Grupo de 3-4 estudiantes emparejados por debilidades complementarias. |
-| **ProactiveHint** | Sugerencia no-intrusiva de Sylvie cuando detecta dificultad. |
+| **ProactiveHint** | Sugerencia no-intrusiva de Angela cuando detecta dificultad. |
 | **IRT** | Item Response Theory. Algoritmo para assessments adaptativos. |
 
 ---

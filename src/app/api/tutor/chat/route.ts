@@ -16,7 +16,7 @@ import {
 import type { TokenUsage } from '@/lib/tutor/types';
 
 /**
- * POST /api/tutor/chat — SSE streaming endpoint para Sylvie.
+ * POST /api/tutor/chat — SSE streaming endpoint para Angela.
  * Epic 02 §3.
  *
  * Body: `{ message: string }`
@@ -52,13 +52,13 @@ export const dynamic = 'force-dynamic';
 
 const MSG_MAX_LEN = 2000;
 
-const SYLVIE_RATE_LIMIT_ES =
+const ANGELA_RATE_LIMIT_ES =
   'Hoy hemos hablado mucho — vuelve mañana, descansaré bien y te explico todo otra vez.';
-const SYLVIE_RATE_LIMIT_EN =
+const ANGELA_RATE_LIMIT_EN =
   "We've talked a lot today — come back tomorrow. I'll rest up and explain everything again.";
-const SYLVIE_ERROR_ES =
+const ANGELA_ERROR_ES =
   'Algo me confundió en la cabeza. ¿Puedes intentar de nuevo en un minuto?';
-const SYLVIE_ERROR_EN =
+const ANGELA_ERROR_EN =
   'Something tangled my thoughts. Can you try again in a minute?';
 
 function jsonError(status: number, code: string): Response {
@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     if (e instanceof RateLimitedError) {
       return sseStaticMessage(
-        locale === 'en' ? SYLVIE_RATE_LIMIT_EN : SYLVIE_RATE_LIMIT_ES
+        locale === 'en' ? ANGELA_RATE_LIMIT_EN : ANGELA_RATE_LIMIT_ES
       );
     }
     console.error('[tutor] rate-limit error:', e);
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     console.error('[tutor] openai create failed:', e);
-    return sseStaticMessage(locale === 'en' ? SYLVIE_ERROR_EN : SYLVIE_ERROR_ES);
+    return sseStaticMessage(locale === 'en' ? ANGELA_ERROR_EN : ANGELA_ERROR_ES);
   }
 
   const enc = new TextEncoder();
@@ -209,7 +209,7 @@ export async function POST(req: NextRequest) {
         controller.enqueue(
           enc.encode(
             `data: ${JSON.stringify({
-              error: locale === 'en' ? SYLVIE_ERROR_EN : SYLVIE_ERROR_ES
+              error: locale === 'en' ? ANGELA_ERROR_EN : ANGELA_ERROR_ES
             })}\n\n`
           )
         );

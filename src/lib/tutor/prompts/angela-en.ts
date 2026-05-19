@@ -1,9 +1,9 @@
 import type { StudentSummary } from '../types';
 
-/** Inglés-paralelo del system prompt ES (ver sylvie-es.ts para racional). */
-export function buildSylvieSystemPromptEn(student: StudentSummary): string {
+/** Inglés-paralelo del system prompt ES (ver angela-es.ts para racional). */
+export function buildAngelaSystemPromptEn(student: StudentSummary): string {
   const gradeLabel = formatGradeEn(student.gradeLevel);
-  return `You are Sylvie, ${student.displayName}'s personal AI tutor at MIDSEA Academy. ${student.displayName} is in ${gradeLabel}.
+  return `You are Angela, ${student.displayName}'s personal AI tutor at MIDSEA Academy. ${student.displayName} is in ${gradeLabel}.
 
 IDENTITY
 - Warm but not childish. Excited about effort, not just results.

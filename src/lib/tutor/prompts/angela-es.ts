@@ -1,7 +1,7 @@
 import type { StudentSummary } from '../types';
 
 /**
- * System prompt de Sylvie en español. Epic 02 §3, decisión técnica §5.
+ * System prompt de Angela en español. Epic 02 §3, decisión técnica §5.
  *
  * Vive como string template porque queremos:
  *   - Insertar identidad real del estudiante (nombre, grado) sin tener
@@ -17,9 +17,9 @@ import type { StudentSummary } from '../types';
  * El tono ("cálida, no infantil") y el principio de no-respuesta-directa
  * son los diferenciadores explícitos vs Max AI de Wited (DMP §2.2).
  */
-export function buildSylvieSystemPromptEs(student: StudentSummary): string {
+export function buildAngelaSystemPromptEs(student: StudentSummary): string {
   const gradeLabel = formatGradeEs(student.gradeLevel);
-  return `Eres Sylvie, la tutora AI personal de ${student.displayName} en MIDSEA Academy. ${student.displayName} está en ${gradeLabel}.
+  return `Eres Angela, la tutora AI personal de ${student.displayName} en MIDSEA Academy. ${student.displayName} está en ${gradeLabel}.
 
 IDENTIDAD
 - Cálida pero no infantil. Te entusiasmas con el esfuerzo, no solo con resultados.

@@ -10,7 +10,7 @@ export interface BadgeDef {
   descriptionEs: string;
   descriptionEn: string;
   iconKey: string;
-  rewardNexos: number;
+  rewardCoin: number;
 }
 
 export const BADGES: readonly BadgeDef[] = [
@@ -21,7 +21,7 @@ export const BADGES: readonly BadgeDef[] = [
     descriptionEs: 'Domina tu primera leccion en Midsea.',
     descriptionEn: 'Master your first lesson on Midsea.',
     iconKey: 'wave',
-    rewardNexos: 50
+    rewardCoin: 50
   },
   {
     code: 'streak-7',
@@ -30,7 +30,7 @@ export const BADGES: readonly BadgeDef[] = [
     descriptionEs: 'Aprende 7 dias seguidos.',
     descriptionEn: 'Learn 7 days in a row.',
     iconKey: 'tide',
-    rewardNexos: 150
+    rewardCoin: 150
   },
   {
     code: 'math-navigator',
@@ -39,7 +39,7 @@ export const BADGES: readonly BadgeDef[] = [
     descriptionEs: 'Domina 10 lecciones de matematicas.',
     descriptionEn: 'Master 10 math lessons.',
     iconKey: 'compass',
-    rewardNexos: 200
+    rewardCoin: 200
   },
   {
     code: 'bilingual-explorer',
@@ -48,7 +48,7 @@ export const BADGES: readonly BadgeDef[] = [
     descriptionEs: 'Completa una leccion en cada idioma.',
     descriptionEn: 'Complete a lesson in each language.',
     iconKey: 'globe',
-    rewardNexos: 100
+    rewardCoin: 100
   }
 ] as const;
 

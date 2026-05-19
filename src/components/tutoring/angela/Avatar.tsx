@@ -2,14 +2,14 @@
 import styles from './Avatar.module.css';
 import type { AvatarState } from '@/lib/tutor/store';
 
-interface SylvieAvatarProps {
+interface AngelaAvatarProps {
   state: AvatarState;
   size?: 'sm' | 'md' | 'lg';
   /** Texto leído por screen readers; debe describir el estado. */
   ariaLabel: string;
 }
 
-const SIZE_PX: Record<NonNullable<SylvieAvatarProps['size']>, number> = {
+const SIZE_PX: Record<NonNullable<AngelaAvatarProps['size']>, number> = {
   sm: 48,
   md: 96,
   lg: 144
@@ -20,7 +20,7 @@ const SIZE_PX: Record<NonNullable<SylvieAvatarProps['size']>, number> = {
  * Geometría: cara redondeada teal sobre fondo, boca arco, dos ojos. Los
  * estados emocionales completos del AI_TUTOR_SPEC §2.2 son Epic 03.
  */
-export function SylvieAvatar({ state, size = 'md', ariaLabel }: SylvieAvatarProps) {
+export function AngelaAvatar({ state, size = 'md', ariaLabel }: AngelaAvatarProps) {
   const px = SIZE_PX[size];
   return (
     <div
@@ -31,7 +31,7 @@ export function SylvieAvatar({ state, size = 'md', ariaLabel }: SylvieAvatarProp
     >
       <svg viewBox="0 0 96 96" width={px} height={px} aria-hidden>
         <defs>
-          <linearGradient id="sylvieBody" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="angelaBody" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#5eead4" />
             <stop offset="100%" stopColor="#0d9488" />
           </linearGradient>
@@ -55,7 +55,7 @@ export function SylvieAvatar({ state, size = 'md', ariaLabel }: SylvieAvatarProp
             width="68"
             height="62"
             rx="34"
-            fill="url(#sylvieBody)"
+            fill="url(#angelaBody)"
             stroke="#0f766e"
             strokeWidth="2"
           />

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { getOpenAI, TUTOR_MODEL } from '@/lib/openai';
-import { buildSylvieSystemPrompt } from '@/lib/tutor/prompts/sylvie-system';
+import { buildAngelaSystemPrompt } from '@/lib/tutor/prompts/angela-system';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -19,7 +19,7 @@ interface TutorRequest {
   lessonTitle?: string;
   topic?: string;
   subject?: string;
-  // Senales de sesion (opcional — Sylvie las usa para personalizar).
+  // Senales de sesion (opcional — Angela las usa para personalizar).
   currentExercise?: number;
   totalExercises?: number;
   consecutiveErrors?: number;
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
   const locale = body.locale === 'en' ? 'en' : 'es';
   const userMessages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
 
-  const system = buildSylvieSystemPrompt({
+  const system = buildAngelaSystemPrompt({
     locale,
     studentFirstName: body.studentFirstName,
     gradeLevel: body.gradeLevel,
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         // Error mid-stream: emitimos un marcador para que el cliente sepa que
         // algo se rompio en medio. Sin esto, el cliente termina sin contenido
-        // y luce como "Sylvie no respondio".
+        // y luce como "Angela no respondio".
         const errText =
           locale === 'en'
             ? '\n\n[Stream interrupted — try again.]'
@@ -159,6 +159,6 @@ function mapOpenAIError(err: unknown): Response {
   return errorResponse(
     status,
     code,
-    e?.message ?? 'Algo salió mal hablando con Sylvie.'
+    e?.message ?? 'Algo salió mal hablando con Angela.'
   );
 }

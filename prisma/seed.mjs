@@ -24,7 +24,7 @@ const lessons = [
     summaryEs: 'Suma de números de dos y tres dígitos llevando al siguiente lugar.',
     summaryEn: 'Add two- and three-digit numbers carrying to the next place.',
     estMinutes: 10,
-    rewardNexos: 100,
+    rewardCoin: 100,
     orderIndex: 0
   },
   {
@@ -36,7 +36,7 @@ const lessons = [
     summaryEs: 'Identifica fracciones impropias y conviértelas a números mixtos.',
     summaryEn: 'Identify improper fractions and convert them to mixed numbers.',
     estMinutes: 15,
-    rewardNexos: 100,
+    rewardCoin: 100,
     orderIndex: 1
   },
   {
@@ -48,7 +48,7 @@ const lessons = [
     summaryEs: 'Capítulo 3 con preguntas de comprensión y vocabulario.',
     summaryEn: 'Chapter 3 with comprehension questions and vocabulary.',
     estMinutes: 20,
-    rewardNexos: 100,
+    rewardCoin: 100,
     orderIndex: 2
   },
   {
@@ -60,7 +60,7 @@ const lessons = [
     summaryEs: 'Evaporación, condensación, precipitación y colección.',
     summaryEn: 'Evaporation, condensation, precipitation and collection.',
     estMinutes: 12,
-    rewardNexos: 100,
+    rewardCoin: 100,
     orderIndex: 3
   }
 ];
@@ -73,7 +73,7 @@ const badges = [
     descriptionEs: '¡Dominaste tu primera lección!',
     descriptionEn: 'You mastered your first lesson!',
     iconKey: 'spark',
-    rewardNexos: 50
+    rewardCoin: 50
   },
   {
     code: 'math-rookie',
@@ -82,7 +82,7 @@ const badges = [
     descriptionEs: 'Tres lecciones de matemáticas con dominio.',
     descriptionEn: 'Three math lessons mastered.',
     iconKey: 'compass',
-    rewardNexos: 100
+    rewardCoin: 100
   }
 ];
 
@@ -197,16 +197,16 @@ async function main() {
     });
   }
 
-  // 6) NexosEntry — total 1240 para que coincida con el NexosBadge del shell.
+  // 6) CoinEntry — total 1240 para que coincida con el CoinBadge del shell.
   // 12 mastery x 100 + 1 streak x 40. Idempotente: solo si no hay entries.
-  const existingEntries = await prisma.nexosEntry.count({
+  const existingEntries = await prisma.coinEntry.count({
     where: { studentId: sofia.id }
   });
   if (existingEntries === 0) {
     const masteredLesson = await prisma.lesson.findUnique({
       where: { slug: 'addition-with-carrying' }
     });
-    await prisma.nexosEntry.create({
+    await prisma.coinEntry.create({
       data: {
         studentId: sofia.id,
         amount: 100,
@@ -216,7 +216,7 @@ async function main() {
       }
     });
     for (let i = 0; i < 11; i++) {
-      await prisma.nexosEntry.create({
+      await prisma.coinEntry.create({
         data: {
           studentId: sofia.id,
           amount: 100,
@@ -225,7 +225,7 @@ async function main() {
         }
       });
     }
-    await prisma.nexosEntry.create({
+    await prisma.coinEntry.create({
       data: {
         studentId: sofia.id,
         amount: 40,
@@ -255,7 +255,7 @@ async function main() {
   console.log(`  1 family "Familia Demo" + 1 parent ${demoParentEmail} (pwd: demo1234)`);
   console.log(`  Sofía  (gr3, PIN 1234, avatar fox)`);
   console.log(`  Mateo  (gr5, PIN 5678, avatar owl)`);
-  console.log(`  Sofía: 4 LessonProgress, ~13 NexosEntry (total 1240), 1 EarnedBadge`);
+  console.log(`  Sofía: 4 LessonProgress, ~13 CoinEntry (total 1240), 1 EarnedBadge`);
 }
 
 main()

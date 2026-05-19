@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { SylvieAvatar } from './Avatar';
-import { useTutorStore, type SylvieUiMessage } from '@/lib/tutor/store';
+import { AngelaAvatar } from './Avatar';
+import { useTutorStore, type AngelaUiMessage } from '@/lib/tutor/store';
 import type { TutorMessageDto } from '@/lib/tutor/types';
 
 interface StuckChatProps {
@@ -11,7 +11,7 @@ interface StuckChatProps {
 }
 
 /**
- * Host del chat de Sylvie en /stuck. Epic 02 §4 + §5.
+ * Host del chat de Angela en /stuck. Epic 02 §4 + §5.
  *
  * Mobile-first: pantalla completa con header sticky + lista scroll +
  * input fijo abajo. En desktop hereda el max-w del layout padre.
@@ -20,7 +20,7 @@ interface StuckChatProps {
  * tokens entrantes sin interrumpir lo que ya se está leyendo.
  */
 export function StuckChat({ initialMessages, studentName }: StuckChatProps) {
-  const t = useTranslations('student.sylvie');
+  const t = useTranslations('student.angela');
   const tErr = useTranslations('auth.errors');
 
   const messages = useTutorStore((s) => s.messages);
@@ -67,7 +67,7 @@ export function StuckChat({ initialMessages, studentName }: StuckChatProps) {
   return (
     <div className="flex flex-col h-full min-h-[calc(100vh-4rem)] bg-white">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-slate-200 sticky top-0 bg-white z-10">
-        <SylvieAvatar
+        <AngelaAvatar
           state={avatarState}
           size="sm"
           ariaLabel={t(avatarState === 'thinking' ? 'thinking' : 'focusTitle')}
@@ -88,7 +88,7 @@ export function StuckChat({ initialMessages, studentName }: StuckChatProps) {
       >
         {messages.length === 0 && (
           <div className="text-center text-slate-400 mt-12 px-4">
-            <SylvieAvatar
+            <AngelaAvatar
               state="idle"
               size="lg"
               ariaLabel={t('focusTitle')}
@@ -113,12 +113,12 @@ export function StuckChat({ initialMessages, studentName }: StuckChatProps) {
         onSubmit={onSubmit}
         className="border-t border-slate-200 p-3 flex gap-2 items-end sticky bottom-0 bg-white"
       >
-        <label htmlFor="sylvie-input" className="sr-only">
+        <label htmlFor="angela-input" className="sr-only">
           {t('focusTitle')}
         </label>
         <textarea
           ref={inputRef}
-          id="sylvie-input"
+          id="angela-input"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={onKeyDown}
@@ -144,7 +144,7 @@ function Bubble({
   message,
   studentName
 }: {
-  message: SylvieUiMessage;
+  message: AngelaUiMessage;
   studentName: string;
 }) {
   const isUser = message.role === 'user';
@@ -160,7 +160,7 @@ function Bubble({
             ? 'bg-sky-600 text-white rounded-br-sm'
             : 'bg-slate-100 text-slate-900 rounded-bl-sm'
         }`}
-        aria-label={isUser ? studentName : 'Sylvie'}
+        aria-label={isUser ? studentName : 'Angela'}
       >
         {showDots ? (
           <span className="inline-flex gap-1">

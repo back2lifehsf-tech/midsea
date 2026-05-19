@@ -1,10 +1,10 @@
 import 'server-only';
 import { getOpenAI, TUTOR_MODEL } from '@/lib/openai';
-import { buildSylvieSystemPrompt } from './prompts';
+import { buildAngelaSystemPrompt } from './prompts';
 import type { StudentSummary, TokenUsage } from './types';
 
 /**
- * Generador de respuesta de Sylvie con streaming. Epic 02 §3.
+ * Generador de respuesta de Angela con streaming. Epic 02 §3.
  *
  * Diseño:
  *   - Devuelve `AsyncIterable<string>` (text deltas). El route handler
@@ -14,7 +14,7 @@ import type { StudentSummary, TokenUsage } from './types';
  *     valores para que el caller los persista en `TutorMessage.metadata`
  *     o `TutorUsageDaily.tokensUsed`.
  *   - Errores de OpenAI burbujean. El caller (route handler) los traduce
- *     en un mensaje amable de Sylvie (Epic 02 §3#8) — NO los devolvemos
+ *     en un mensaje amable de Angela (Epic 02 §3#8) — NO los devolvemos
  *     mezclados con tokens del stream porque rompe la semántica del SSE.
  *
  * No hacemos retry interno. Si la API falla, el estudiante reintenta el
@@ -41,7 +41,7 @@ export async function generateStream(
 ): Promise<AsyncIterable<string>> {
   const { locale, student, conversation, onComplete } = params;
 
-  const systemPrompt = buildSylvieSystemPrompt(locale, student);
+  const systemPrompt = buildAngelaSystemPrompt(locale, student);
   const messages = [
     { role: 'system' as const, content: systemPrompt },
     ...conversation.map((m) => ({ role: m.role, content: m.content }))

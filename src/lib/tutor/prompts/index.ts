@@ -1,6 +1,6 @@
 import type { StudentSummary } from '../types';
-import { buildSylvieSystemPromptEs } from './sylvie-es';
-import { buildSylvieSystemPromptEn } from './sylvie-en';
+import { buildAngelaSystemPromptEs } from './angela-es';
+import { buildAngelaSystemPromptEn } from './angela-en';
 
 /**
  * Selector de system prompt por locale. v1: no hay code-switching dentro
@@ -8,13 +8,13 @@ import { buildSylvieSystemPromptEn } from './sylvie-en';
  * locale de la sesión (Epic 02 §1 OUT). v2 puede agregar `auto` que
  * detecte el idioma del último mensaje del estudiante.
  */
-export function buildSylvieSystemPrompt(
+export function buildAngelaSystemPrompt(
   locale: 'es' | 'en',
   student: StudentSummary
 ): string {
   return locale === 'en'
-    ? buildSylvieSystemPromptEn(student)
-    : buildSylvieSystemPromptEs(student);
+    ? buildAngelaSystemPromptEn(student)
+    : buildAngelaSystemPromptEs(student);
 }
 
-export { buildSylvieSystemPromptEs, buildSylvieSystemPromptEn };
+export { buildAngelaSystemPromptEs, buildAngelaSystemPromptEn };

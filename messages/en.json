@@ -314,7 +314,7 @@
     "student": {
       "tag": "Students",
       "title": "I'm a student",
-      "description": "Open today's lessons, complete exercises and earn Nexos. If you get stuck, ask for help inside the lesson.",
+      "description": "Open today's lessons, complete exercises and earn COIN. If you get stuck, ask for help inside the lesson.",
       "cta": "Sign in as student"
     }
   },
@@ -363,7 +363,7 @@
       "askForHelp": "Ask the tutor for help",
       "minutesEstimate": "{minutes} min",
       "noLessons": "No lessons assigned today. Take a break!",
-      "rewardPreview": "+{nexos} Nexos for mastering this lesson"
+      "rewardPreview": "+{coin} COIN for mastering this lesson"
     },
     "tutor": {
       "title": "Ask for help with this lesson",
@@ -383,14 +383,14 @@
       "backToHome": "Back to home",
       "subjectLabel": "Subject",
       "minutesEstimate": "{minutes} min",
-      "rewardPreview": "+{nexos} Nexos for mastering the lesson",
+      "rewardPreview": "+{coin} COIN for mastering the lesson",
       "masteryProgress": "Your current mastery",
       "placeholderHeading": "Lesson content",
-      "placeholderBody": "Video, interactive activities and the assessment will live here. If you get stuck, tap Ask for help and Sylvie will guide you without giving the answer away."
+      "placeholderBody": "Video, interactive activities and the assessment will live here. If you get stuck, tap Ask for help and Angela will guide you without giving the answer away."
     },
     "dashboard": {
       "greeting": "What do you need today, {name}?",
-      "subheading": "Pick where to start. Sylvie is with you in any of them.",
+      "subheading": "Pick where to start. Angela is with you in any of them.",
       "intentsHeading": "What do you want to do?",
       "resumeHeading": "Pick up where you left off",
       "resumeContext": "You were here last — jump back in any time.",
@@ -400,17 +400,17 @@
       "masteryLabel": "{pct}% mastered",
       "completedTag": "Mastered"
     },
-    "sylvie": {
-      "open": "Open Sylvie",
-      "openWithUnread": "Sylvie has a suggestion for you",
+    "angela": {
+      "open": "Open Angela",
+      "openWithUnread": "Angela has a suggestion for you",
       "close": "Close",
       "minimize": "Minimize",
       "expand": "Expand to full screen",
-      "focusTitle": "Talk to Sylvie",
+      "focusTitle": "Talk to Angela",
       "send": "Send",
       "thinking": "Thinking…",
       "clearHistory": "Clear conversation",
-      "disclaimer": "This conversation is shared with your parent. Sylvie guides you, she doesn't hand you the answer.",
+      "disclaimer": "This conversation is shared with your parent. Angela guides you, she doesn't hand you the answer.",
       "placeholder": {
         "default": "What do you want to talk about?",
         "lesson": "What confuses you about «{topic}»?"
@@ -435,43 +435,43 @@
     },
     "exercises": {
       "progress": "Question {current} of {total}",
-      "askSylvie": "Ask Sylvie",
-      "askSylvieBig": "Talk to Sylvie",
+      "askAngela": "Ask Angela",
+      "askAngelaBig": "Talk to Angela",
       "next": "Next",
       "finish": "Finish",
       "feedback": {
         "correct": "Correct! Nicely done.",
-        "incorrect": "Not yet. Try again or ask Sylvie for a hint."
+        "incorrect": "Not yet. Try again or ask Angela for a hint."
       },
       "completed": {
         "title": "You finished the exercises!",
-        "body": "Nice work. Run them again to reinforce, or review with Sylvie.",
+        "body": "Nice work. Run them again to reinforce, or review with Angela.",
         "restart": "Start over",
-        "askSylvie": "Review with Sylvie"
+        "askAngela": "Review with Angela"
       }
     },
     "intents": {
       "stuck": {
         "title": "I'm stuck",
-        "body": "Tell Sylvie what tripped you up and she guides you step by step.",
+        "body": "Tell Angela what tripped you up and she guides you step by step.",
         "hint": "No active blockers right now — drop in when you need help.",
-        "hintActive": "Your last attempt on «{topic}» didn't land. Sylvie can guide you.",
-        "pageBody": "Here Sylvie identifies your current lesson, reads your latest attempts, and guides you with hints — without giving away the answer. For now, inside any lesson you can tap «Ask the tutor for help» to open the same contextual flow.",
+        "hintActive": "Your last attempt on «{topic}» didn't land. Angela can guide you.",
+        "pageBody": "Here Angela identifies your current lesson, reads your latest attempts, and guides you with hints — without giving away the answer. For now, inside any lesson you can tap «Ask the tutor for help» to open the same contextual flow.",
         "comingSoon": "Dedicated flow coming soon"
       },
       "prep": {
         "title": "Practice for a test",
-        "body": "Sylvie builds an adaptive plan for your next assessment.",
+        "body": "Angela builds an adaptive plan for your next assessment.",
         "hint": "No upcoming tests on record.",
-        "hintActive": "Test coming up in {days} days — Sylvie can build a plan.",
-        "pageBody": "Here Sylvie runs a short IRT diagnostic, identifies gaps, and builds a 3-5 day plan with micro-lessons and quizzes. Pending: IRT engine and calendar integration with the parent dashboard.",
+        "hintActive": "Test coming up in {days} days — Angela can build a plan.",
+        "pageBody": "Here Angela runs a short IRT diagnostic, identifies gaps, and builds a 3-5 day plan with micro-lessons and quizzes. Pending: IRT engine and calendar integration with the parent dashboard.",
         "comingSoon": "Adaptive diagnostic coming soon"
       },
       "explore": {
         "title": "Learn something new",
         "body": "Follow your curiosity. Ask and discover.",
         "hint": "Why is the sky blue? How do planes fly?",
-        "pageBody": "Here you ask anything you're curious about and Sylvie maps the answer back to the curriculum: she shows you the concept, suggests a short experiment or video, and connects it to formal lessons. Pending: competency ↔ curiosity mapping.",
+        "pageBody": "Here you ask anything you're curious about and Angela maps the answer back to the curriculum: she shows you the concept, suggests a short experiment or video, and connects it to formal lessons. Pending: competency ↔ curiosity mapping.",
         "comingSoon": "Guided discovery coming soon"
       },
       "review": {
@@ -479,16 +479,16 @@
         "body": "Reinforce what you've mastered with spaced repetition.",
         "hint": "Nothing to review today.",
         "hintActive": "{count} concepts to review today.",
-        "pageBody": "Here Sylvie uses spaced repetition to schedule reviews based on when you learned something and how often you missed it. Pending: spaced-repetition engine (SM-2 or similar) and mastery map view.",
+        "pageBody": "Here Angela uses spaced repetition to schedule reviews based on when you learned something and how often you missed it. Pending: spaced-repetition engine (SM-2 or similar) and mastery map view.",
         "comingSoon": "Spaced repetition coming soon"
       },
       "backToDashboard": "Back to dashboard"
     }
   },
   "gamification": {
-    "nexosShort": "Nexos",
-    "lessonReward": "+{amount} Nexos for mastering the lesson",
-    "masteryRequired": "You need 80% mastery to earn Nexos",
+    "coinShort": "COIN",
+    "lessonReward": "+{amount} COIN for mastering the lesson",
+    "masteryRequired": "You need 80% mastery to earn COIN",
     "badgeUnlocked": "You unlocked the «{name}» badge!",
     "currentLevel": "Level {level}"
   },

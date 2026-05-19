@@ -314,7 +314,7 @@
     "student": {
       "tag": "Estudiantes",
       "title": "Soy estudiante",
-      "description": "Abre tus lecciones del día, completa ejercicios y gana Nexos. Si te atascas, puedes pedir ayuda dentro de la lección.",
+      "description": "Abre tus lecciones del día, completa ejercicios y gana COIN. Si te atascas, puedes pedir ayuda dentro de la lección.",
       "cta": "Entrar como estudiante"
     }
   },
@@ -363,7 +363,7 @@
       "askForHelp": "Pedir ayuda al tutor",
       "minutesEstimate": "{minutes} min",
       "noLessons": "No tienes lecciones asignadas hoy. ¡Date un descanso!",
-      "rewardPreview": "+{nexos} Nexos si dominas la lección"
+      "rewardPreview": "+{coin} COIN si dominas la lección"
     },
     "tutor": {
       "title": "Pide ayuda con esta lección",
@@ -383,14 +383,14 @@
       "backToHome": "Volver al inicio",
       "subjectLabel": "Materia",
       "minutesEstimate": "{minutes} min",
-      "rewardPreview": "+{nexos} Nexos si dominas la lección",
+      "rewardPreview": "+{coin} COIN si dominas la lección",
       "masteryProgress": "Tu dominio actual",
       "placeholderHeading": "Contenido de la lección",
-      "placeholderBody": "Aquí irán el video, las actividades interactivas y la evaluación. Si te atascas, pulsa el botón Pedir ayuda y Sylvie te orienta sin darte la respuesta."
+      "placeholderBody": "Aquí irán el video, las actividades interactivas y la evaluación. Si te atascas, pulsa el botón Pedir ayuda y Angela te orienta sin darte la respuesta."
     },
     "dashboard": {
       "greeting": "¿Qué necesitas hoy, {name}?",
-      "subheading": "Elige por dónde empezar. Sylvie te acompaña en cualquiera.",
+      "subheading": "Elige por dónde empezar. Angela te acompaña en cualquiera.",
       "intentsHeading": "¿Qué quieres hacer?",
       "resumeHeading": "Continúa donde estabas",
       "resumeContext": "Ibas por aquí — retomamos cuando quieras.",
@@ -400,17 +400,17 @@
       "masteryLabel": "{pct}% dominado",
       "completedTag": "Dominado"
     },
-    "sylvie": {
-      "open": "Abrir a Sylvie",
-      "openWithUnread": "Sylvie tiene una sugerencia para ti",
+    "angela": {
+      "open": "Abrir a Angela",
+      "openWithUnread": "Angela tiene una sugerencia para ti",
       "close": "Cerrar",
       "minimize": "Minimizar",
       "expand": "Expandir a pantalla completa",
-      "focusTitle": "Habla con Sylvie",
+      "focusTitle": "Habla con Angela",
       "send": "Enviar",
       "thinking": "Pensando…",
       "clearHistory": "Borrar conversación",
-      "disclaimer": "Esta conversación se comparte con tu mamá o papá. Sylvie te orienta, no te da la respuesta.",
+      "disclaimer": "Esta conversación se comparte con tu mamá o papá. Angela te orienta, no te da la respuesta.",
       "placeholder": {
         "default": "¿Sobre qué quieres conversar?",
         "lesson": "¿Qué te confunde de «{topic}»?"
@@ -435,43 +435,43 @@
     },
     "exercises": {
       "progress": "Ejercicio {current} de {total}",
-      "askSylvie": "Preguntar a Sylvie",
-      "askSylvieBig": "Hablar con Sylvie",
+      "askAngela": "Preguntar a Angela",
+      "askAngelaBig": "Hablar con Angela",
       "next": "Siguiente",
       "finish": "Terminar",
       "feedback": {
         "correct": "¡Correcto! Bien pensado.",
-        "incorrect": "Aún no. Vuelve a intentarlo o pide una pista a Sylvie."
+        "incorrect": "Aún no. Vuelve a intentarlo o pide una pista a Angela."
       },
       "completed": {
         "title": "¡Terminaste los ejercicios!",
-        "body": "Buen trabajo. Puedes repetirlos para reforzar o repasar con Sylvie.",
+        "body": "Buen trabajo. Puedes repetirlos para reforzar o repasar con Angela.",
         "restart": "Empezar de nuevo",
-        "askSylvie": "Revisar con Sylvie"
+        "askAngela": "Revisar con Angela"
       }
     },
     "intents": {
       "stuck": {
         "title": "Estoy atascado",
-        "body": "Cuéntale a Sylvie en qué te trabaste y te ayuda paso a paso.",
+        "body": "Cuéntale a Angela en qué te trabaste y te ayuda paso a paso.",
         "hint": "Sin frustración pendiente ahora — entra cuando lo necesites.",
-        "hintActive": "Tu último intento en «{topic}» no salió. Sylvie puede orientarte.",
-        "pageBody": "Aquí Sylvie identifica tu lección actual, lee tus últimos intentos y te guía con pistas — sin darte la respuesta. Por ahora, dentro de cualquier lección encuentras el botón «Pedir ayuda al tutor» que abre el mismo flujo contextual.",
+        "hintActive": "Tu último intento en «{topic}» no salió. Angela puede orientarte.",
+        "pageBody": "Aquí Angela identifica tu lección actual, lee tus últimos intentos y te guía con pistas — sin darte la respuesta. Por ahora, dentro de cualquier lección encuentras el botón «Pedir ayuda al tutor» que abre el mismo flujo contextual.",
         "comingSoon": "Flujo dedicado próximamente"
       },
       "prep": {
         "title": "Practicar para una prueba",
-        "body": "Sylvie genera un plan adaptativo para tu próxima evaluación.",
+        "body": "Angela genera un plan adaptativo para tu próxima evaluación.",
         "hint": "Sin pruebas próximas registradas.",
-        "hintActive": "Prueba próxima en {days} días — Sylvie puede armar plan.",
-        "pageBody": "Aquí Sylvie diagnostica con un assessment IRT corto, identifica brechas y arma un plan de 3-5 días con micro-lecciones y quizzes. Pendiente: motor IRT y agenda integrada con el calendario del padre.",
+        "hintActive": "Prueba próxima en {days} días — Angela puede armar plan.",
+        "pageBody": "Aquí Angela diagnostica con un assessment IRT corto, identifica brechas y arma un plan de 3-5 días con micro-lecciones y quizzes. Pendiente: motor IRT y agenda integrada con el calendario del padre.",
         "comingSoon": "Diagnóstico adaptativo próximamente"
       },
       "explore": {
         "title": "Aprender algo nuevo",
         "body": "Sigue tu curiosidad. Pregunta y descubre.",
         "hint": "¿Por qué el cielo es azul? ¿Cómo vuela un avión?",
-        "pageBody": "Aquí preguntas lo que se te ocurra y Sylvie mapea la respuesta al currículo: te muestra el concepto, sugiere un experimento o video corto, y lo conecta con lecciones formales relacionadas. Pendiente: mapeo competencia ↔ curiosidad.",
+        "pageBody": "Aquí preguntas lo que se te ocurra y Angela mapea la respuesta al currículo: te muestra el concepto, sugiere un experimento o video corto, y lo conecta con lecciones formales relacionadas. Pendiente: mapeo competencia ↔ curiosidad.",
         "comingSoon": "Descubrimiento guiado próximamente"
       },
       "review": {
@@ -479,16 +479,16 @@
         "body": "Refuerza tu dominio con repaso espaciado.",
         "hint": "Sin temas para repasar hoy.",
         "hintActive": "{count} conceptos para repasar hoy.",
-        "pageBody": "Aquí Sylvie usa repetición espaciada para programar repasos basados en cuándo aprendiste algo y cuántas veces lo fallaste. Pendiente: motor de spaced repetition (SM-2 o similar) y vista de mapa de mastery.",
+        "pageBody": "Aquí Angela usa repetición espaciada para programar repasos basados en cuándo aprendiste algo y cuántas veces lo fallaste. Pendiente: motor de spaced repetition (SM-2 o similar) y vista de mapa de mastery.",
         "comingSoon": "Repetición espaciada próximamente"
       },
       "backToDashboard": "Volver al inicio"
     }
   },
   "gamification": {
-    "nexosShort": "Nexos",
-    "lessonReward": "+{amount} Nexos por dominar la lección",
-    "masteryRequired": "Necesitas 80% para ganar Nexos",
+    "coinShort": "COIN",
+    "lessonReward": "+{amount} COIN por dominar la lección",
+    "masteryRequired": "Necesitas 80% para ganar COIN",
     "badgeUnlocked": "¡Lograste el logro «{name}»!",
     "currentLevel": "Nivel {level}"
   },

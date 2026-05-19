@@ -15,7 +15,7 @@ export interface StudentSummary {
   displayName: string;
   gradeLevel: number;
   preferredLocale: Locale;
-  totalNexos: number;
+  totalCoin: number;
 }
 
 export interface LessonSummary {

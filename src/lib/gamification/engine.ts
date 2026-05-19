@@ -1,12 +1,12 @@
 /**
- * Motor de Nexos — PRD seccion 2.3 punto 2.
+ * Motor de Coin — PRD seccion 2.3 punto 2.
  * "Los puntos solo se ganan con mastery (80%+), no con tiempo." (PRD seccion 1.5 riesgo #2)
  *
  * Reglas duras (no derivables del codigo, vienen del PRD):
- * - 100 Nexos por leccion dominada (paridad con Miacademy gold).
- * - Mastery threshold = 80%. Por debajo, 0 Nexos.
+ * - 100 Coin por leccion dominada (paridad con Miacademy gold).
+ * - Mastery threshold = 80%. Por debajo, 0 Coin.
  * - Bonus de racha: +10% por cada dia consecutivo, cap a +50%.
- * - Penalty por reintentos abusivos: -5 Nexos por intento despues del 3ro (no debajo de 0 reward).
+ * - Penalty por reintentos abusivos: -5 Coin por intento despues del 3ro (no debajo de 0 reward).
  */
 
 export const MASTERY_THRESHOLD = 80;
@@ -22,7 +22,7 @@ export interface LessonOutcome {
   streakDays: number;
 }
 
-export interface NexosAward {
+export interface CoinAward {
   granted: number;
   reasonCode:
     | 'BELOW_MASTERY'
@@ -35,7 +35,7 @@ export interface NexosAward {
   };
 }
 
-export function computeLessonReward(outcome: LessonOutcome): NexosAward {
+export function computeLessonReward(outcome: LessonOutcome): CoinAward {
   if (outcome.masteryPct < MASTERY_THRESHOLD) {
     return {
       granted: 0,

@@ -11,7 +11,7 @@ vi.mock('@/lib/openai', () => ({
 }));
 
 import { generateStream, __test } from './ResponseGenerator';
-import { buildSylvieSystemPromptEs, buildSylvieSystemPromptEn } from './prompts';
+import { buildAngelaSystemPromptEs, buildAngelaSystemPromptEn } from './prompts';
 
 const sofia: StudentSummary = {
   id: 's1',
@@ -41,9 +41,9 @@ function fakeStream(
   };
 }
 
-describe('prompts.buildSylvieSystemPrompt', () => {
+describe('prompts.buildAngelaSystemPrompt', () => {
   it('ES prompt mentions student name and grade label', () => {
-    const p = buildSylvieSystemPromptEs(sofia);
+    const p = buildAngelaSystemPromptEs(sofia);
     expect(p).toContain('Sofía');
     expect(p).toContain('3° grado');
     expect(p).toContain('MIDSEA Academy');
@@ -56,7 +56,7 @@ describe('prompts.buildSylvieSystemPrompt', () => {
       gradeLevel: 5,
       locale: 'en'
     };
-    const p = buildSylvieSystemPromptEn(mateo);
+    const p = buildAngelaSystemPromptEn(mateo);
     expect(p).toContain('Mateo');
     expect(p).toContain('5th grade');
   });
@@ -68,8 +68,8 @@ describe('prompts.buildSylvieSystemPrompt', () => {
       gradeLevel: 0,
       locale: 'es'
     };
-    expect(buildSylvieSystemPromptEs(kid)).toContain('PreK');
-    expect(buildSylvieSystemPromptEn(kid)).toContain('PreK');
+    expect(buildAngelaSystemPromptEs(kid)).toContain('PreK');
+    expect(buildAngelaSystemPromptEn(kid)).toContain('PreK');
   });
 });
 

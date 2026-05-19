@@ -7,7 +7,7 @@ const toneBg: Record<AvatarTone, string> = {
   lagoon: 'bg-gradient-to-br from-midsea-lagoon to-midsea-ocean',
   coral: 'bg-gradient-to-br from-midsea-coral to-midsea-sun',
   ocean: 'bg-gradient-to-br from-midsea-ocean to-midsea-deep',
-  sun: 'bg-gradient-to-br from-nexos to-nexos-dark'
+  sun: 'bg-gradient-to-br from-coin to-coin-dark'
 };
 
 function initials(name: string) {

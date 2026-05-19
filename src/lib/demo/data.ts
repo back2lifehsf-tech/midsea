@@ -92,7 +92,7 @@ export interface DemoLesson {
   subject: DemoSubject;
   gradeLevel: number;
   estMinutes: number;
-  rewardNexos: number;
+  rewardCoin: number;
   orderIndex: number;
 }
 
@@ -104,7 +104,7 @@ export const DEMO_LESSONS: DemoLesson[] = [
     subject: 'MATH',
     gradeLevel: 3,
     estMinutes: 10,
-    rewardNexos: 100,
+    rewardCoin: 100,
     orderIndex: 0
   },
   {
@@ -114,7 +114,7 @@ export const DEMO_LESSONS: DemoLesson[] = [
     subject: 'MATH',
     gradeLevel: 3,
     estMinutes: 15,
-    rewardNexos: 100,
+    rewardCoin: 100,
     orderIndex: 1
   },
   {
@@ -124,7 +124,7 @@ export const DEMO_LESSONS: DemoLesson[] = [
     subject: 'LANGUAGE_ARTS',
     gradeLevel: 3,
     estMinutes: 20,
-    rewardNexos: 100,
+    rewardCoin: 100,
     orderIndex: 2
   },
   {
@@ -134,7 +134,7 @@ export const DEMO_LESSONS: DemoLesson[] = [
     subject: 'SCIENCE',
     gradeLevel: 3,
     estMinutes: 12,
-    rewardNexos: 100,
+    rewardCoin: 100,
     orderIndex: 3
   }
 ];
@@ -194,5 +194,5 @@ export const DEMO_OVERVIEW_KIDS: DemoOverviewKid[] = [
 // L M X J V S D — minutos agregados por dia entre los dos hijos.
 export const DEMO_WEEKLY_MINUTES: number[] = [55, 70, 40, 85, 65, 30, 0];
 
-// NexosEntry agregado para la estudiante activa (Lucía). Coincide con el seed.
-export const DEMO_TOTAL_NEXOS = 1240;
+// CoinEntry agregado para la estudiante activa (Lucía). Coincide con el seed.
+export const DEMO_TOTAL_COIN = 1240;

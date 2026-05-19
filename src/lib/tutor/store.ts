@@ -4,7 +4,7 @@ import { SseEventParser } from './sse-parser';
 import type { TutorMessageDto } from './types';
 
 /**
- * Store del chat de Sylvie. Epic 02 §4.
+ * Store del chat de Angela. Epic 02 §4.
  *
  * Responsabilidades:
  *   - Estado UI de mensajes (user + assistant en stream).
@@ -20,7 +20,7 @@ import type { TutorMessageDto } from './types';
 
 export type AvatarState = 'idle' | 'thinking' | 'speaking' | 'celebrating';
 
-export interface SylvieUiMessage {
+export interface AngelaUiMessage {
   /** id local; los mensajes históricos usan el cuid de Prisma. */
   id: string;
   role: 'user' | 'assistant';
@@ -30,7 +30,7 @@ export interface SylvieUiMessage {
 }
 
 interface TutorStoreState {
-  messages: SylvieUiMessage[];
+  messages: AngelaUiMessage[];
   avatarState: AvatarState;
   isStreaming: boolean;
   errorText: string | null;

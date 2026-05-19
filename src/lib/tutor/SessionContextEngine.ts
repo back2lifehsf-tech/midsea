@@ -65,7 +65,7 @@ export async function appendUserMessage(
 }
 
 /**
- * Persistir respuesta de Sylvie. `metadata` (tokens, modelo, latencia)
+ * Persistir respuesta de Angela. `metadata` (tokens, modelo, latencia)
  * va a la columna JSONB `TutorMessage.metadata` que Epic 02 §3 agregó.
  * Llave libre — extensible sin nueva migration.
  */
