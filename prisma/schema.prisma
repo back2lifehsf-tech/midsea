@@ -88,6 +88,7 @@ model Student {
   ledger          NexosEntry[]
   earnedBadges    EarnedBadge[]
   tutorSessions   TutorSession[]
+  tutorUsage      TutorUsageDaily[]
 
   @@index([familyId])
 }
@@ -187,7 +188,27 @@ model TutorMessage {
   sessionId String
   role      String       // "user" | "assistant" | "system"
   content   String       @db.Text
+  // Epic 02 §3: tokens consumidos + modelo por turno. JSON libre para
+  // permitir extender con latency, cost estimate, etc. sin nueva migration.
+  metadata  Json?
   createdAt DateTime     @default(now())
 
   @@index([sessionId, createdAt])
+}
+
+// Epic 02 §1.7 + §3.9: rate limit por estudiante + telemetría de costos.
+// Una fila por (estudiante, día UTC). El bump del contador es upsert
+// atómico; ver src/lib/tutor/rate-limit.ts.
+model TutorUsageDaily {
+  id         String   @id @default(cuid())
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId  String
+  date       DateTime @db.Date
+  msgCount   Int      @default(0)
+  tokensUsed Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([studentId, date])
+  @@index([studentId])
 }

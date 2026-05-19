@@ -107,8 +107,7 @@ describe('SessionContextEngine.append* + getMessagesForSession', () => {
     expect(msg.role).toBe('assistant');
   });
 
-  it('appendAssistantMessage with metadata logs but still persists content', async () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+  it('appendAssistantMessage persists metadata payload', async () => {
     messageCreate.mockResolvedValue({
       id: 'm3',
       role: 'assistant',
@@ -116,9 +115,20 @@ describe('SessionContextEngine.append* + getMessagesForSession', () => {
       createdAt: new Date()
     });
     await appendAssistantMessage('sess-1', 'ok', { totalTokens: 42 });
-    expect(spy).toHaveBeenCalled();
-    expect(messageCreate).toHaveBeenCalled();
-    spy.mockRestore();
+    const args = messageCreate.mock.calls[0][0];
+    expect(args.data.metadata).toEqual({ totalTokens: 42 });
+  });
+
+  it('appendAssistantMessage without metadata passes undefined (no overwrite)', async () => {
+    messageCreate.mockResolvedValue({
+      id: 'm4',
+      role: 'assistant',
+      content: 'ok',
+      createdAt: new Date()
+    });
+    await appendAssistantMessage('sess-1', 'ok');
+    const args = messageCreate.mock.calls[0][0];
+    expect(args.data.metadata).toBeUndefined();
   });
 
   it('getMessagesForSession returns Prisma rows mapped to DTO', async () => {

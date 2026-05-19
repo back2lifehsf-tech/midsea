@@ -1,6 +1,6 @@
 import 'server-only';
 import { prisma } from '@/lib/prisma';
-import type { Locale } from '@prisma/client';
+import { Prisma, type Locale } from '@prisma/client';
 import type { TutorMessageDto, TutorRole } from './types';
 
 /**
@@ -65,25 +65,25 @@ export async function appendUserMessage(
 }
 
 /**
- * Persistir respuesta de Sylvie. `metadata` (tokens, modelo) se ignora
- * mientras no entre la migration de TutorMessage.metadata (Tarea 3). El
- * route handler la pasará desde ya; cuando la migration corra, esta
- * función la persiste — no romperá nada porque el campo será opcional.
- *
- * Lo que sí cae al log inmediatamente con prefijo `[tutor]` para que se
- * pueda monitorear costos antes de tener la columna.
+ * Persistir respuesta de Sylvie. `metadata` (tokens, modelo, latencia)
+ * va a la columna JSONB `TutorMessage.metadata` que Epic 02 §3 agregó.
+ * Llave libre — extensible sin nueva migration.
  */
 export async function appendAssistantMessage(
   sessionId: string,
   content: string,
   metadata?: Record<string, unknown>
 ): Promise<TutorMessageDto> {
-  if (metadata) {
-    // Hasta que entre Prisma migration (Tarea 3), loguear y no persistir.
-    console.log('[tutor]', { sessionId, metadata });
-  }
   const row = await prisma.tutorMessage.create({
-    data: { sessionId, role: 'assistant', content },
+    data: {
+      sessionId,
+      role: 'assistant',
+      content,
+      // Prisma acepta null o InputJsonValue. undefined = no escribe; null borraría.
+      // Cast a InputJsonValue: confiamos en el caller para pasar payloads
+      // serializables (números, strings, objetos planos).
+      metadata: (metadata as Prisma.InputJsonValue | undefined) ?? undefined
+    },
     select: { id: true, role: true, content: true, createdAt: true }
   });
   return {
