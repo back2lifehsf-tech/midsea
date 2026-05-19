@@ -245,6 +245,46 @@
       "emailTaken": "Ya existe una cuenta con ese correo. Inicia sesión.",
       "invalidCredentials": "Correo o contraseña incorrectos.",
       "generic": "Algo salió mal. Inténtalo de nuevo."
+    },
+    "studentLogin": {
+      "title": "¿Quién eres tú?",
+      "subtitle": "Toca tu avatar para entrar.",
+      "pinPrompt": "Hola, {name} — escribe tu PIN",
+      "pinSubmit": "Entrar",
+      "pinSubmitting": "Entrando…",
+      "back": "Atrás",
+      "pinClear": "Borrar",
+      "noStudentsYet": "Tu familia aún no tiene estudiantes. Pídele a tu mamá o papá que cree tu perfil.",
+      "noParentSession": "Tu mamá o papá debe iniciar sesión primero en este dispositivo.",
+      "pinError": "PIN incorrecto. Inténtalo de nuevo.",
+      "switchAccount": "Salir y entrar como padre"
+    }
+  },
+  "parentStudents": {
+    "new": {
+      "title": "Crear perfil de estudiante",
+      "subtitle": "Elige avatar, nombre y un PIN de 4 dígitos.",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Sofía",
+      "birthDateLabel": "Fecha de nacimiento",
+      "gradeLabel": "Grado",
+      "gradePreK": "PreK",
+      "gradeNumbered": "{n}°",
+      "avatarLabel": "Avatar",
+      "pinLabel": "PIN de 4 dígitos",
+      "pinHint": "El estudiante usará este PIN para entrar. Elígelo con tu hijo.",
+      "submit": "Crear estudiante",
+      "submitting": "Creando…",
+      "backToOverview": "Volver al panel",
+      "errors": {
+        "nameRequired": "Necesitamos el nombre del estudiante.",
+        "birthDateRequired": "Selecciona la fecha de nacimiento.",
+        "gradeInvalid": "Elige un grado válido.",
+        "pinInvalid": "El PIN debe ser exactamente 4 dígitos.",
+        "avatarRequired": "Elige un avatar.",
+        "unauthorized": "Sesión expirada. Inicia sesión de nuevo.",
+        "generic": "Algo salió mal. Inténtalo de nuevo."
+      }
     }
   },
   "roleSelector": {

@@ -245,6 +245,46 @@
       "emailTaken": "An account with that email already exists. Sign in.",
       "invalidCredentials": "Wrong email or password.",
       "generic": "Something went wrong. Please try again."
+    },
+    "studentLogin": {
+      "title": "Who are you?",
+      "subtitle": "Tap your avatar to sign in.",
+      "pinPrompt": "Hi, {name} — enter your PIN",
+      "pinSubmit": "Enter",
+      "pinSubmitting": "Entering…",
+      "back": "Back",
+      "pinClear": "Clear",
+      "noStudentsYet": "Your family has no students yet. Ask your parent to create your profile.",
+      "noParentSession": "Your parent must sign in on this device first.",
+      "pinError": "Wrong PIN. Try again.",
+      "switchAccount": "Sign out and sign in as parent"
+    }
+  },
+  "parentStudents": {
+    "new": {
+      "title": "Create a student profile",
+      "subtitle": "Pick an avatar, name and a 4-digit PIN.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Sofía",
+      "birthDateLabel": "Date of birth",
+      "gradeLabel": "Grade",
+      "gradePreK": "PreK",
+      "gradeNumbered": "Grade {n}",
+      "avatarLabel": "Avatar",
+      "pinLabel": "4-digit PIN",
+      "pinHint": "The student will use this PIN to sign in. Pick it with your child.",
+      "submit": "Create student",
+      "submitting": "Creating…",
+      "backToOverview": "Back to dashboard",
+      "errors": {
+        "nameRequired": "We need the student's name.",
+        "birthDateRequired": "Pick a date of birth.",
+        "gradeInvalid": "Pick a valid grade.",
+        "pinInvalid": "PIN must be exactly 4 digits.",
+        "avatarRequired": "Pick an avatar.",
+        "unauthorized": "Session expired. Sign in again.",
+        "generic": "Something went wrong. Try again."
+      }
     }
   },
   "roleSelector": {

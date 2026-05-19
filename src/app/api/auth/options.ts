@@ -4,6 +4,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 import { verifySecret } from '@/lib/auth/password';
+import { verifyPin } from '@/lib/auth/student-pin';
 
 /**
  * NextAuth v4 — JWT sessions con dos providers:
@@ -74,6 +75,36 @@ export const authOptions: NextAuthOptions = {
           role: 'PARENT' as const
         };
       }
+    }),
+    CredentialsProvider({
+      id: 'student-pin',
+      name: 'Student PIN',
+      credentials: {
+        studentId: { label: 'studentId', type: 'text' },
+        pin: { label: 'pin', type: 'password' }
+      },
+      async authorize(credentials) {
+        const studentId = credentials?.studentId?.toString().trim() ?? '';
+        const pin = credentials?.pin?.toString().trim() ?? '';
+        if (!studentId || !pin) return null;
+
+        const student = await prisma.student.findUnique({
+          where: { id: studentId },
+          select: { id: true, displayName: true, pinHash: true, familyId: true }
+        });
+        if (!student) return null;
+
+        const ok = await verifyPin(pin, student.pinHash);
+        if (!ok) return null;
+
+        return {
+          id: student.id,
+          name: student.displayName,
+          studentId: student.id,
+          familyId: student.familyId,
+          role: 'STUDENT' as const
+        };
+      }
     })
   ],
   pages: {
@@ -81,8 +112,9 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account }) {
-      // Credentials: el authorize ya validó. Permitimos.
+      // Credentials (parent o student): el authorize ya validó. Permitimos.
       if (account?.provider === 'parent-credentials') return true;
+      if (account?.provider === 'student-pin') return true;
 
       // Google OAuth: auto-crear Family+Parent en el primer sign-in.
       if (account?.provider === 'google') {
@@ -112,10 +144,20 @@ export const authOptions: NextAuthOptions = {
       // Initial sign-in: account+user están presentes. Cacheamos identidad.
       if (account?.provider === 'parent-credentials' && user) {
         // user vino del authorize() — los extras ya están tipados.
-        const u = user as { id: string; parentId?: string; familyId?: string; role?: 'PARENT' };
+        const u = user as { id: string; parentId?: string; familyId?: string };
         token.parentId = u.parentId ?? u.id;
         if (u.familyId) token.familyId = u.familyId;
         token.role = 'PARENT';
+        return token;
+      }
+
+      if (account?.provider === 'student-pin' && user) {
+        const u = user as { id: string; studentId?: string; familyId?: string };
+        token.studentId = u.studentId ?? u.id;
+        if (u.familyId) token.familyId = u.familyId;
+        token.role = 'STUDENT';
+        // Limpio identidad de parent — un mismo JWT no porta ambos roles.
+        token.parentId = undefined;
         return token;
       }
 
@@ -139,6 +181,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         if (typeof token.parentId === 'string') session.user.parentId = token.parentId;
+        if (typeof token.studentId === 'string') session.user.studentId = token.studentId;
         if (typeof token.familyId === 'string') session.user.familyId = token.familyId;
         if (typeof token.googleSub === 'string') session.user.googleSub = token.googleSub;
         if (token.role === 'PARENT' || token.role === 'STUDENT') session.user.role = token.role;
