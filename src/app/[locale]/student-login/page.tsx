@@ -76,7 +76,7 @@ export default async function StudentLoginPage({
               href={`/${locale}/parent/students/new`}
               className="inline-flex rounded-xl bg-midsea-deep px-5 py-2.5 text-sm font-semibold text-white shadow-wave hover:bg-midsea-lagoon"
             >
-              {t('switchAccount')}
+              {t('createFirstStudent')}
             </Link>
           </div>
         ) : (

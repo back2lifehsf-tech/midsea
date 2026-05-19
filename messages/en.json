@@ -254,7 +254,8 @@
       "pinSubmitting": "Entering…",
       "back": "Back",
       "pinClear": "Clear",
-      "noStudentsYet": "Your family has no students yet. Ask your parent to create your profile.",
+      "noStudentsYet": "You don't have students in this family yet. Create the first one so your child can sign in.",
+      "createFirstStudent": "Create first student",
       "noParentSession": "Your parent must sign in on this device first.",
       "pinError": "Wrong PIN. Try again.",
       "switchAccount": "Sign out and sign in as parent"

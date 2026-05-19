@@ -254,7 +254,8 @@
       "pinSubmitting": "Entrando…",
       "back": "Atrás",
       "pinClear": "Borrar",
-      "noStudentsYet": "Tu familia aún no tiene estudiantes. Pídele a tu mamá o papá que cree tu perfil.",
+      "noStudentsYet": "Aún no tienes estudiantes en esta familia. Crea el primero para que tu hijo pueda entrar.",
+      "createFirstStudent": "Crear primer estudiante",
       "noParentSession": "Tu mamá o papá debe iniciar sesión primero en este dispositivo.",
       "pinError": "PIN incorrecto. Inténtalo de nuevo.",
       "switchAccount": "Salir y entrar como padre"
