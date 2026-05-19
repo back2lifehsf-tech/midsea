@@ -223,6 +223,17 @@
       "studentEntry": "¿Eres estudiante?",
       "studentEntryLink": "Entra con tu avatar"
     },
+    "gateway": {
+      "title": "¿Quién va a entrar hoy?",
+      "subtitle": "Elige cómo quieres entrar.",
+      "parentTitle": "Soy padre o madre",
+      "parentBody": "Gestiono el progreso de mis hijos, asigno lecciones y reviso reportes.",
+      "parentCta": "Entrar como padre",
+      "studentTitle": "Soy estudiante",
+      "studentBody": "Elijo mi avatar y empiezo mi día.",
+      "studentCta": "Entrar como estudiante",
+      "backToGateway": "← Cambiar quién entra"
+    },
     "signup": {
       "title": "Crea tu cuenta de familia",
       "subtitle": "Empieza gratis. Sin tarjeta de crédito.",
@@ -259,6 +270,9 @@
       "noStudentsYet": "Aún no tienes estudiantes en esta familia. Crea el primero para que tu hijo pueda entrar.",
       "createFirstStudent": "Crear primer estudiante",
       "noParentSession": "Tu mamá o papá debe iniciar sesión primero en este dispositivo.",
+      "deviceNotClaimedTitle": "Hola 👋",
+      "deviceNotClaimedBody": "Antes de entrar, tu mamá o papá debe iniciar sesión en este dispositivo al menos una vez. Después podrás entrar con tu avatar y PIN.",
+      "deviceNotClaimedCta": "Entrar como padre",
       "pinError": "PIN incorrecto. Inténtalo de nuevo.",
       "switchAccount": "Salir y entrar como padre"
     }

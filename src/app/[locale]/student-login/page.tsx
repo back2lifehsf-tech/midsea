@@ -44,16 +44,17 @@ export default async function StudentLoginPage({
   const familyIdFromCookie = cookies().get(DEVICE_FAMILY_COOKIE)?.value ?? null;
   const familyId = familyIdFromSession ?? familyIdFromCookie;
 
-  if (!familyId) {
-    // Dispositivo no reclamado. El padre debe firmar primero al menos una vez.
-    redirect(`/${locale}/login?callbackUrl=${encodeURIComponent(`/${locale}/student-login`)}`);
-  }
+  // Si el device no fue reclamado todavía, mostramos pantalla amigable
+  // en vez de loop hacia /login. (Evita confusión al estudiante.)
+  const deviceNotClaimed = !familyId;
 
-  const studentsRaw = await prisma.student.findMany({
-    where: { familyId, pinHash: { not: null } },
-    orderBy: { createdAt: 'asc' },
-    select: { id: true, displayName: true, avatarKey: true }
-  });
+  const studentsRaw = familyId
+    ? await prisma.student.findMany({
+        where: { familyId, pinHash: { not: null } },
+        orderBy: { createdAt: 'asc' },
+        select: { id: true, displayName: true, avatarKey: true }
+      })
+    : [];
   const students = studentsRaw.map((s) => ({
     id: s.id,
     displayName: s.displayName,
@@ -80,7 +81,20 @@ export default async function StudentLoginPage({
       </header>
 
       <main className="py-10">
-        {students.length === 0 ? (
+        {deviceNotClaimed ? (
+          <div className="mx-auto max-w-md space-y-5 text-center">
+            <h1 className="font-display text-2xl font-bold text-midsea-deep">
+              {t('deviceNotClaimedTitle')}
+            </h1>
+            <p className="text-sm text-midsea-ink/70">{t('deviceNotClaimedBody')}</p>
+            <Link
+              href={`/${locale}/login?as=parent`}
+              className="inline-flex rounded-xl bg-midsea-deep px-5 py-2.5 text-sm font-semibold text-white shadow-wave hover:bg-midsea-lagoon"
+            >
+              {t('deviceNotClaimedCta')}
+            </Link>
+          </div>
+        ) : students.length === 0 ? (
           <div className="mx-auto max-w-md space-y-4 text-center">
             <h1 className="font-display text-2xl font-bold text-midsea-deep">{t('title')}</h1>
             <p className="text-sm text-midsea-ink/70">{t('noStudentsYet')}</p>
