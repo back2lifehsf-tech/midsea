@@ -6,13 +6,16 @@
 
 ---
 
-## 1. DOCUMENTOS MAESTROS (LEER ANTES DE CUALQUIER TAREA)
+## 1. DOCUMENTOS MAESTROS
 
-1. **PRD.md** — Estrategia de producto, ICP, roadmap, análisis competitivo.
-2. **AI_TUTOR_SPEC.md** — Especificación técnica completa del tutor AI "Sylvie" y experiencia estudiante.
-3. **Este archivo (CLAUDE.md)** — Reglas de código, stack, estructura, convenciones.
+1. **PRD.md** (raíz) — Estrategia de producto, ICP, roadmap. **Leer antes de cualquier tarea.**
+2. **docs/DMP.md** — Documento Maestro de Posicionamiento Competitivo: análisis de 5 competidores, UVP por audiencia, priorización estratégica. **Consultar antes de decisiones de feature que toquen diferenciación, UX core o pricing.** No leer para bugs triviales o ajustes UI sin implicaciones estratégicas: es contexto caro (~4,200 palabras).
+3. **docs/AI_TUTOR_SPEC.md** — Especificación técnica del tutor AI "Sylvie" y experiencia estudiante. **Leer antes de tocar cualquier código en `src/lib/tutor/` o `src/app/[locale]/(student)/`.**
+4. **Este archivo (CLAUDE.md)** — Reglas de código, stack, estructura, convenciones. **Leer siempre.**
 
-**Jerarquía de conflictos:** PRD.md > AI_TUTOR_SPEC.md > CLAUDE.md
+**Jerarquía de conflictos:** PRD.md > docs/DMP.md > docs/AI_TUTOR_SPEC.md > CLAUDE.md
+
+**Regla anti-copia.** Si una tarea sugiere replicar un patrón de Miacademy, Wited, Time4Learning, Pruebat.org o Smartick, primero verifica en `docs/DMP.md §2` si ese patrón está marcado como "Rechazo estratégico". Si lo está, propón la alternativa de Midsea en lugar de implementar la copia.
 
 ---
 
@@ -189,7 +192,7 @@ Ninguna acción core debe requerir más de 3 clicks desde la pantalla principal.
 
 ## 8. CÓMO TRABAJAR CON CLAUDE CODE
 
-1. **Lee PRD.md y AI_TUTOR_SPEC.md antes de cualquier tarea.**
+1. **Lee PRD.md siempre. Lee docs/AI_TUTOR_SPEC.md si la tarea toca el tutor o la experiencia del estudiante. Lee docs/DMP.md si la tarea toca diferenciación, UX core o pricing.**
 2. **Pregunta primero, codea después.** Si una tarea parece requerir una jerarquía Materia→Grado→Unidad, detente y replantéala como una Ruta de Competencias.
 3. **Piensa en estados emocionales.** ¿Este componente reduce ansiedad o la aumenta? ¿Es claro qué hacer siguiente?
 4. **Mantén la IA integrada, no aislada.** No crees un "componente de chatbot". Crea un "servicio de explicación adaptativa" que se invoque desde `/stuck`, `/prep`, etc.
@@ -241,5 +244,5 @@ npm run test
 
 ---
 
-*Última actualización: 2026-05-17*  
+*Última actualización: 2026-05-18 (DMP.md añadido a jerarquía de documentos maestros).*  
 *Este documento es un contrato vivo. Si el dominio evoluciona, este prompt debe evolucionar.*
