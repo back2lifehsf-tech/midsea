@@ -1,18 +1,17 @@
 import { getTranslations } from 'next-intl/server';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { NexosBadge } from '@/components/gamification/NexosBadge';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { UserMenu } from '@/components/auth/UserMenu';
 import { SylvieWidget } from '@/components/tutoring/SylvieWidget';
-import { requireStudentSpaceAccess } from '@/lib/auth/session';
-import { getActiveStudent } from '@/lib/auth/active-student';
+import { requireStudent } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { DEMO_TOTAL_NEXOS } from '@/lib/demo/data';
 
 // Memory project-midsea-framing: el AI tutor NO es entrada de nav principal,
 // solo boton contextual dentro de una leccion del estudiante.
-// v1: el "active student" es el primer hijo de la familia (o Lucia en demo).
+// Epic 01 §4: role enforcement — solo STUDENT (o demo-student) llega aquí.
+// PARENT que intenta /student → redirect a /student-login (selector).
 
 export default async function StudentLayout({
   children,
@@ -21,11 +20,7 @@ export default async function StudentLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const parent = await requireStudentSpaceAccess(locale);
-  const activeStudent = await getActiveStudent(parent);
-  if (!activeStudent) {
-    redirect(`/${locale}/parent`);
-  }
+  const activeStudent = await requireStudent(locale);
 
   const t = await getTranslations({ locale, namespace: 'student.nav' });
 

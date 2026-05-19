@@ -209,7 +209,100 @@
     "loading": "Cargando sesión",
     "errorTitle": "No pudimos iniciar sesión",
     "errorGeneric": "Algo salió mal con Google. Inténtalo de nuevo.",
-    "backHome": "Volver al login"
+    "backHome": "Volver al login",
+    "signIn": {
+      "divider": "o con tu email",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Tu contraseña",
+      "submit": "Entrar",
+      "submitting": "Entrando…",
+      "noAccount": "¿No tienes cuenta?",
+      "noAccountLink": "Crea una gratis",
+      "studentEntry": "¿Eres estudiante?",
+      "studentEntryLink": "Entra con tu avatar"
+    },
+    "gateway": {
+      "title": "¿Quién va a entrar hoy?",
+      "subtitle": "Elige cómo quieres entrar.",
+      "parentTitle": "Soy padre o madre",
+      "parentBody": "Gestiono el progreso de mis hijos, asigno lecciones y reviso reportes.",
+      "parentCta": "Entrar como padre",
+      "studentTitle": "Soy estudiante",
+      "studentBody": "Elijo mi avatar y empiezo mi día.",
+      "studentCta": "Entrar como estudiante",
+      "backToGateway": "← Cambiar quién entra"
+    },
+    "signup": {
+      "title": "Crea tu cuenta de familia",
+      "subtitle": "Empieza gratis. Sin tarjeta de crédito.",
+      "nameLabel": "Tu nombre",
+      "namePlaceholder": "María García",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "passwordLabel": "Contraseña",
+      "passwordHint": "Mínimo 8 caracteres",
+      "confirmLabel": "Confirma tu contraseña",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta…",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "haveAccountLink": "Inicia sesión"
+    },
+    "errors": {
+      "emailRequired": "El correo es obligatorio.",
+      "emailInvalid": "Ese correo no parece válido.",
+      "nameRequired": "Necesitamos tu nombre.",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "emailTaken": "Ya existe una cuenta con ese correo. Inicia sesión.",
+      "invalidCredentials": "Correo o contraseña incorrectos.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    },
+    "studentLogin": {
+      "title": "¿Quién eres tú?",
+      "subtitle": "Toca tu avatar para entrar.",
+      "pinPrompt": "Hola, {name} — escribe tu PIN",
+      "pinSubmit": "Entrar",
+      "pinSubmitting": "Entrando…",
+      "back": "Atrás",
+      "pinClear": "Borrar",
+      "noStudentsYet": "Aún no tienes estudiantes en esta familia. Crea el primero para que tu hijo pueda entrar.",
+      "createFirstStudent": "Crear primer estudiante",
+      "noParentSession": "Tu mamá o papá debe iniciar sesión primero en este dispositivo.",
+      "deviceNotClaimedTitle": "Hola 👋",
+      "deviceNotClaimedBody": "Antes de entrar, tu mamá o papá debe iniciar sesión en este dispositivo al menos una vez. Después podrás entrar con tu avatar y PIN.",
+      "deviceNotClaimedCta": "Entrar como padre",
+      "pinError": "PIN incorrecto. Inténtalo de nuevo.",
+      "switchAccount": "Salir y entrar como padre"
+    }
+  },
+  "parentStudents": {
+    "new": {
+      "title": "Crear perfil de estudiante",
+      "subtitle": "Elige avatar, nombre y un PIN de 4 dígitos.",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "Sofía",
+      "birthDateLabel": "Fecha de nacimiento",
+      "gradeLabel": "Grado",
+      "gradePreK": "PreK",
+      "gradeNumbered": "{n}°",
+      "avatarLabel": "Avatar",
+      "pinLabel": "PIN de 4 dígitos",
+      "pinHint": "El estudiante usará este PIN para entrar. Elígelo con tu hijo.",
+      "submit": "Crear estudiante",
+      "submitting": "Creando…",
+      "backToOverview": "Volver al panel",
+      "errors": {
+        "nameRequired": "Necesitamos el nombre del estudiante.",
+        "birthDateRequired": "Selecciona la fecha de nacimiento.",
+        "gradeInvalid": "Elige un grado válido.",
+        "pinInvalid": "El PIN debe ser exactamente 4 dígitos.",
+        "avatarRequired": "Elige un avatar.",
+        "unauthorized": "Sesión expirada. Inicia sesión de nuevo.",
+        "generic": "Algo salió mal. Inténtalo de nuevo."
+      }
+    }
   },
   "roleSelector": {
     "parent": {

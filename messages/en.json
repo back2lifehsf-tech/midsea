@@ -209,7 +209,100 @@
     "loading": "Loading session",
     "errorTitle": "We couldn't sign you in",
     "errorGeneric": "Something went wrong with Google. Please try again.",
-    "backHome": "Back to login"
+    "backHome": "Back to login",
+    "signIn": {
+      "divider": "or with your email",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Your password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "No account yet?",
+      "noAccountLink": "Create one free",
+      "studentEntry": "Are you a student?",
+      "studentEntryLink": "Sign in with your avatar"
+    },
+    "gateway": {
+      "title": "Who's signing in today?",
+      "subtitle": "Pick how you want to sign in.",
+      "parentTitle": "I'm a parent",
+      "parentBody": "Track my kids' progress, assign lessons, review reports.",
+      "parentCta": "Sign in as parent",
+      "studentTitle": "I'm a student",
+      "studentBody": "Pick my avatar and start my day.",
+      "studentCta": "Sign in as student",
+      "backToGateway": "← Change who's signing in"
+    },
+    "signup": {
+      "title": "Create your family account",
+      "subtitle": "Start free. No credit card required.",
+      "nameLabel": "Your name",
+      "namePlaceholder": "Maria Garcia",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@email.com",
+      "passwordLabel": "Password",
+      "passwordHint": "At least 8 characters",
+      "confirmLabel": "Confirm your password",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "haveAccount": "Already have an account?",
+      "haveAccountLink": "Sign in"
+    },
+    "errors": {
+      "emailRequired": "Email is required.",
+      "emailInvalid": "That email doesn't look valid.",
+      "nameRequired": "We need your name.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "passwordMismatch": "Passwords don't match.",
+      "emailTaken": "An account with that email already exists. Sign in.",
+      "invalidCredentials": "Wrong email or password.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "studentLogin": {
+      "title": "Who are you?",
+      "subtitle": "Tap your avatar to sign in.",
+      "pinPrompt": "Hi, {name} — enter your PIN",
+      "pinSubmit": "Enter",
+      "pinSubmitting": "Entering…",
+      "back": "Back",
+      "pinClear": "Clear",
+      "noStudentsYet": "You don't have students in this family yet. Create the first one so your child can sign in.",
+      "createFirstStudent": "Create first student",
+      "noParentSession": "Your parent must sign in on this device first.",
+      "deviceNotClaimedTitle": "Hi there 👋",
+      "deviceNotClaimedBody": "Before signing in, your parent must sign in on this device at least once. After that, you can enter with your avatar and PIN.",
+      "deviceNotClaimedCta": "Sign in as parent",
+      "pinError": "Wrong PIN. Try again.",
+      "switchAccount": "Sign out and sign in as parent"
+    }
+  },
+  "parentStudents": {
+    "new": {
+      "title": "Create a student profile",
+      "subtitle": "Pick an avatar, name and a 4-digit PIN.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Sofía",
+      "birthDateLabel": "Date of birth",
+      "gradeLabel": "Grade",
+      "gradePreK": "PreK",
+      "gradeNumbered": "Grade {n}",
+      "avatarLabel": "Avatar",
+      "pinLabel": "4-digit PIN",
+      "pinHint": "The student will use this PIN to sign in. Pick it with your child.",
+      "submit": "Create student",
+      "submitting": "Creating…",
+      "backToOverview": "Back to dashboard",
+      "errors": {
+        "nameRequired": "We need the student's name.",
+        "birthDateRequired": "Pick a date of birth.",
+        "gradeInvalid": "Pick a valid grade.",
+        "pinInvalid": "PIN must be exactly 4 digits.",
+        "avatarRequired": "Pick an avatar.",
+        "unauthorized": "Session expired. Sign in again.",
+        "generic": "Something went wrong. Try again."
+      }
+    }
   },
   "roleSelector": {
     "parent": {
