@@ -17,7 +17,7 @@ export async function FinalCtaSection({ locale }: { locale: string }) {
             <p className="text-base text-white/80 sm:text-lg">{t('body')}</p>
             <div className="pt-2">
               <Link
-                href={`/${locale}/login`}
+                href={`/${locale}/signup`}
                 className="inline-flex items-center justify-center rounded-2xl bg-white px-7 py-3.5 text-base font-semibold text-midsea-deep shadow-wave transition hover:bg-midsea-foam focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-midsea-deep"
               >
                 {t('cta')}

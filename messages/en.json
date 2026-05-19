@@ -209,7 +209,43 @@
     "loading": "Loading session",
     "errorTitle": "We couldn't sign you in",
     "errorGeneric": "Something went wrong with Google. Please try again.",
-    "backHome": "Back to login"
+    "backHome": "Back to login",
+    "signIn": {
+      "divider": "or with your email",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Your password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "noAccount": "No account yet?",
+      "noAccountLink": "Create one free"
+    },
+    "signup": {
+      "title": "Create your family account",
+      "subtitle": "Start free. No credit card required.",
+      "nameLabel": "Your name",
+      "namePlaceholder": "Maria Garcia",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@email.com",
+      "passwordLabel": "Password",
+      "passwordHint": "At least 8 characters",
+      "confirmLabel": "Confirm your password",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "haveAccount": "Already have an account?",
+      "haveAccountLink": "Sign in"
+    },
+    "errors": {
+      "emailRequired": "Email is required.",
+      "emailInvalid": "That email doesn't look valid.",
+      "nameRequired": "We need your name.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "passwordMismatch": "Passwords don't match.",
+      "emailTaken": "An account with that email already exists. Sign in.",
+      "invalidCredentials": "Wrong email or password.",
+      "generic": "Something went wrong. Please try again."
+    }
   },
   "roleSelector": {
     "parent": {

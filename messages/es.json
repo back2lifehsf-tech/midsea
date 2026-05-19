@@ -209,7 +209,43 @@
     "loading": "Cargando sesión",
     "errorTitle": "No pudimos iniciar sesión",
     "errorGeneric": "Algo salió mal con Google. Inténtalo de nuevo.",
-    "backHome": "Volver al login"
+    "backHome": "Volver al login",
+    "signIn": {
+      "divider": "o con tu email",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Tu contraseña",
+      "submit": "Entrar",
+      "submitting": "Entrando…",
+      "noAccount": "¿No tienes cuenta?",
+      "noAccountLink": "Crea una gratis"
+    },
+    "signup": {
+      "title": "Crea tu cuenta de familia",
+      "subtitle": "Empieza gratis. Sin tarjeta de crédito.",
+      "nameLabel": "Tu nombre",
+      "namePlaceholder": "María García",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "passwordLabel": "Contraseña",
+      "passwordHint": "Mínimo 8 caracteres",
+      "confirmLabel": "Confirma tu contraseña",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta…",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "haveAccountLink": "Inicia sesión"
+    },
+    "errors": {
+      "emailRequired": "El correo es obligatorio.",
+      "emailInvalid": "Ese correo no parece válido.",
+      "nameRequired": "Necesitamos tu nombre.",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+      "passwordMismatch": "Las contraseñas no coinciden.",
+      "emailTaken": "Ya existe una cuenta con ese correo. Inicia sesión.",
+      "invalidCredentials": "Correo o contraseña incorrectos.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
+    }
   },
   "roleSelector": {
     "parent": {
