@@ -219,7 +219,9 @@
       "submit": "Entrar",
       "submitting": "Entrando…",
       "noAccount": "¿No tienes cuenta?",
-      "noAccountLink": "Crea una gratis"
+      "noAccountLink": "Crea una gratis",
+      "studentEntry": "¿Eres estudiante?",
+      "studentEntryLink": "Entra con tu avatar"
     },
     "signup": {
       "title": "Crea tu cuenta de familia",

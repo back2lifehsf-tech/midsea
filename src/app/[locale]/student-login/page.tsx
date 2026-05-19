@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
@@ -7,6 +8,8 @@ import { StudentLoginForm } from '@/components/auth/StudentLoginForm';
 import { getSession } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { isAvatarKey } from '@/lib/auth/avatars';
+
+const DEVICE_FAMILY_COOKIE = 'midsea_device_family';
 
 /**
  * Login de estudiante por PIN. Epic 01 §3b.
@@ -32,13 +35,22 @@ export default async function StudentLoginPage({
     redirect(`/${locale}/student`);
   }
 
-  if (!session?.user?.parentId || !session.user.familyId) {
-    // Sin sesión de padre, no podemos saber qué estudiantes mostrar.
+  // Resolución de familyId — dos fuentes en orden de preferencia:
+  //   1) Sesión activa del padre (más fresco)
+  //   2) Cookie midsea_device_family (sticky, setteada por middleware en el
+  //      primer login del padre — sobrevive al logout para que el estudiante
+  //      pueda entrar después)
+  const familyIdFromSession = session?.user?.familyId ?? null;
+  const familyIdFromCookie = cookies().get(DEVICE_FAMILY_COOKIE)?.value ?? null;
+  const familyId = familyIdFromSession ?? familyIdFromCookie;
+
+  if (!familyId) {
+    // Dispositivo no reclamado. El padre debe firmar primero al menos una vez.
     redirect(`/${locale}/login?callbackUrl=${encodeURIComponent(`/${locale}/student-login`)}`);
   }
 
   const studentsRaw = await prisma.student.findMany({
-    where: { familyId: session.user.familyId, pinHash: { not: null } },
+    where: { familyId, pinHash: { not: null } },
     orderBy: { createdAt: 'asc' },
     select: { id: true, displayName: true, avatarKey: true }
   });

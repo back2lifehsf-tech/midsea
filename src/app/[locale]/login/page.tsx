@@ -1,9 +1,13 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { DemoLogin } from '@/components/auth/DemoLogin';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { getSession, getDemoRole } from '@/lib/auth/session';
+
+const DEVICE_FAMILY_COOKIE = 'midsea_device_family';
 
 export default async function LoginPage({
   params: { locale }
@@ -21,6 +25,11 @@ export default async function LoginPage({
   if (demoRole === 'student') redirect(`/${locale}/student`);
 
   const callbackUrl = `/${locale}/parent`;
+  // Si este dispositivo ya fue reclamado por una familia (cookie sticky),
+  // mostramos un acceso rápido para estudiante. Si no, no — un dispositivo
+  // sin claim no debería poder enumerar estudiantes de nadie.
+  const deviceClaimed = Boolean(cookies().get(DEVICE_FAMILY_COOKIE)?.value);
+  const t = await getTranslations({ locale, namespace: 'auth.signIn' });
 
   return (
     <div className="relative mx-auto min-h-screen max-w-6xl px-4 py-6">
@@ -48,6 +57,17 @@ export default async function LoginPage({
             <span className="font-display text-2xl font-bold text-midsea-deep">Midsea</span>
           </div>
           <LoginForm callbackUrl={callbackUrl} />
+          {deviceClaimed ? (
+            <p className="text-center text-xs text-midsea-ink/60">
+              {t('studentEntry')}{' '}
+              <Link
+                href={`/${locale}/student-login`}
+                className="font-semibold text-midsea-deep hover:underline"
+              >
+                {t('studentEntryLink')}
+              </Link>
+            </p>
+          ) : null}
           <DemoLogin />
         </div>
       </div>

@@ -219,7 +219,9 @@
       "submit": "Sign in",
       "submitting": "Signing in…",
       "noAccount": "No account yet?",
-      "noAccountLink": "Create one free"
+      "noAccountLink": "Create one free",
+      "studentEntry": "Are you a student?",
+      "studentEntryLink": "Sign in with your avatar"
     },
     "signup": {
       "title": "Create your family account",
