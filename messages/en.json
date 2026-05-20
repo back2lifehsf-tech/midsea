@@ -114,39 +114,52 @@
       }
     },
     "pricing": {
-      "heading": "One subscription, the whole curriculum",
-      "subheading": "No long contracts. Cancel anytime.",
-      "popular": "Most popular",
+      "eyebrow": "Pricing",
+      "heading": "An AI tutor for every child. No surprises.",
+      "subheading": "Pay per student. Each child gets their own Angela, MasteryMap and Learning Path. Cancel anytime.",
+      "perStudent": "per student",
       "perMonth": "/mo",
-      "perYear": "/yr",
-      "oneTime": "one-time",
-      "cta": "Start trial",
-      "monthly": {
-        "name": "Monthly",
-        "price": "$29",
-        "body": "Full access, cancel anytime.",
-        "feat1": "Full K-12 curriculum",
-        "feat2": "Unlimited AI Tutor",
-        "feat3": "Up to 4 kids",
-        "feat4": "Email support"
+      "perFour": "for up to 4 kids",
+      "cta": "Get started",
+      "badgeRecommended": "Recommended",
+      "annualSubtitle": "{total}/year · You save {savings}",
+      "annualOnlyMonthly": "Only available monthly in v1",
+      "toggle": {
+        "legend": "Billing cycle",
+        "monthly": "Monthly",
+        "annual": "Annual",
+        "savePct": "Save {pct}%"
       },
-      "annual": {
-        "name": "Annual",
-        "price": "$290",
-        "body": "2 months free. Full access.",
-        "feat1": "Everything in Monthly",
-        "feat2": "Regulatory reports",
-        "feat3": "Offline mode (soon)",
-        "feat4": "Priority support"
-      },
-      "lifetime": {
-        "name": "Lifetime",
-        "price": "$590",
-        "body": "For the whole family, forever.",
-        "feat1": "Everything in Annual",
-        "feat2": "Lifetime access",
-        "feat3": "New subjects included",
-        "feat4": "Premium family account"
+      "plans": {
+        "core": {
+          "name": "Core",
+          "tagline": "For families with one child or trying Midsea.",
+          "feat1": "Angela 24/7 in Spanish or English",
+          "feat2": "Access to all K-12 subjects",
+          "feat3": "MasteryMap and AI weekly planner",
+          "feat4": "Parent reports",
+          "feat5": "Cancel anytime"
+        },
+        "pro": {
+          "name": "Pro",
+          "tagline": "For families serious about homeschooling.",
+          "feat1": "Everything in Core, plus:",
+          "feat2": "Automated regulatory reports (FL, TX, MX-SEP, ES-LOMLOE)",
+          "feat3": "Group sessions with a human tutor (4 per month)",
+          "feat4": "Priority support",
+          "feat5": "Predictive progress analysis"
+        },
+        "family": {
+          "name": "Family",
+          "tagline": "Big families. Flat pricing, no surprises.",
+          "badge": "Best for 3+ kids",
+          "feat1": "Everything in Pro, plus:",
+          "feat2": "Up to 4 students included",
+          "feat3": "Per-child comparison dashboards",
+          "feat4": "Sibling scheduling coordination",
+          "feat5": "No extra fees per additional student",
+          "disclaimer": "If you have 5+ kids, contact us for a custom plan."
+        }
       }
     },
     "finalCta": {
