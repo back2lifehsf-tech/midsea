@@ -217,4 +217,48 @@ Empieza por PASO -1 ahora.
 
 ## Pendientes para Epic 03
 
-*(Se llena al cerrar.)*
+### Cobranza real (out of scope intencional)
+Todo el módulo `src/lib/pricing/plans.ts` se reemplaza por `getPlansFromStripe()` que lee Price IDs del dashboard. La estructura `PlanDisplay` ya está alineada con `Stripe.Price` para minimizar diff. Lo que hay que añadir:
+- `lib/stripe/server.ts` con cliente singleton.
+- `/api/checkout/session/route.ts` que recibe `{plan, cycle, parentId}` y abre Stripe Checkout.
+- Webhook handler `/api/webhooks/stripe/route.ts` (modelo `StripeWebhookEvent` ya en ADR-001 §10).
+- Migración Prisma: `Student.subscriptionStatus`, `planTier`, `billingCycle`, `stripeSubscriptionId`, `currentPeriodEnd`; `Parent.stripeCustomerId`.
+
+### CTA con query params
+El landing pasa `?role=parent&plan={core|pro|family}` al `/signup`. La página de signup actualmente IGNORA estos params. Cuando Epic 03 cablee el flow:
+- Leer `plan` en signup → guardar como `planTier` pendiente en sesión / cookie temporal.
+- Al completar signup, redirigir a Stripe Checkout con el Price ID correspondiente.
+
+### Currency toggle
+ADR-001 §7 punt a v2: USD/MXN/COP/EUR. Cuando entremos:
+- `formatUsd` pasa a `formatMoney(cents, currency, locale)`.
+- Backend devuelve `Price` por moneda (Stripe Adaptive Pricing o Pricing Tables).
+- Toggle adicional Currency (3 botones) o auto-detect por `Accept-Language` + IP.
+
+### Tooltip en Family annual-disabled
+Hoy se muestra hint en texto plano ("Disponible solo mensual en v1"). UX más limpio:
+- Toggle con icono `?` que abre un tooltip al hover/focus con la razón (proration complexity per ADR-001 §3).
+- Considerar mostrar el hint sólo cuando el toggle Anual está activo Y el usuario está mirando Family (Intersection Observer).
+
+### A/B testing del default
+Defaulteamos a Anual por LTV. Cuando tengamos analytics (PostHog / Vercel Analytics):
+- Variant A: default Anual (actual)
+- Variant B: default Mensual
+- Métrica: conversión a signup completado en 7 días.
+- Probable resultado: Anual gana por LTV, Mensual gana por conversion rate al signup. Decisión a tomar con números reales.
+
+### Comparison table multi-plan
+Algunas familias quieren ver lado-a-lado qué incluye cada plan. Una `<ComparisonTable>` debajo del FAQ con filas (features) y columnas (planes) podría incrementar conversión. Punt hasta tener datos de sesión que muestren que los usuarios scrollean buscando esa info.
+
+### Lifetime plan
+El landing viejo tenía un plan "Lifetime $590" que se removió en este epic (no aparece en ADR-001 ni PRD). Si el negocio quiere re-introducirlo, hay que añadir el tier al schema (`enum PlanTier`) y al ADR antes de reflejarlo en UI.
+
+### Framer Motion price morph
+Decidimos NO instalar Framer Motion en este epic. Si el equipo de producto pide el morph fluido entre `$29` y `$20.30` cuando se alterna el toggle, esa es la única dep nueva a justificar.
+
+### Tests E2E (Playwright)
+Heredado de Epic 01/02. Smoke test del flow pricing:
+- Cargar `/es` → ver sección Pricing.
+- Click toggle Anual → precios cambian a `$20.30` Core / `$31.50` Pro / `$69.00` Family (sin cambio).
+- Click CTA Pro → navega a `/es/signup?role=parent&plan=pro`.
+- Toggle por keyboard (Tab + Arrow keys) funciona.
