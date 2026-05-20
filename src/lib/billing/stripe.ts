@@ -114,7 +114,10 @@ export async function createStudentSubscription(args: {
     items: [{ price: priceId }],
     payment_behavior: 'default_incomplete',
     payment_settings: { save_default_payment_method: 'on_subscription' },
-    expand: ['latest_invoice.payment_intent'],
+    // Stripe API 2025+: confirmation_secret reemplaza al legacy
+    // payment_intent en flujos default_incomplete. Expandimos ambos
+    // como cinturón y tirantes; usamos lo que llegue primero.
+    expand: ['latest_invoice.confirmation_secret', 'latest_invoice.payment_intent'],
     metadata: {
       midseaStudentId: args.studentId,
       midseaPlan: args.plan,
@@ -126,11 +129,22 @@ export async function createStudentSubscription(args: {
   if (!invoice || typeof invoice === 'string') {
     throw new Error('Stripe did not return an expanded invoice.');
   }
-  const pi =
-    (invoice as Stripe.Invoice & { payment_intent?: Stripe.PaymentIntent | string })
-      .payment_intent;
-  if (!pi || typeof pi === 'string' || !pi.client_secret) {
-    throw new Error('Stripe did not return an expanded payment_intent with client_secret.');
+
+  // Pattern 1 (API 2025+): invoice.confirmation_secret.client_secret
+  // Pattern 2 (legacy): invoice.payment_intent.client_secret
+  const invAny = invoice as Stripe.Invoice & {
+    confirmation_secret?: { client_secret?: string | null } | null;
+    payment_intent?: Stripe.PaymentIntent | string | null;
+  };
+  let clientSecret: string | null = invAny.confirmation_secret?.client_secret ?? null;
+  if (!clientSecret) {
+    const pi = invAny.payment_intent;
+    if (pi && typeof pi !== 'string') clientSecret = pi.client_secret ?? null;
+  }
+  if (!clientSecret) {
+    throw new Error(
+      'Stripe did not return a client_secret (neither confirmation_secret nor payment_intent expanded).'
+    );
   }
 
   // current_period_end vive en items[0] en API 2025+; fallback al campo
@@ -144,7 +158,7 @@ export async function createStudentSubscription(args: {
 
   return {
     subscriptionId: subscription.id,
-    clientSecret: pi.client_secret,
+    clientSecret,
     currentPeriodEnd: new Date(periodEnd * 1000),
     amountCents: invoice.amount_due ?? 0,
     status: mapStripeStatusToPrisma(subscription.status)
