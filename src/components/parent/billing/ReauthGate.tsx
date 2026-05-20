@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { formatUsd } from '@/lib/pricing/format';
 
@@ -32,6 +32,37 @@ export function ReauthGate({
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<'probing' | 'password'>('probing');
+
+  // Probe on mount: si el parent es Google-OAuth-only (sin passwordHash),
+  // el endpoint devuelve 409 no_password_set. Para esos usuarios la
+  // sesión OAuth es suficiente — el gate se salta silenciosamente y
+  // el Payment Element (Step B) absorbe la confirmación visual.
+  // Si la respuesta es 401/400 (password requerida), mostramos el form.
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/auth/reauth', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ password: '__probe__' })
+    })
+      .then(async (res) => {
+        if (cancelled) return;
+        if (res.status === 409) {
+          // Google parent — skip gate.
+          onSuccess();
+          return;
+        }
+        setMode('password');
+      })
+      .catch(() => {
+        if (!cancelled) setMode('password');
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,6 +84,14 @@ export function ReauthGate({
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (mode === 'probing') {
+    return (
+      <div className="flex h-32 items-center justify-center text-sm text-midsea-ink/60">
+        {t('submitting')}
+      </div>
+    );
   }
 
   return (
