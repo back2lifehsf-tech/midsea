@@ -386,6 +386,46 @@
       "subjectSocial": "Social Studies"
     },
     "students": {
+      "list": {
+        "subheading": "My students",
+        "heading": "Your Midsea family",
+        "addCta": "Add a student",
+        "empty": {
+          "heading": "No students yet",
+          "subheading": "Add your first child. We'll create their profile with Angela and you can start using Midsea today."
+        }
+      },
+      "card": {
+        "gradePreK": "PreK",
+        "gradeNumbered": "Grade {n}",
+        "viewProfileSoon": "View profile — coming soon",
+        "completeHint": "Complete the {amount} payment to activate this student.",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        },
+        "status": {
+          "active": "Active",
+          "trialing": "Trial",
+          "pending": "Payment pending",
+          "pastDue": "Past due",
+          "canceled": "Canceled",
+          "paused": "Paused"
+        }
+      },
+      "total": {
+        "aria": "Family monthly total",
+        "heading": "Next monthly charge",
+        "perMonth": "/mo",
+        "singleStudent": "1 student on {plan}",
+        "planCount": "{n} {plan}",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        }
+      },
       "dialog": {
         "title": "Add a student",
         "close": "Close",

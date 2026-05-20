@@ -386,6 +386,46 @@
       "subjectSocial": "Sociales"
     },
     "students": {
+      "list": {
+        "subheading": "Mis estudiantes",
+        "heading": "Tu familia en Midsea",
+        "addCta": "Agregar estudiante",
+        "empty": {
+          "heading": "Aún no tienes estudiantes",
+          "subheading": "Agrega a tu primer hijo o hija. Le creamos su perfil con Angela y empiezas a usar Midsea hoy."
+        }
+      },
+      "card": {
+        "gradePreK": "PreK",
+        "gradeNumbered": "{n}° grado",
+        "viewProfileSoon": "Ver perfil — próximamente",
+        "completeHint": "Completa el pago de {amount} para activar a este estudiante.",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        },
+        "status": {
+          "active": "Activo",
+          "trialing": "Prueba",
+          "pending": "Pago pendiente",
+          "pastDue": "Pago atrasado",
+          "canceled": "Cancelado",
+          "paused": "Pausado"
+        }
+      },
+      "total": {
+        "aria": "Total mensual de la familia",
+        "heading": "Próximo cobro mensual",
+        "perMonth": "/mes",
+        "singleStudent": "1 estudiante en {plan}",
+        "planCount": "{n} {plan}",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        }
+      },
       "dialog": {
         "title": "Nuevo estudiante",
         "close": "Cerrar",
