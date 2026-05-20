@@ -17,7 +17,7 @@ interface LessonRender {
   subject: string;
   gradeLevel: number;
   estMinutes: number;
-  rewardNexos: number;
+  rewardCoin: number;
   status: string;
   masteryPct: number;
 }
@@ -34,7 +34,7 @@ async function loadLessonForDemo(slug: string): Promise<LessonRender | null> {
     subject: lesson.subject,
     gradeLevel: lesson.gradeLevel,
     estMinutes: lesson.estMinutes,
-    rewardNexos: lesson.rewardNexos,
+    rewardCoin: lesson.rewardCoin,
     status: progress?.status ?? 'AVAILABLE',
     masteryPct: progress?.masteryPct ?? 0
   };
@@ -54,7 +54,7 @@ async function loadLessonReal(slug: string, studentId: string): Promise<LessonRe
     subject: lesson.subject,
     gradeLevel: lesson.gradeLevel,
     estMinutes: lesson.estMinutes,
-    rewardNexos: lesson.rewardNexos,
+    rewardCoin: lesson.rewardCoin,
     status: progress?.status ?? 'AVAILABLE',
     masteryPct: progress?.masteryPct ?? 0
   };
@@ -106,7 +106,7 @@ export default async function LessonDetailPage({
         <h1 className="font-display text-3xl font-bold text-midsea-deep">{title}</h1>
         <p className="text-sm text-midsea-ink/70">
           {tLesson('minutesEstimate', { minutes: data.estMinutes })} ·{' '}
-          {tLesson('rewardPreview', { nexos: data.rewardNexos })}
+          {tLesson('rewardPreview', { coin: data.rewardCoin })}
         </p>
         {data.status === 'IN_PROGRESS' ? (
           <div className="max-w-md pt-2">

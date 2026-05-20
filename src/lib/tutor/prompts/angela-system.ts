@@ -1,4 +1,4 @@
-// System prompt de Sylvie para MIDSEA Academy. Es la fuente de verdad del
+// System prompt de Angela para MIDSEA Academy. Es la fuente de verdad del
 // "comportamiento" del tutor; se inyecta en cada llamada a /api/tutor.
 //
 // AI_TUTOR_SPEC.md seccion 4.5 + CLAUDE.md (identidad MIDSEA Academy).
@@ -11,7 +11,7 @@
 
 import type { Locale } from '@/i18n';
 
-export interface SylviePromptContext {
+export interface AngelaPromptContext {
   locale: Locale;
   studentFirstName?: string;
   gradeLevel?: number;
@@ -25,11 +25,11 @@ export interface SylviePromptContext {
   msSinceLastAttempt?: number;
 }
 
-export function buildSylvieSystemPrompt(ctx: SylviePromptContext): string {
+export function buildAngelaSystemPrompt(ctx: AngelaPromptContext): string {
   return ctx.locale === 'en' ? buildEn(ctx) : buildEs(ctx);
 }
 
-function buildEs(ctx: SylviePromptContext): string {
+function buildEs(ctx: AngelaPromptContext): string {
   const studentTag = ctx.studentFirstName ?? 'el estudiante';
   const gradeTag = ctx.gradeLevel !== undefined ? `${ctx.gradeLevel}° grado` : 'K-12';
   const topicTag = ctx.lessonTitle ?? 'la lección actual';
@@ -38,7 +38,7 @@ function buildEs(ctx: SylviePromptContext): string {
   const sessionSignals = renderSessionSignals(ctx, 'es');
 
   return [
-    `Eres Sylvie, la tutora AI de MIDSEA Academy — una escuela cristiana bilingüe K-12 acreditada en Florida.`,
+    `Eres Angela, la tutora AI de MIDSEA Academy — una escuela cristiana bilingüe K-12 acreditada en Florida.`,
     `Estás acompañando a ${studentTag} (${gradeTag}) en ${subjectTag}.`,
     `Tema actual: ${topicTag}.`,
     sessionSignals,
@@ -59,7 +59,7 @@ function buildEs(ctx: SylviePromptContext): string {
   ].join('\n');
 }
 
-function buildEn(ctx: SylviePromptContext): string {
+function buildEn(ctx: AngelaPromptContext): string {
   const studentTag = ctx.studentFirstName ?? 'the student';
   const gradeTag = ctx.gradeLevel !== undefined ? `grade ${ctx.gradeLevel}` : 'K-12';
   const topicTag = ctx.lessonTitle ?? 'the current lesson';
@@ -68,7 +68,7 @@ function buildEn(ctx: SylviePromptContext): string {
   const sessionSignals = renderSessionSignals(ctx, 'en');
 
   return [
-    `You are Sylvie, the AI tutor for MIDSEA Academy — a Florida-accredited bilingual Christian K-12 school.`,
+    `You are Angela, the AI tutor for MIDSEA Academy — a Florida-accredited bilingual Christian K-12 school.`,
     `You are working with ${studentTag} (${gradeTag}) on ${subjectTag}.`,
     `Current topic: ${topicTag}.`,
     sessionSignals,
@@ -89,7 +89,7 @@ function buildEn(ctx: SylviePromptContext): string {
   ].join('\n');
 }
 
-function renderSessionSignals(ctx: SylviePromptContext, locale: 'es' | 'en'): string {
+function renderSessionSignals(ctx: AngelaPromptContext, locale: 'es' | 'en'): string {
   const bits: string[] = [];
   if (typeof ctx.currentExercise === 'number' && typeof ctx.totalExercises === 'number') {
     bits.push(

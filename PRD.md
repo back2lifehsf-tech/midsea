@@ -14,7 +14,7 @@
 Midsea es una plataforma de homeschooling integral, **bilingüe por diseño** (español nativo, inglés escalado), que combina:
 - **Currículo académico completo** PreK-12 alineado a estándares internacionales (Common Core adaptado, estándares latinoamericanos SEP/LOMLOE, IB PYP/MYP opcional)
 - **AI Agentic Tutors** (tutores autónomos inteligentes) que personalizan el aprendizaje en tiempo real en **ambos idiomas**
-- **Gamificación profunda** con economía virtual "Nexos", avatares, logros y mundos colaborativos
+- **Gamificación profunda** con economía virtual "Coin", avatares, logros y mundos colaborativos
 - **Herramientas parentales completas** para planificación, seguimiento y reportes regulatorios en español e inglés
 - **Comunidad segura** de estudiantes homeschoolers con moderación AI + humana
 
@@ -57,7 +57,7 @@ Midsea es una plataforma de homeschooling integral, **bilingüe por diseño** (e
 **Features locked:**
 - Core subjects: Matemáticas, Language Arts (español), Ciencias, Estudios Sociales
 - AI Tutor básico: Diagnóstico inicial, explicaciones adaptativas, hints proactivos en **español nativo**
-- Gamificación v1: Sistema de puntos "Nexos", avatares básicos, logros por lección, leaderboard familiar
+- Gamificación v1: Sistema de puntos "Coin", avatares básicos, logros por lección, leaderboard familiar
 - Parent Dashboard: Planificador semanal automático, gradebook, reportes de progreso en español
 - Offline mode: Descarga de PDFs y videos para zonas sin internet
 - Mobile-first: Tablet es el dispositivo principal (iPad/Android)
@@ -69,8 +69,8 @@ Midsea es una plataforma de homeschooling integral, **bilingüe por diseño** (e
 
 **Features:**
 - High School curriculum con transcript oficial y pathways a universidad
-- AI Agentic avanzado: "Sylvie-like" agents que planifican semanas completas, generan worksheets personalizados, conectan inventario físico de libros/juguetes educativos
-- **Gamificación v2: Economía virtual "Nexos"** (100 por lección como Miacademy), tiendas digitales, trading entre estudiantes, clanes/guilds para proyectos colaborativos, "Minecraft-style" mundos de aprendizaje
+- AI Agentic avanzado: "Angela-like" agents que planifican semanas completas, generan worksheets personalizados, conectan inventario físico de libros/juguetes educativos
+- **Gamificación v2: Economía virtual "Coin"** (100 por lección como Miacademy), tiendas digitales, trading entre estudiantes, clanes/guilds para proyectos colaborativos, "Minecraft-style" mundos de aprendizaje
 - Comunidad moderada: Newspaper escrito por estudiantes, Clubs temáticos, comentarios predefinidos (no chat libre, como Miacademy)
 - Electivas: Programación, arte digital, idiomas (inglés como segunda lengua), life skills
 - White-label para microescuelas
@@ -136,13 +136,13 @@ Midsea es una plataforma de homeschooling integral, **bilingüe por diseño** (e
 |---------|---------------------------|------------------------|
 | **Precio** | $45/mes flat (hasta 4 hijos) | $29/mes Core, $45/mes Pro, $69/mes Family (4 hijos) |
 | **Mundo visual** | Isla 3D con paths de lecciones | Mundos temáticos por materia (Ciudad STEM, Bosque Literario) |
-| **Economía** | 100 gold por lección, tienda de ropa/avatar/house items | 100 Nexos por lección, tienda + marketplace estudiante-estudiante |
+| **Economía** | 100 gold por lección, tienda de ropa/avatar/house items | 100 Coin por lección, tienda + marketplace estudiante-estudiante |
 | **Tienda parental** | Padre puede ver/controlar compras del niño | Parent Copilot: aprobación de compras, límites configurables |
 | **Comunidad** | Newspaper, Clubs, comentarios predefinidos (NO chat libre) | Newspaper, Clanes, comentarios predefinidos + moderación AI |
 | **Offline** | Descarga de lecciones para sin internet | Offline mode con descarga progresiva + worksheets PDF |
 | **High School** | MiaPrep separado ($394/mes) | K-12 integrado en una plataforma, diploma track v3 |
 | **Idioma** | Solo inglés | Español nativo + inglés toggle |
-| **AI Tutor** | No tiene | Sylvie: tutor personal 24/7 en ambos idiomas |
+| **AI Tutor** | No tiene | Angela: tutor personal 24/7 en ambos idiomas |
 | **Parent Dashboard** | Progreso básico, asignación manual | AI Copilot: planificación automática, alertas proactivas, reportes regulatorios |
 
 ### Indirectos
@@ -162,7 +162,7 @@ Midsea es una plataforma de homeschooling integral, **bilingüe por diseño** (e
    - **Code-switching natural:** Si el estudiante mezcla español e inglés, el tutor sigue el lead
 
 2. **Gamificación con Propósito Pedagógico ("Learn-to-Earn" real)**
-   - Economía virtual "Nexos": 100 por lección completada con mastery (80%+), como Miacademy pero con más sinks
+   - Economía virtual "Coin": 100 por lección completada con mastery (80%+), como Miacademy pero con más sinks
    - "Clanes de Aprendizaje": Grupos de 4-6 estudiantes para proyectos PBL (Project Based Learning) con recompensas colectivas
    - "Worlds": Mundos temáticos ("Antiguo Egipto" para historia, "Laboratorio Químico" para ciencias) donde el progreso desbloquea áreas
    - Sistema de "Logros de Transferencia": Recompensas por aplicar conocimiento al mundo real (foto de experimento, video explicando a hermano)
@@ -249,8 +249,8 @@ Content Structure:
 │   ├── es.json       # UI en español
 │   └── en.json       # UI en inglés
 └── ai-prompts/
-    ├── sylvie-es.txt # Tutor en español
-    └── sylvie-en.txt # Tutor en inglés
+    ├── angela-es.txt # Tutor en español
+    └── angela-en.txt # Tutor en inglés
 ```
 
 **i18n Framework:** next-intl con locale detection por IP y override manual.

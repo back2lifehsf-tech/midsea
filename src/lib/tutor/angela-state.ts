@@ -4,10 +4,10 @@ import { create } from 'zustand';
 import { evaluateProactive } from './ProactiveIntervention';
 import type { LessonContext, SessionSnapshot } from './LessonContext';
 
-// Zustand store central de Sylvie. AI_TUTOR_SPEC seccion 5 (state machine)
+// Zustand store central de Angela. AI_TUTOR_SPEC seccion 5 (state machine)
 // + 4.4 (SessionContext) en un solo store para v1.
 
-export type SylvieState =
+export type AngelaState =
   | 'idle'
   | 'active'
   | 'suggesting'
@@ -19,7 +19,7 @@ export type WidgetMode = 'collapsed' | 'expanded' | 'focus';
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'sylvie-proactive';
+  role: 'user' | 'assistant' | 'angela-proactive';
   content: string;
   timestamp: number;
   ruleId?: string;
@@ -31,12 +31,12 @@ export interface ProactiveTrigger {
   messageParams?: Record<string, string | number>;
 }
 
-const STORAGE_KEY = 'midsea_sylvie_chat_v1';
+const STORAGE_KEY = 'midsea_angela_chat_v1';
 const HISTORY_LIMIT = 20;
 
 interface TutorState {
   // animacion
-  sylvieState: SylvieState;
+  angelaState: AngelaState;
 
   // contexto curricular activo
   lessonContext: LessonContext | null;
@@ -56,7 +56,7 @@ interface TutorState {
   widgetOpen: boolean;
   widgetMode: WidgetMode;
 
-  // intervencion pendiente (Sylvie quiere decir algo)
+  // intervencion pendiente (Angela quiere decir algo)
   pendingProactive: ProactiveTrigger | null;
   hasUnreadProactive: boolean;
 
@@ -85,8 +85,8 @@ interface TutorActions {
   finishStreaming: () => void;
   clearHistory: () => void;
 
-  // sylvie state + proactive
-  setSylvieState: (state: SylvieState) => void;
+  // angela state + proactive
+  setAngelaState: (state: AngelaState) => void;
   consumeProactive: () => ProactiveTrigger | null;
 
   // persistencia
@@ -121,7 +121,7 @@ function loadMessages(): ChatMessage[] {
       (m): m is ChatMessage =>
         typeof m?.id === 'string' &&
         typeof m?.content === 'string' &&
-        (m?.role === 'user' || m?.role === 'assistant' || m?.role === 'sylvie-proactive')
+        (m?.role === 'user' || m?.role === 'assistant' || m?.role === 'angela-proactive')
     ).slice(-HISTORY_LIMIT);
   } catch {
     return [];
@@ -129,7 +129,7 @@ function loadMessages(): ChatMessage[] {
 }
 
 export const useTutorStore = create<TutorState & TutorActions>((set, get) => ({
-  sylvieState: 'idle',
+  angelaState: 'idle',
   lessonContext: null,
   studentFirstName: null,
   currentExercise: 0,
@@ -153,7 +153,7 @@ export const useTutorStore = create<TutorState & TutorActions>((set, get) => ({
     set({
       lessonContext: ctx,
       studentFirstName: student?.firstName ?? get().studentFirstName,
-      sylvieState: ctx ? 'active' : 'idle',
+      angelaState: ctx ? 'active' : 'idle',
       sessionStartedAt: ctx ? now : 0,
       lastExerciseStartedAt: ctx ? now : 0,
       currentExercise: 0,
@@ -207,7 +207,7 @@ export const useTutorStore = create<TutorState & TutorActions>((set, get) => ({
       totalCorrect,
       currentExercise,
       lastExerciseStartedAt: now,
-      sylvieState: proactive ? 'suggesting' : correct ? 'celebrating' : 'active',
+      angelaState: proactive ? 'suggesting' : correct ? 'celebrating' : 'active',
       pendingProactive: proactive,
       hasUnreadProactive: proactive ? true : s.hasUnreadProactive
     });
@@ -216,7 +216,7 @@ export const useTutorStore = create<TutorState & TutorActions>((set, get) => ({
     if (correct && !proactive) {
       setTimeout(() => {
         const cur = get();
-        if (cur.sylvieState === 'celebrating') set({ sylvieState: 'active' });
+        if (cur.angelaState === 'celebrating') set({ angelaState: 'active' });
       }, 1800);
     }
   },
@@ -232,7 +232,7 @@ export const useTutorStore = create<TutorState & TutorActions>((set, get) => ({
       totalCorrect: 0,
       pendingProactive: null,
       hasUnreadProactive: false,
-      sylvieState: 'idle'
+      angelaState: 'idle'
     }),
 
   openWidget: (mode = 'expanded') => {
@@ -268,7 +268,7 @@ export const useTutorStore = create<TutorState & TutorActions>((set, get) => ({
   },
 
   finishStreaming: () => {
-    set({ isStreaming: false, sylvieState: 'active' });
+    set({ isStreaming: false, angelaState: 'active' });
     persistMessages(get().messages);
   },
 
@@ -281,7 +281,7 @@ export const useTutorStore = create<TutorState & TutorActions>((set, get) => ({
     }
   },
 
-  setSylvieState: (state) => set({ sylvieState: state }),
+  setAngelaState: (state) => set({ angelaState: state }),
 
   consumeProactive: () => {
     const p = get().pendingProactive;

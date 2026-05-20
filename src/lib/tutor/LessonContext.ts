@@ -1,4 +1,4 @@
-// Tipos del contexto que Sylvie necesita para responder con sentido.
+// Tipos del contexto que Angela necesita para responder con sentido.
 // AI_TUTOR_SPEC seccion 4.3: Curriculum Context Engine.
 //
 // v1: alimentado por el lesson detail page (server-component) que pasa los

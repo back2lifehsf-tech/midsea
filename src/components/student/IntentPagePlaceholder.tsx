@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/Card';
 import { intentIcons, intentTone, type IntentKey } from './intentVisuals';
 
 // Stub compartido por las 4 paginas de intencion (/stuck, /prep, /explore,
-// /review). Honesto sobre el estado: explica que va a hacer Sylvie aqui en
+// /review). Honesto sobre el estado: explica que va a hacer Angela aqui en
 // la version completa, no es un generico "Coming Soon".
 export function IntentPagePlaceholder({
   locale,
