@@ -59,6 +59,7 @@ function Option({
     <label
       className={[
         'relative flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+        'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-midsea-lagoon has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-midsea-foam',
         checked
           ? 'bg-white text-midsea-deep shadow-sm ring-1 ring-midsea-ocean/15'
           : 'text-midsea-ink/70 hover:text-midsea-deep'

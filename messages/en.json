@@ -160,6 +160,33 @@
           "feat5": "No extra fees per additional student",
           "disclaimer": "If you have 5+ kids, contact us for a custom plan."
         }
+      },
+      "faq": {
+        "heading": "Frequently asked questions",
+        "q1": {
+          "question": "How much does it cost if I have 2 kids?",
+          "answer": "On Core, $58/mo ($29 × 2). On Pro, $90/mo ($45 × 2). Each child gets their own progress, avatar, and Angela. If you have 3 or more kids, Family at $69/mo is the better fit."
+        },
+        "q2": {
+          "question": "Can I change plans later?",
+          "answer": "Yes, anytime from the Parent Copilot. Changes are prorated on the next charge."
+        },
+        "q3": {
+          "question": "Are refunds available?",
+          "answer": "No refunds for partial periods, but you can cancel anytime and access continues until the end of the period already paid."
+        },
+        "q4": {
+          "question": "What if I pick annual and need to cancel after 3 months?",
+          "answer": "You can cancel and you keep access until the end of the paid year. We don't refund the unused fraction — that's why the 30% discount only applies when you commit to the full year."
+        },
+        "q5": {
+          "question": "Do you accept payments from Mexico / LATAM?",
+          "answer": "Yes, we accept cards from any country. Prices are in USD. We'll soon add OXXO (Mexico) and local currency."
+        },
+        "q6": {
+          "question": "What's included in \"automated regulatory reports\"?",
+          "answer": "We generate the formats your jurisdiction requires to validate homeschooling: SEP in Mexico, LOMLOE in Spain, Florida Compulsory Attendance Affidavit, Texas Notice of Intent, and the equivalent reports for the other states and countries we keep adding."
+        }
       }
     },
     "finalCta": {

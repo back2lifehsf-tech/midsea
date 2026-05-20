@@ -160,6 +160,33 @@
           "feat5": "Sin sobrecargos por estudiante adicional",
           "disclaimer": "Si tienes 5+ hijos, contáctanos para plan personalizado."
         }
+      },
+      "faq": {
+        "heading": "Preguntas frecuentes",
+        "q1": {
+          "question": "¿Cuánto cuesta si tengo 2 hijos?",
+          "answer": "En Core, $58/mes ($29 × 2). En Pro, $90/mes ($45 × 2). Cada hijo tiene su propio progreso, avatar y Angela. Si tienes 3 o más hijos, Family a $69/mes te conviene."
+        },
+        "q2": {
+          "question": "¿Puedo cambiar de plan después?",
+          "answer": "Sí, en cualquier momento desde el Parent Copilot. Los cambios se prorratean en el siguiente cobro."
+        },
+        "q3": {
+          "question": "¿Hay reembolsos?",
+          "answer": "No hay reembolsos por períodos parciales, pero puedes cancelar cuando quieras y el acceso continúa hasta el final del período ya pagado."
+        },
+        "q4": {
+          "question": "¿Qué pasa si elijo anual y necesito cancelar a los 3 meses?",
+          "answer": "Puedes cancelar y mantienes acceso hasta el final del año pagado. No reembolsamos la fracción no usada — por eso el descuento del 30% solo aplica si te comprometes con el año."
+        },
+        "q5": {
+          "question": "¿Aceptan pagos desde México / LATAM?",
+          "answer": "Sí, aceptamos tarjetas de cualquier país. Los precios están en USD. Próximamente sumaremos OXXO (México) y moneda local."
+        },
+        "q6": {
+          "question": "¿Qué incluye \"reportes regulatorios automáticos\"?",
+          "answer": "Generamos los formatos que pide tu jurisdicción para validar homeschooling: SEP en México, LOMLOE en España, Florida Compulsory Attendance Affidavit, Texas Notice of Intent, y los reportes equivalentes de otros estados y países que vamos sumando."
+        }
       }
     },
     "finalCta": {

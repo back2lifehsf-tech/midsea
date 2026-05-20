@@ -10,6 +10,7 @@ import {
   buildDisplayCell,
   type PricingDisplayMatrix
 } from './pricing/PricingPanel';
+import { PricingFAQ } from './pricing/PricingFAQ';
 
 /**
  * PricingSection — shell server. Epic 02b §1.
@@ -61,6 +62,8 @@ export async function PricingSection({ locale }: { locale: string }) {
         </header>
 
         <PricingPanel displays={displays} savePct={savePct} />
+
+        <PricingFAQ locale={locale} />
       </div>
     </section>
   );
