@@ -44,6 +44,29 @@ enum LessonStatus {
   MASTERED
 }
 
+// Epic 03 + ADR-001 §10: estado de suscripción por estudiante.
+// PENDING_PAYMENT cubre el caso "padre llenó form pero no pagó / el cobro
+// falló". Hasta que llegue ACTIVE el estudiante NO puede usar Angela.
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  PENDING_PAYMENT
+  CANCELED
+  PAUSED
+}
+
+enum PlanTier {
+  CORE
+  PRO
+  FAMILY
+}
+
+enum BillingCycle {
+  MONTHLY
+  ANNUAL
+}
+
 enum CoinReason {
   LESSON_MASTERY
   BADGE
@@ -74,6 +97,10 @@ model Parent {
   family       Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId     String
   createdAt    DateTime @default(now())
+  // Epic 03 + ADR-001 §2: un Customer de Stripe por Parent. Nullable: se
+  // crea on-demand al primer cobro (no en signup) para evitar Customers
+  // huérfanos que no van a comprar.
+  stripeCustomerId String? @unique
 
   @@index([familyId])
 }
@@ -89,9 +116,25 @@ model Student {
   pinHash         String?
   // Identificador del avatar (referencia a src/lib/auth/avatars.ts).
   avatarKey       String?
+  // Notas opcionales que el padre le pasa a Angela ("hace 6 meses ADHD
+  // dx, prefiere ejemplos cortos"). Epic 03 — Step A del NewStudentDialog.
+  angelaNotes     String?         @db.Text
   family          Family          @relation(fields: [familyId], references: [id], onDelete: Cascade)
   familyId        String
   createdAt       DateTime        @default(now())
+
+  // Epic 03 + ADR-001 §10: state de suscripción.
+  //   - subscriptionStatus arranca en PENDING_PAYMENT al crear el Student
+  //     (antes de cobrar). El webhook payment_intent.succeeded lo lleva
+  //     a ACTIVE.
+  //   - monthlyAmountCents es el "precio efectivo del mes" (anual / 12
+  //     o monthly). Permite que Parent Copilot sume sin recalcular cycles.
+  subscriptionStatus    SubscriptionStatus @default(PENDING_PAYMENT)
+  planTier              PlanTier?
+  billingCycle          BillingCycle?
+  stripeSubscriptionId  String?            @unique
+  currentPeriodEnd      DateTime?
+  monthlyAmountCents    Int?
 
   progress        LessonProgress[]
   ledger          CoinEntry[]
@@ -100,6 +143,7 @@ model Student {
   tutorUsage      TutorUsageDaily[]
 
   @@index([familyId])
+  @@index([subscriptionStatus])
 }
 
 model Lesson {
@@ -221,4 +265,18 @@ model TutorUsageDaily {
 
   @@unique([studentId, date])
   @@index([studentId])
+}
+
+// Epic 03 + ADR-001 §9: idempotencia de webhooks de Stripe.
+// `id` = Stripe event id (`evt_...`). Si recibimos el mismo evento dos
+// veces (retry de Stripe, replay), upsert no-op. Sin esto, un
+// payment_intent.succeeded duplicado podría disparar acciones dobles
+// (segundo cargo, doble email, etc.).
+model StripeWebhookEvent {
+  id          String   @id
+  type        String
+  payload     Json
+  processedAt DateTime @default(now())
+
+  @@index([type, processedAt])
 }
