@@ -1,14 +1,9 @@
 'use client';
 import { useState } from 'react';
-import type { Plan, BillingCycle } from '@/lib/pricing/plans';
+import type { BillingCycle } from '@/lib/pricing/plans';
+import type { PricingDisplayMatrix } from './display';
 import { PricingToggle } from './PricingToggle';
-import { PricingCard, type PricingCardDisplay } from './PricingCard';
-
-export interface PricingDisplayMatrix {
-  core: { monthly: PricingCardDisplay; annual: PricingCardDisplay };
-  pro: { monthly: PricingCardDisplay; annual: PricingCardDisplay };
-  family: { monthly: PricingCardDisplay; annual: PricingCardDisplay };
-}
+import { PricingCard } from './PricingCard';
 
 interface PricingPanelProps {
   displays: PricingDisplayMatrix;
@@ -63,24 +58,3 @@ export function PricingPanel({ displays, savePct }: PricingPanelProps) {
   );
 }
 
-/** Ayuda al server para construir el display matrix desde un solo lugar. */
-export function buildDisplayCell(args: {
-  monthlyDisplayCents: number;
-  annualTotalCents: number | null;
-  annualSavingsCents: number;
-  formatUsd: (cents: number) => string;
-}): PricingCardDisplay {
-  const { monthlyDisplayCents, annualTotalCents, annualSavingsCents, formatUsd } = args;
-  return {
-    monthlyLabel: formatUsd(monthlyDisplayCents),
-    annualTotalLabel:
-      annualTotalCents !== null ? formatUsd(annualTotalCents) : null,
-    annualSavingsLabel:
-      annualSavingsCents > 0 ? formatUsd(annualSavingsCents) : null,
-    // Server lo override con el flag real basado en el cycle activo:
-    showAnnualSubtitle: false
-  };
-}
-
-/** Re-export tipos para uso del server. */
-export type { Plan, BillingCycle, PricingCardDisplay };

@@ -1,17 +1,7 @@
 'use client';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Plan } from '@/lib/pricing/plans';
-
-export interface PricingCardDisplay {
-  /** "$29.00" o "$20.30" — pre-formateado server-side. */
-  monthlyLabel: string;
-  /** "$243.60" total anual, o null si no aplica. */
-  annualTotalLabel: string | null;
-  /** "$104.40" ahorro vs 12 meses al precio mensual, o null. */
-  annualSavingsLabel: string | null;
-  /** true si el toggle Anual está activo Y el plan ofrece anual. */
-  showAnnualSubtitle: boolean;
-}
+import type { PricingCardDisplay } from './display';
 
 interface PricingCardProps {
   plan: Plan;

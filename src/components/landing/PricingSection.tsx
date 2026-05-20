@@ -5,11 +5,8 @@ import {
   formatUsd,
   type Plan
 } from '@/lib/pricing/plans';
-import {
-  PricingPanel,
-  buildDisplayCell,
-  type PricingDisplayMatrix
-} from './pricing/PricingPanel';
+import { PricingPanel } from './pricing/PricingPanel';
+import { buildDisplayCell, type PricingDisplayMatrix } from './pricing/display';
 import { PricingFAQ } from './pricing/PricingFAQ';
 
 /**
