@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { AngelaAvatar } from './Avatar';
 import { useTutorStore, type AngelaUiMessage } from '@/lib/tutor/store';
 import type { TutorMessageDto } from '@/lib/tutor/types';
+import { parseChainOfThought } from '@/lib/tutor/cot-parser';
 
 interface StuckChatProps {
   initialMessages: TutorMessageDto[];
@@ -149,6 +150,47 @@ function Bubble({
 }) {
   const isUser = message.role === 'user';
   const showDots = message.role === 'assistant' && message.pending && !message.content;
+
+  // Epic 02.5 §5: si la respuesta de Angela contiene `### Paso N` / `### Step N`
+  // headers, renderizamos los pasos como tarjetas apiladas — visual sectioning
+  // sin animación de transición (deferida a Pendiente Epic 04).
+  const parsed =
+    !isUser && message.content && !showDots
+      ? parseChainOfThought(message.content)
+      : null;
+  const hasSteps = parsed?.hasSteps ?? false;
+
+  if (hasSteps && parsed) {
+    return (
+      <div className="flex justify-start" data-role={message.role}>
+        <div
+          className="max-w-[85%] space-y-2 text-base text-slate-900"
+          aria-label="Angela"
+        >
+          {parsed.preamble ? (
+            <div className="whitespace-pre-wrap break-words rounded-2xl rounded-bl-sm bg-slate-100 px-4 py-2">
+              {parsed.preamble}
+            </div>
+          ) : null}
+          {parsed.steps.map((step, i) => (
+            <div
+              key={i}
+              className="rounded-xl border border-slate-200 bg-white px-4 py-3"
+              data-step={i + 1}
+            >
+              <p className="mb-1 text-xs font-bold uppercase tracking-wide text-midsea-lagoon">
+                {step.label}
+              </p>
+              <p className="whitespace-pre-wrap break-words text-slate-900">
+                {step.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={isUser ? 'flex justify-end' : 'flex justify-start'}
