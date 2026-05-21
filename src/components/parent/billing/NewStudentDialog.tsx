@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import type { StudentCreateInput } from '@/lib/schemas/student';
 import type {
   PLAN_TIER_VALUES,
@@ -55,6 +56,7 @@ export function NewStudentDialog({
 }: NewStudentDialogProps) {
   const t = useTranslations('parent.students.dialog');
   const tErr = useTranslations('parent.errors');
+  const router = useRouter();
   const [step, setStep] = useState<Step>('form');
   const [student, setStudent] = useState<CreatedStudent | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -200,7 +202,16 @@ export function NewStudentDialog({
             />
           )}
           {step === 'success' && student && (
-            <SuccessView studentName={student.displayName} onClose={onClose} />
+            <SuccessView
+              studentName={student.displayName}
+              onClose={() => {
+                // Bug fix: server components no re-fetchean al volver al
+                // mismo path con <Link>. router.refresh() invalida el cache
+                // del segment para que el dashboard re-querye Students.
+                router.refresh();
+                onClose();
+              }}
+            />
           )}
           {step === 'error' && (
             <ErrorView
