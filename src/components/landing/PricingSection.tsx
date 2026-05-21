@@ -1,53 +1,66 @@
 import { getTranslations } from 'next-intl/server';
-import { PricingCard } from './PricingCard';
+import {
+  getAnnualDiscountPct,
+  getDisplayPlan,
+  formatUsd,
+  type Plan
+} from '@/lib/pricing/plans';
+import { PricingPanel } from './pricing/PricingPanel';
+import { buildDisplayCell, type PricingDisplayMatrix } from './pricing/display';
+import { PricingFAQ } from './pricing/PricingFAQ';
 
-type PlanKey = 'monthly' | 'annual' | 'lifetime';
-
-const planSuffixKey: Record<PlanKey, 'perMonth' | 'perYear' | 'oneTime'> = {
-  monthly: 'perMonth',
-  annual: 'perYear',
-  lifetime: 'oneTime'
-};
-
+/**
+ * PricingSection — shell server. Epic 02b §1.
+ *
+ * Pre-computa todos los display strings (formato USD, redondeo) en el
+ * servidor — el cliente sólo alterna entre `monthly` y `annual` de un
+ * objeto plano. Mantiene `plans.ts` como `server-only`.
+ *
+ * Las cifras vienen del módulo de pricing que lee `ANNUAL_DISCOUNT_PCT`.
+ * En Epic 03 esto se reemplaza por `getPlansFromStripe()` que va contra
+ * el dashboard real.
+ */
 export async function PricingSection({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'landing.pricing' });
+  const savePct = getAnnualDiscountPct();
 
-  const plans: { key: PlanKey; popular: boolean }[] = [
-    { key: 'monthly', popular: false },
-    { key: 'annual', popular: true },
-    { key: 'lifetime', popular: false }
-  ];
+  const plans: Plan[] = ['core', 'pro', 'family'];
+  const displays = plans.reduce((acc, plan) => {
+    const monthly = getDisplayPlan(plan, 'monthly');
+    const annual = getDisplayPlan(plan, 'annual');
+    acc[plan] = {
+      monthly: buildDisplayCell({
+        monthlyDisplayCents: monthly.monthlyDisplayCents,
+        annualTotalCents: monthly.annualTotalCents,
+        annualSavingsCents: monthly.annualSavingsCents,
+        formatUsd
+      }),
+      annual: buildDisplayCell({
+        monthlyDisplayCents: annual.monthlyDisplayCents,
+        annualTotalCents: annual.annualTotalCents,
+        annualSavingsCents: annual.annualSavingsCents,
+        formatUsd
+      })
+    };
+    return acc;
+  }, {} as PricingDisplayMatrix);
 
   return (
     <section id="pricing" className="scroll-mt-20 bg-white/60">
       <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
-        <header className="max-w-2xl space-y-3">
+        <header className="mx-auto max-w-2xl space-y-3 text-center">
+          <p className="text-xs font-bold uppercase tracking-wider text-midsea-lagoon">
+            {t('eyebrow')}
+          </p>
           <h2 className="font-display text-3xl font-bold text-midsea-deep sm:text-4xl">
             {t('heading')}
           </h2>
           <p className="text-base text-midsea-ink/70">{t('subheading')}</p>
         </header>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
-          {plans.map((plan) => (
-            <PricingCard
-              key={plan.key}
-              name={t(`${plan.key}.name`)}
-              price={t(`${plan.key}.price`)}
-              priceSuffix={t(planSuffixKey[plan.key])}
-              body={t(`${plan.key}.body`)}
-              features={[
-                t(`${plan.key}.feat1`),
-                t(`${plan.key}.feat2`),
-                t(`${plan.key}.feat3`),
-                t(`${plan.key}.feat4`)
-              ]}
-              ctaLabel={t('cta')}
-              ctaHref={`/${locale}/signup`}
-              popularLabel={plan.popular ? t('popular') : undefined}
-            />
-          ))}
-        </div>
+        <PricingPanel displays={displays} savePct={savePct} />
+
+        <PricingFAQ locale={locale} />
       </div>
     </section>
   );

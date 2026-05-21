@@ -114,39 +114,79 @@
       }
     },
     "pricing": {
-      "heading": "Una suscripción, todo el currículo",
-      "subheading": "Sin contratos largos. Cancela cuando quieras.",
-      "popular": "Más popular",
+      "eyebrow": "Precios",
+      "heading": "Un tutor AI para cada hijo. Sin sorpresas.",
+      "subheading": "Paga por estudiante. Cada hijo tiene su propia Angela, su MasteryMap y su Ruta de Aprendizaje. Cancela cuando quieras.",
+      "perStudent": "por estudiante",
       "perMonth": "/mes",
-      "perYear": "/año",
-      "oneTime": "una vez",
-      "cta": "Comenzar prueba",
-      "monthly": {
-        "name": "Mensual",
-        "price": "$29",
-        "body": "Acceso completo, cancela cuando quieras.",
-        "feat1": "Currículo K-12 completo",
-        "feat2": "AI Tutor ilimitado",
-        "feat3": "Hasta 4 hijos",
-        "feat4": "Soporte por email"
+      "perFour": "para hasta 4 hijos",
+      "cta": "Comenzar",
+      "badgeRecommended": "Recomendado",
+      "annualSubtitle": "{total} al año · Ahorras {savings}",
+      "annualOnlyMonthly": "Disponible solo mensual en v1",
+      "toggle": {
+        "legend": "Ciclo de facturación",
+        "monthly": "Mensual",
+        "annual": "Anual",
+        "savePct": "Ahorra {pct}%"
       },
-      "annual": {
-        "name": "Anual",
-        "price": "$290",
-        "body": "2 meses gratis. Acceso completo.",
-        "feat1": "Todo lo del plan mensual",
-        "feat2": "Reportes regulatorios",
-        "feat3": "Modo offline (pronto)",
-        "feat4": "Soporte prioritario"
+      "plans": {
+        "core": {
+          "name": "Core",
+          "tagline": "Para familias con un hijo o probando Midsea.",
+          "feat1": "Angela 24/7 en español o inglés",
+          "feat2": "Acceso a todas las materias K-12",
+          "feat3": "MasteryMap y planificador semanal AI",
+          "feat4": "Reportes para el padre",
+          "feat5": "Cancela cuando quieras"
+        },
+        "pro": {
+          "name": "Pro",
+          "tagline": "Para familias serias sobre homeschooling.",
+          "feat1": "Todo lo del plan Core, más:",
+          "feat2": "Reportes regulatorios automáticos (FL, TX, MX-SEP, ES-LOMLOE)",
+          "feat3": "Sesiones grupales con tutor humano (4 por mes)",
+          "feat4": "Prioridad en soporte",
+          "feat5": "Análisis predictivo del progreso"
+        },
+        "family": {
+          "name": "Family",
+          "tagline": "Familias grandes. Precio fijo sin sorpresas.",
+          "badge": "Mejor para 3+ hijos",
+          "feat1": "Todo lo del plan Pro, más:",
+          "feat2": "Hasta 4 estudiantes incluidos",
+          "feat3": "Dashboards comparativos por hijo",
+          "feat4": "Coordinación de horarios entre hermanos",
+          "feat5": "Sin sobrecargos por estudiante adicional",
+          "disclaimer": "Si tienes 5+ hijos, contáctanos para plan personalizado."
+        }
       },
-      "lifetime": {
-        "name": "Lifetime",
-        "price": "$590",
-        "body": "Para toda la familia, para siempre.",
-        "feat1": "Todo lo del plan anual",
-        "feat2": "Acceso de por vida",
-        "feat3": "Nuevas materias incluidas",
-        "feat4": "Cuenta familiar premium"
+      "faq": {
+        "heading": "Preguntas frecuentes",
+        "q1": {
+          "question": "¿Cuánto cuesta si tengo 2 hijos?",
+          "answer": "En Core, $58/mes ($29 × 2). En Pro, $90/mes ($45 × 2). Cada hijo tiene su propio progreso, avatar y Angela. Si tienes 3 o más hijos, Family a $69/mes te conviene."
+        },
+        "q2": {
+          "question": "¿Puedo cambiar de plan después?",
+          "answer": "Sí, en cualquier momento desde el Parent Copilot. Los cambios se prorratean en el siguiente cobro."
+        },
+        "q3": {
+          "question": "¿Hay reembolsos?",
+          "answer": "No hay reembolsos por períodos parciales, pero puedes cancelar cuando quieras y el acceso continúa hasta el final del período ya pagado."
+        },
+        "q4": {
+          "question": "¿Qué pasa si elijo anual y necesito cancelar a los 3 meses?",
+          "answer": "Puedes cancelar y mantienes acceso hasta el final del año pagado. No reembolsamos la fracción no usada — por eso el descuento del 30% solo aplica si te comprometes con el año."
+        },
+        "q5": {
+          "question": "¿Aceptan pagos desde México / LATAM?",
+          "answer": "Sí, aceptamos tarjetas de cualquier país. Los precios están en USD. Próximamente sumaremos OXXO (México) y moneda local."
+        },
+        "q6": {
+          "question": "¿Qué incluye \"reportes regulatorios automáticos\"?",
+          "answer": "Generamos los formatos que pide tu jurisdicción para validar homeschooling: SEP en México, LOMLOE en España, Florida Compulsory Attendance Affidavit, Texas Notice of Intent, y los reportes equivalentes de otros estados y países que vamos sumando."
+        }
       }
     },
     "finalCta": {
@@ -344,6 +384,119 @@
       "subjectLanguage": "Lengua",
       "subjectScience": "Ciencias",
       "subjectSocial": "Sociales"
+    },
+    "students": {
+      "list": {
+        "subheading": "Mis estudiantes",
+        "heading": "Tu familia en Midsea",
+        "addCta": "Agregar estudiante",
+        "empty": {
+          "heading": "Aún no tienes estudiantes",
+          "subheading": "Agrega a tu primer hijo o hija. Le creamos su perfil con Angela y empiezas a usar Midsea hoy."
+        }
+      },
+      "card": {
+        "gradePreK": "PreK",
+        "gradeNumbered": "{n}° grado",
+        "viewProfileSoon": "Ver perfil — próximamente",
+        "completeHint": "Completa el pago de {amount} para activar a este estudiante.",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        },
+        "status": {
+          "active": "Activo",
+          "trialing": "Prueba",
+          "pending": "Pago pendiente",
+          "pastDue": "Pago atrasado",
+          "canceled": "Cancelado",
+          "paused": "Pausado"
+        }
+      },
+      "total": {
+        "aria": "Total mensual de la familia",
+        "heading": "Próximo cobro mensual",
+        "perMonth": "/mes",
+        "singleStudent": "1 estudiante en {plan}",
+        "planCount": "{n} {plan}",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        }
+      },
+      "dialog": {
+        "title": "Nuevo estudiante",
+        "close": "Cerrar",
+        "stepForm": "Paso 1 de 3",
+        "stepReauth": "Paso 2 de 3",
+        "stepPayment": "Paso 3 de 3",
+        "stepSuccess": "Listo",
+        "stepError": "Error",
+        "cycleMonthlyLabel": "mes",
+        "cycleAnnualLabel": "año"
+      },
+      "form": {
+        "nameLabel": "Nombre del estudiante",
+        "namePlaceholder": "Sofía",
+        "birthDateLabel": "Fecha de nacimiento",
+        "gradeLabel": "Grado",
+        "gradePreK": "PreK",
+        "gradeNumbered": "{n}° grado",
+        "localeLabel": "Idioma de aprendizaje",
+        "localeEs": "Español",
+        "localeEn": "Inglés",
+        "angelaNotesLabel": "Notas para Angela (opcional)",
+        "angelaNotesPlaceholder": "Cosas que ayudarían a Angela a acompañar mejor — diagnóstico, intereses, preferencias…",
+        "submit": "Continuar al pago",
+        "submitting": "Procesando…"
+      },
+      "reauth": {
+        "heading": "Confirma tu identidad",
+        "subheading": "Para autorizar el cobro de {amount} por {name} necesitamos tu contraseña.",
+        "passwordLabel": "Contraseña",
+        "submit": "Confirmar",
+        "submitting": "Verificando…",
+        "cancel": "Volver"
+      },
+      "payment": {
+        "payingFor": "Cobro para",
+        "amountLabel": "Total a pagar hoy:",
+        "disclaimer": "Se cobrará automáticamente cada {cycle}. Cancela cuando quieras.",
+        "confirm": "Confirmar y pagar {amount}",
+        "confirming": "Procesando pago…",
+        "back": "Volver"
+      },
+      "success": {
+        "heading": "¡{name} está adentro!",
+        "subheading": "Angela ya está conociendo a {name}. Cuando entre por primera vez, calibrarán juntos su Ruta de Aprendizaje.",
+        "goDashboard": "Ir al Dashboard"
+      },
+      "error": {
+        "heading": "No pudimos procesar el pago",
+        "subheading": "{name} está creado pero en espera. Puedes reintentar o intentar más tarde.",
+        "retry": "Reintentar",
+        "later": "Lo haré luego"
+      }
+    },
+    "errors": {
+      "name_required": "Necesitamos el nombre del estudiante.",
+      "birth_invalid": "Fecha de nacimiento inválida.",
+      "birth_future": "La fecha no puede estar en el futuro.",
+      "birth_too_old": "Esa fecha es demasiado antigua.",
+      "family_annual_unavailable": "Family solo está disponible con cobro mensual en v1.",
+      "create_failed": "No pudimos crear el estudiante. Inténtalo de nuevo.",
+      "subscribe_failed": "No pudimos iniciar el cobro. Inténtalo de nuevo.",
+      "customer_setup_failed": "Tuvimos un problema con el método de pago.",
+      "subscription_create_failed": "Stripe rechazó la creación de la suscripción.",
+      "subscription_exists": "Ya hay un cobro pendiente para este estudiante.",
+      "student_missing_plan": "Faltó elegir plan o ciclo.",
+      "invalid_password": "Contraseña incorrecta.",
+      "no_password_set": "Tu cuenta usó Google. Configura una contraseña primero.",
+      "unauthorized": "Tu sesión expiró. Inicia sesión otra vez.",
+      "payment_failed": "El pago falló. Revisa tu tarjeta o intenta otro método.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
     }
   },
   "student": {

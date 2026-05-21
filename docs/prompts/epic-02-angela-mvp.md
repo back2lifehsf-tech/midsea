@@ -205,11 +205,30 @@ Empieza por el PASO -1 ahora.
 
 ## Pendientes para Epic 03
 
+### Decisión 2026-05-20: Angela hero variant + responsive surfaces (supersede de "borrar AngelaWidget")
+
+**Contexto.** En revisión de UX post-Epic 02 con el equipo (sesión 2026-05-20), se decidió que `AngelaWidget` NO se borra. Permanece como surface principal de Angela en el espacio del estudiante, pero evoluciona en cinco dimensiones. Esta decisión **supersede** el item "Borrar el widget flotante AngelaWidget" que aparecía abajo en la sección de Limpieza de v1.
+
+| # | Pendiente | Estado actual | Cambio requerido |
+|---|---|---|---|
+| 1 | **Hero variant del avatar en `/dashboard`** | Avatar solo tiene `size: 'sm' \| 'md'` | Agregar `size="hero"` (~120px en tablet, ~72px en mobile). Reemplaza el círculo azul "Midsea" del header en la vista del estudiante. La marca Midsea queda en el footer/menu, no compite con Angela como personaje. |
+| 2 | **Medium variant en flujos de intención (`/stuck`, `/prep`, `/explore`, `/review`)** | Mismo `md` en todos lados | Diferenciar: `medium` (~80px tablet, ~56px mobile) en los 4 flujos. Confirma a Sofia que Angela está "más cerca" cuando entra a un flujo, pero sin robar la pantalla del contenido. |
+| 3 | **Bottom sheet real en mobile (no popover bottom-right)** | `AngelaWidget` usa popover anclado `bottom-right` también en mobile | Reemplazar por bottom sheet con drag handle, alturas snap (50% / 85% / fullscreen), respeta safe-area-bottom. Patron de shadcn/ui `Sheet side="bottom"`. |
+| 4 | **Panel lateral derecho en desktop (no popover bottom-right)** | Popover anclado bottom-right | En desktop ≥`md`, el `expanded` mode se monta como panel lateral derecho fijo (≈400px ancho, altura completa menos header). El `focus` mode sigue siendo fullscreen como hoy. |
+| 5 | **Ocultar Angela durante lecciones activas (`/student/lessons/[slug]`)** | Solo se oculta en `/stuck` (regex line 55 de `AngelaWidget.tsx`) | Extender el regex/path-check para ocultar también en `/student/lessons/`. Razón: durante una lección activa, Angela vive como botón discreto contextual ("Pedir ayuda") dentro de `LessonSurface`, no como widget global. |
+| 6 | **Burbuja proactiva con texto contextual al cargar `/dashboard`** | `hasUnread` flag existe pero solo enciende un dot rojo | Cuando Sofia entra a `/dashboard` y `ProactiveIntervention` detecta una sugerencia (e.g. "ayer dejaste pendiente fracciones"), Angela debe mostrar una burbuja de 2-3 segundos con el texto antes de colapsar al estado `idle`. Es el patrón demoable a inversores que separa a Angela de Max AI de Wited. |
+
+**Costo estimado.** Epic 02.5 dedicado (5-7 días). Alternativamente, fusionar al Epic 03 (Lesson Player + integración del tutor con currículo) si el equipo prefiere menos PRs. Recomendación: epic separado por menor riesgo de scope creep.
+
+**Cómo medir éxito:** demo a Sofia (estudiante de prueba) en tablet — Angela visible y reconocible desde primer segundo en dashboard, burbuja proactiva aparece sin clic, abrir chat NO desplaza el contenido principal, entrar a una lección oculta a Angela del header pero deja el botón "Pedir ayuda" visible dentro de la lección.
+
+---
+
 ### Limpieza de v1 (sylvie-v1) — no se borró en Epic 02
 Los archivos del branch viejo `feature/sylvie-v1` fueron *renombrados* a Angela pero NO eliminados porque siguen montados desde rutas en producción (`student/layout.tsx` monta `AngelaWidget`; `lessons/[slug]/page.tsx` usa `LessonSurface`). El epic 02 sólo cubrió `/stuck`. Para Epic 03:
 - Decidir si el "Pedir ayuda al tutor" dentro de la lección abre el nuevo `StuckChat` reutilizable, o si vive como mini-chat aparte.
-- Borrar el widget flotante `AngelaWidget` (contradice CLAUDE.md §5.4 — Sylvie en mobile = bottom sheet o pantalla completa, no modal flotante).
-- Eliminar `LessonContext.ts`, `ProactiveIntervention.ts`, `angela-state.ts`, `prompts/angela-system.ts`. Eran scaffolding sin uso real del LLM.
+- ~~Borrar el widget flotante `AngelaWidget`~~ **REVOCADO** por la decisión 2026-05-20 (ver sección de arriba). El widget se mantiene y evoluciona; no se borra.
+- Eliminar `LessonContext.ts`, `ProactiveIntervention.ts`, `angela-state.ts`, `prompts/angela-system.ts` solo si después de Epic 02.5 siguen sin uso real del LLM. `ProactiveIntervention` probablemente se reactivará para alimentar la burbuja contextual del item 6 de arriba — confirmar antes de borrar.
 - Endpoint viejo `src/app/api/tutor/route.ts` (no es el `/chat` nuevo): revisar si tiene callers; si no, borrar.
 
 ### Rename físico de DB (Nexos → Coin)
