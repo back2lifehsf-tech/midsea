@@ -7,7 +7,9 @@ const validInput = {
   gradeLevel: 1,
   preferredLocale: 'es' as const,
   plan: 'CORE' as const,
-  cycle: 'MONTHLY' as const
+  cycle: 'MONTHLY' as const,
+  pin: '1234',
+  avatarKey: 'fox' as const
 };
 
 describe('studentCreateSchema', () => {
@@ -65,6 +67,24 @@ describe('studentCreateSchema', () => {
       birthDate: '1988-05-01'
     });
     expect(r.success).toBe(false);
+  });
+
+  it('rejects PIN with non-digits or wrong length', () => {
+    expect(
+      studentCreateSchema.safeParse({ ...validInput, pin: '12ab' }).success
+    ).toBe(false);
+    expect(
+      studentCreateSchema.safeParse({ ...validInput, pin: '123' }).success
+    ).toBe(false);
+    expect(
+      studentCreateSchema.safeParse({ ...validInput, pin: '12345' }).success
+    ).toBe(false);
+  });
+
+  it('rejects unknown avatar key', () => {
+    expect(
+      studentCreateSchema.safeParse({ ...validInput, avatarKey: 'wolf' }).success
+    ).toBe(false);
   });
 
   it('rejects FAMILY + ANNUAL (not offered in v1)', () => {

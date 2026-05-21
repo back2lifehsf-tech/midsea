@@ -12,6 +12,18 @@ import { z } from 'zod';
 export const PLAN_TIER_VALUES = ['CORE', 'PRO', 'FAMILY'] as const;
 export const BILLING_CYCLE_VALUES = ['MONTHLY', 'ANNUAL'] as const;
 export const LOCALE_VALUES = ['es', 'en'] as const;
+export const AVATAR_KEY_VALUES = [
+  'fox',
+  'owl',
+  'cat',
+  'dog',
+  'panda',
+  'lion',
+  'fish',
+  'rabbit'
+] as const;
+
+const PIN_RE = /^\d{4}$/;
 
 const MIN_BIRTH_DATE = new Date('1990-01-01');
 
@@ -31,7 +43,17 @@ export const studentCreateSchema = z
       .optional()
       .transform((v) => (v && v.length > 0 ? v : undefined)),
     plan: z.enum(PLAN_TIER_VALUES),
-    cycle: z.enum(BILLING_CYCLE_VALUES)
+    cycle: z.enum(BILLING_CYCLE_VALUES),
+    // PIN + avatar: requeridos para que el estudiante pueda entrar via
+    // /student-login (que filtra por pinHash !== null). Si los dejamos
+    // opcionales el estudiante queda huérfano (creado pero no logueable).
+    pin: z
+      .string()
+      .trim()
+      .refine((v) => PIN_RE.test(v), { message: 'pin_invalid' }),
+    avatarKey: z.enum(AVATAR_KEY_VALUES, {
+      errorMap: () => ({ message: 'avatar_required' })
+    })
   })
   .superRefine((data, ctx) => {
     if (data.plan === 'FAMILY' && data.cycle === 'ANNUAL') {
