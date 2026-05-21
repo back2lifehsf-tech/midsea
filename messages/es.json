@@ -564,6 +564,9 @@
       "thinking": "Pensando…",
       "clearHistory": "Borrar conversación",
       "disclaimer": "Esta conversación se comparte con tu mamá o papá. Angela te orienta, no te da la respuesta.",
+      "sheet": {
+        "dragHandle": "Cambiar tamaño del panel"
+      },
       "placeholder": {
         "default": "¿Sobre qué quieres conversar?",
         "lesson": "¿Qué te confunde de «{topic}»?"

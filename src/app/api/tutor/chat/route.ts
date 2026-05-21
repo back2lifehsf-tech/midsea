@@ -9,6 +9,7 @@ import {
   appendAssistantMessage
 } from '@/lib/tutor/SessionContextEngine';
 import { generateStream } from '@/lib/tutor/ResponseGenerator';
+import { pickModelForMessage } from '@/lib/tutor/model-selector';
 import {
   consumeOneOrThrow,
   recordTokens,
@@ -144,6 +145,16 @@ export async function POST(req: NextRequest) {
     { role: 'user', content: message }
   ];
 
+  // Epic 02.5 §5: heurística STEM escala a `gpt-4o`; resto sigue `gpt-4o-mini`.
+  // El selector es por mensaje individual — no se "pega" al turno siguiente.
+  const modelChoice = pickModelForMessage(message);
+  console.log('[tutor]', {
+    studentId,
+    msgLen: message.length,
+    modelKind: modelChoice.kind,
+    model: modelChoice.name
+  });
+
   let usage: TokenUsage | undefined;
   let tokenStream: AsyncIterable<string>;
   try {
@@ -151,6 +162,7 @@ export async function POST(req: NextRequest) {
       locale,
       student: ctx.student,
       conversation,
+      model: modelChoice.name,
       onComplete: (u) => {
         usage = u;
       }

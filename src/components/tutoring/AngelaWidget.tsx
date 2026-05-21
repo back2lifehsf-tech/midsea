@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { useTutorStore } from '@/lib/tutor/angela-state';
 import { AngelaAvatar } from './AngelaAvatar';
 import { AngelaChat } from './AngelaChat';
+import { AngelaBottomSheet } from './AngelaBottomSheet';
+import { AngelaSidePanel } from './AngelaSidePanel';
 
 /**
  * AngelaWidget — shell flotante que mantiene a Angela disponible desde
@@ -50,9 +52,10 @@ export function AngelaWidget() {
   }, [widgetOpen, widgetMode, closeWidget, setWidgetMode]);
 
   // Epic 02 §5: en /stuck, Angela vive como pantalla completa (StuckChat).
-  // El widget flotante de v1 sigue activo en el resto del student space
-  // (dashboard, lessons) hasta que Epic 03 unifique ambas superficies.
-  if (pathname && /\/student\/stuck(\/|$)/.test(pathname)) {
+  // Epic 02.5 §5: durante lecciones activas (/student/lessons/*), Angela
+  // se oculta como surface global — el botón "Pedir ayuda" inline dentro
+  // de LessonSurface (Epic 04) abrirá la conversación contextualizada.
+  if (pathname && /\/student\/(stuck|lessons)(\/|$)/.test(pathname)) {
     return null;
   }
 
@@ -118,43 +121,16 @@ export function AngelaWidget() {
     );
   }
 
-  // expanded → popover anclado bottom-right (mobile: ocupa casi todo el ancho)
+  // Epic 02.5 §3+§4: expanded mode = bottom sheet en mobile + side panel
+  // en desktop. Ambos se montan; cada uno se muestra según viewport via
+  // Tailwind responsive classes en el propio componente. Shared store
+  // hace que la conversación persista al cruzar el breakpoint (e.g.,
+  // rotar tablet).
   return (
-    <div
-      role="dialog"
-      aria-label="Angela chat"
-      className="fixed bottom-6 right-6 z-40 w-[min(380px,calc(100vw-2rem))]"
-    >
-      <div className="overflow-hidden rounded-2xl bg-white shadow-wave ring-1 ring-midsea-ocean/15">
-        <header className="flex items-center justify-between border-b border-midsea-ocean/10 px-4 py-2.5">
-          <div className="flex items-center gap-2">
-            <AngelaAvatar state={angelaState} size="sm" />
-            <span className="font-display text-sm font-bold text-midsea-deep">Angela</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setWidgetMode('focus')}
-              aria-label={t('expand')}
-              className="grid h-7 w-7 place-items-center rounded-lg text-midsea-deep hover:bg-midsea-foam"
-            >
-              <ExpandIcon />
-            </button>
-            <button
-              type="button"
-              onClick={() => closeWidget()}
-              aria-label={t('close')}
-              className="grid h-7 w-7 place-items-center rounded-lg text-midsea-deep hover:bg-midsea-foam"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-        </header>
-        <div className="p-3">
-          <AngelaChat mode="expanded" />
-        </div>
-      </div>
-    </div>
+    <>
+      <AngelaBottomSheet />
+      <AngelaSidePanel />
+    </>
   );
 }
 
@@ -167,13 +143,3 @@ function CloseIcon() {
   );
 }
 
-function ExpandIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden className="h-4 w-4">
-      <polyline points="15 3 21 3 21 9" />
-      <polyline points="9 21 3 21 3 15" />
-      <line x1="21" y1="3" x2="14" y2="10" />
-      <line x1="3" y1="21" x2="10" y2="14" />
-    </svg>
-  );
-}

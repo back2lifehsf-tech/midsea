@@ -564,6 +564,9 @@
       "thinking": "Thinking…",
       "clearHistory": "Clear conversation",
       "disclaimer": "This conversation is shared with your parent. Angela guides you, she doesn't hand you the answer.",
+      "sheet": {
+        "dragHandle": "Resize panel"
+      },
       "placeholder": {
         "default": "What do you want to talk about?",
         "lesson": "What confuses you about «{topic}»?"
