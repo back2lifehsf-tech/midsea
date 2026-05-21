@@ -1,10 +1,25 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { AngelaAvatar } from './Avatar';
+import { AngelaAvatar } from '@/components/tutoring/AngelaAvatar';
 import { useTutorStore, type AngelaUiMessage } from '@/lib/tutor/store';
+import type { AngelaState } from '@/lib/tutor/angela-state';
 import type { TutorMessageDto } from '@/lib/tutor/types';
 import { parseChainOfThought } from '@/lib/tutor/cot-parser';
+
+/**
+ * Mapea el estado del store v2 de /stuck (`idle|thinking|speaking|celebrating`)
+ * al union del AngelaAvatar canónico (v1) usado en el header del student
+ * space. Unifica el look visual: la cara kawaii amarilla aparece en
+ * ambos surfaces (Epic 02.5 + bug-fix).
+ */
+function mapStoreStateToAvatar(
+  s: 'idle' | 'thinking' | 'speaking' | 'celebrating'
+): AngelaState {
+  if (s === 'thinking') return 'explaining';
+  if (s === 'speaking') return 'active';
+  return s;
+}
 
 interface StuckChatProps {
   initialMessages: TutorMessageDto[];
@@ -69,7 +84,7 @@ export function StuckChat({ initialMessages, studentName }: StuckChatProps) {
     <div className="flex flex-col h-full min-h-[calc(100vh-4rem)] bg-white">
       <header className="flex items-center gap-3 px-4 py-3 border-b border-slate-200 sticky top-0 bg-white z-10">
         <AngelaAvatar
-          state={avatarState}
+          state={mapStoreStateToAvatar(avatarState)}
           size="sm"
           ariaLabel={t(avatarState === 'thinking' ? 'thinking' : 'focusTitle')}
         />
@@ -88,7 +103,7 @@ export function StuckChat({ initialMessages, studentName }: StuckChatProps) {
         aria-busy={isStreaming}
       >
         {messages.length === 0 && (
-          <div className="text-center text-slate-400 mt-12 px-4">
+          <div className="mt-12 flex flex-col items-center px-4 text-center text-slate-400">
             <AngelaAvatar
               state="idle"
               size="lg"
