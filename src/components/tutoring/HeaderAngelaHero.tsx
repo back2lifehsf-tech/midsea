@@ -2,6 +2,7 @@
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { AngelaAvatar } from './AngelaAvatar';
+import { ProactiveBubble } from './ProactiveBubble';
 import { useTutorStore } from '@/lib/tutor/angela-state';
 
 /**
@@ -43,6 +44,7 @@ export function HeaderAngelaHero() {
         onClick={() => openWidget('expanded')}
         ariaLabel={hasUnread ? t('openWithUnread') : t('open')}
       />
+      <ProactiveBubble />
     </div>
   );
 }
