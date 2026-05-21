@@ -4,6 +4,7 @@ import { authOptions } from '@/app/api/auth/options';
 import { prisma } from '@/lib/prisma';
 import { studentCreateSchema } from '@/lib/schemas/student';
 import { getDisplayPlan, type Plan } from '@/lib/pricing/plans';
+import { hashPin } from '@/lib/auth/student-pin';
 
 /**
  * POST /api/students/create — Epic 03 §8.
@@ -52,6 +53,10 @@ export async function POST(req: NextRequest) {
   const pricingCycle = parsed.data.cycle.toLowerCase() as 'monthly' | 'annual';
   const display = getDisplayPlan(pricingPlan, pricingCycle);
 
+  // PIN + avatar: hashing del PIN antes de persistir; el avatar es texto
+  // plano (referencia a src/lib/auth/avatars.ts).
+  const pinHash = await hashPin(parsed.data.pin);
+
   const student = await prisma.student.create({
     data: {
       displayName: parsed.data.displayName,
@@ -59,6 +64,8 @@ export async function POST(req: NextRequest) {
       gradeLevel: parsed.data.gradeLevel,
       preferredLocale: parsed.data.preferredLocale,
       angelaNotes: parsed.data.angelaNotes ?? null,
+      pinHash,
+      avatarKey: parsed.data.avatarKey,
       familyId: parent.familyId,
       subscriptionStatus: 'PENDING_PAYMENT',
       planTier: parsed.data.plan,

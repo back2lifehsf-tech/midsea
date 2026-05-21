@@ -6,8 +6,10 @@ import {
   type StudentCreateInput,
   PLAN_TIER_VALUES,
   BILLING_CYCLE_VALUES,
-  LOCALE_VALUES
+  LOCALE_VALUES,
+  AVATAR_KEY_VALUES
 } from '@/lib/schemas/student';
+import { AvatarSvg, type AvatarKey } from '@/lib/auth/avatars';
 
 /**
  * Step A del NewStudentDialog. Epic 03 §1 Step A.
@@ -32,6 +34,8 @@ interface RawForm {
   angelaNotes: string;
   plan: PlanTier;
   cycle: BillingCycle;
+  pin: string;
+  avatarKey: (typeof AVATAR_KEY_VALUES)[number] | '';
 }
 
 interface StudentFormProps {
@@ -48,6 +52,8 @@ export function StudentForm({ defaultPlan, defaultCycle, onSubmit }: StudentForm
     register,
     handleSubmit,
     setError,
+    watch,
+    setValue,
     formState: { errors, isSubmitting }
   } = useForm<RawForm>({
     defaultValues: {
@@ -57,9 +63,12 @@ export function StudentForm({ defaultPlan, defaultCycle, onSubmit }: StudentForm
       preferredLocale: 'es',
       angelaNotes: '',
       plan: defaultPlan ?? 'CORE',
-      cycle: defaultCycle ?? 'MONTHLY'
+      cycle: defaultCycle ?? 'MONTHLY',
+      pin: '',
+      avatarKey: ''
     }
   });
+  const selectedAvatar = watch('avatarKey');
 
   async function onValid(raw: RawForm) {
     const result = studentCreateSchema.safeParse({
@@ -133,6 +142,61 @@ export function StudentForm({ defaultPlan, defaultCycle, onSubmit }: StudentForm
           rows={3}
           maxLength={500}
           className={`${inputClass} resize-none`}
+        />
+      </Field>
+
+      <Field
+        label={t('avatarLabel')}
+        error={errors.avatarKey?.message ? tErr(errors.avatarKey.message) : undefined}
+      >
+        <p className="text-xs text-midsea-ink/60">{t('avatarHint')}</p>
+        <div
+          role="radiogroup"
+          aria-label={t('avatarLabel')}
+          className="mt-2 grid grid-cols-4 gap-2"
+        >
+          {AVATAR_KEY_VALUES.map((key) => {
+            const checked = selectedAvatar === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                role="radio"
+                aria-checked={checked}
+                onClick={() =>
+                  setValue('avatarKey', key, {
+                    shouldDirty: true,
+                    shouldValidate: false
+                  })
+                }
+                className={[
+                  'grid h-14 w-full place-items-center rounded-xl transition-shadow',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-midsea-lagoon',
+                  checked
+                    ? 'ring-2 ring-midsea-lagoon shadow-wave bg-midsea-foam'
+                    : 'ring-1 ring-midsea-ocean/15 bg-white hover:ring-midsea-ocean/30'
+                ].join(' ')}
+              >
+                <AvatarSvg avatar={key as AvatarKey} size={36} />
+              </button>
+            );
+          })}
+        </div>
+      </Field>
+
+      <Field
+        label={t('pinLabel')}
+        error={errors.pin?.message ? tErr(errors.pin.message) : undefined}
+      >
+        <p className="text-xs text-midsea-ink/60">{t('pinHint')}</p>
+        <input
+          {...register('pin')}
+          type="text"
+          inputMode="numeric"
+          maxLength={4}
+          autoComplete="off"
+          placeholder="1234"
+          className={`${inputClass} mt-2 tracking-widest text-center text-lg`}
         />
       </Field>
 
