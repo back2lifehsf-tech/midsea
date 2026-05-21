@@ -38,29 +38,61 @@ Midsea es una plataforma de homeschooling integral, **bilingüe por diseño** (e
 
 ## 1.3 The First Ideal Customer (ICP)
 
-**ICP v1 — "La Madre/Padre Homeschooler Estratégico":**
+> **Actualización 2026-05-21**: el ICP fue refinado por ADR-007 (Midsea como plataforma cristiana explícita). La versión original (genérica/secular) se conserva abajo como referencia histórica.
 
-- **Demográfico:** Padres de 30-45 años, nivel socioeconómico medio-alto, urbanos (LATAM capitales, España, Miami/Houston/LA hispanos)
-- **Situación:** Decidieron homeschooler por: insatisfacción con colegios locales, necesidad de flexibilidad (viajeros, deportistas, artistas), neurodivergencia del hijo (TDAH, altas capacidades), o valores familiares específicos
-- **Dolor actual:** Usa Miacademy/Time4Learning en inglés (frustrante para niño hispanohablante) o un patchwork de recursos en español de baja calidad
-- **Willingness to pay:** $25-45 USD/mes por estudiante (basado en benchmarks: Time4Learning $29.95-$39.95, Miacademy $29.95-$44.95)
-- **Tech savvy:** Usa Notion, WhatsApp, Instagram. No es developer pero compra SaaS sin problemas
-- **Decisor:** La madre (90% de casos en homeschooling) decide; el padre aprueba presupuesto
+**ICP v1 (pilot HS Argentina) — "Familia Cristiana Homeschooler Argentina":**
 
-**ICP v2 (meses 6-12):** Microescuelas / pods educativos (5-15 estudiantes) que necesitan plataforma white-label con múltiples maestros.
+- **Demográfico:** Padres 35-50 años, clase media o media-alta, urbanos o suburbanos. Profesionales o emprendedores. Bilingües es/en o con interés activo en bilingüismo. Hijos en HS (13-17 años).
+- **Identidad religiosa:** **Cristianos activos** (asistencia regular a iglesia, lectura familiar de la Biblia, oración familiar). Denominación variada: católicos, evangélicos, protestantes históricos, ortodoxos. Denominacionalmente inclusivo.
+- **Geografía pilot:** Argentina + diáspora argentina (España, US, México, Brasil, Chile) + LATAM hispanohablante cristiano + US Hispanic cristiano.
+- **Situación:** Decidieron homeschoolear por: (a) valores cristianos no compatibles con currículo escolar oficial argentino/LATAM (educación sexual, ideología de género, enseñanza neutral o anti-religiosa); (b) búsqueda de educación con propósito; (c) control parental sobre influencias culturales; (d) flexibilidad para integración familiar de fe-vida-aprendizaje; (e) razones secundarias: neurodivergencia, flexibilidad geográfica, insatisfacción con calidad académica local.
+- **Dolor actual:** Usan Abeka / BJU Press / Sonlight (solo inglés, $300-800/año, sin AI, sin gamificación), o homeschooling cristiano autogestionado caótico (worksheets + Khan Academy + iglesia, sin estructura), o colegio cristiano privado argentino ($150-400 USD/mes equivalente — caro y rígido).
+- **Willingness to pay:** $29-45 USD/mes por estudiante. Punto de comparación favorable contra colegio privado y contra Abeka.
+- **Tech savvy:** WhatsApp, Facebook, Instagram. Notion, Google Workspace. SaaS-comfortable.
+- **Decisor:** La madre (90% de casos). El padre co-decisor activo en familias evangélicas.
+
+**ICP v2 (post-pilot):** ampliar a familias cristianas K-6 + 7°-8° (v1.1) y microescuelas / pods educativos cristianos hispanohablantes (5-15 estudiantes) que necesitan plataforma white-label con múltiples maestros.
+
+---
+
+**ICP original (pre-ADR-007, conservado como referencia):** "La Madre/Padre Homeschooler Estratégico" (genérico, sin filtro religioso). Padres 30-45 años, urbano LATAM/España/US Hispanic. Sigue siendo válido conceptualmente para v2+ si se decide ampliar el mercado más allá del segmento cristiano explícito.
 
 ## 1.4 v1 / v2 / Later
 
-### v1 — "El Cimiento" (Meses 1-4)
-**Objetivo:** Validar producto-market fit con homeschooling individual en español, grados K-6.
+### v1 — "El Pilot HS Argentina" (Meses 1-3, lanzamiento ~10-11 semanas desde mayo 2026)
+
+> **Actualización 2026-05-21**: el alcance original K-6 LATAM se difiere a v1.1. v1 pivoteó a HS Argentina por: (a) contenido propio en proceso de terminar para HS en 6 materias, (b) moat anti-Wited más claro en HS, (c) mercado argentino con menor fricción regulatoria. Ver `docs/decisions/ADR-003-pivot-to-hs-multi-course-catalog.md`.
+
+**Objetivo:** Validar producto-market fit con homeschooling HS argentino, pilot beta cerrada de 10-30 familias.
 
 **Features locked:**
-- Core subjects: Matemáticas, Language Arts (español), Ciencias, Estudios Sociales
-- AI Tutor básico: Diagnóstico inicial, explicaciones adaptativas, hints proactivos en **español nativo**
-- Gamificación v1: Sistema de puntos "Coin", avatares básicos, logros por lección, leaderboard familiar
-- Parent Dashboard: Planificador semanal automático, gradebook, reportes de progreso en español
-- Offline mode: Descarga de PDFs y videos para zonas sin internet
-- Mobile-first: Tablet es el dispositivo principal (iPad/Android)
+- **Catálogo HS a la carta**: 9 cursos en 6 materias (Matemáticas Ciclo Básico + Orientado, Lengua/Literatura Ciclo Básico + Orientado, Inglés ESL Intermedio + Avanzado, Sociales = Historia Universal + Historia de Argentina, Ciencias HS, Música como electiva). Padre activa cursos por hijo sin límite numérico (ADR-005).
+- **Catálogo visible públicamente pre-signup** en `/[locale]/catalog` (anti-Wited paquete-cerrado).
+- **Angela AI Tutor (Epic 02 ya implementado, Epic 02.5 en plan)**: chat con memoria persistente, streaming SSE, integración con `/stuck`. Epic 02.5 agrega hero variant + tono académico HS + chain-of-thought visible.
+- **Coin como moneda interna con poder pedagógico (ADR-004)**: gana 100 Coin por lección con mastery ≥80%. Gasta en productos premium de tienda (cursos especializados, masterclasses, electivos). Padre puede regalar Coin packs comprables vía Stripe ($9/$25/$50).
+- **Tienda Coin con 8-12 productos premium iniciales**: preparación CBC universitario argentino, AP-equivalentes, masterclasses de método de estudio, módulos electivos.
+- **Parent Copilot básico**: gestión de cursos activos por hijo, aprobación de compras en tienda Coin, dashboard de 5 minutos. Reportes regulatorios formales se difieren a v1.1.
+- **Pipeline de generación de contenido (ADR-006)**: outline humano (founder) → GPT-4o → review humano → ingesta. ~400-500 lecciones para los 9 cursos.
+- **Stripe billing (Epic 03 ya implementado)**: $29 Core, $45 Pro, $69 Family, todo USD.
+- **Mobile-first**: tablet + smartphone son los dispositivos del estudiante adolescente argentino.
+
+**Idioma:** español rioplatense (es-AR) como default + inglés (en) para Inglés ESL e UI universal. Voseo argentino natural en español.
+
+**Mercado del pilot:** Argentina + diáspora argentina (España, US, México, Brasil, Chile). 10-30 familias beta reclutadas por boca-a-boca + comunidad homeschooler argentina.
+
+**Disclaimer obligatorio en signup:** "Pilot académico de Midsea — contenido revisado por el equipo fundador, no acreditado todavía. Validación legal de la educación es responsabilidad del padre/tutor según jurisdicción."
+
+### v1 ORIGINAL — "El Cimiento" K-6 (DIFERIDO a v1.1)
+
+> **Estado**: postponed. Esta era la definición original de v1 antes del pivot 2026-05-21. Se conserva como referencia histórica y como spec base para v1.1, cuando el pipeline de generación HS esté validado y se expanda a K-6 + 7°-8°.
+
+**Features (referencia para v1.1):**
+- Core subjects: Matemáticas, Language Arts (español), Ciencias, Estudios Sociales (con módulos por país latino 1°-6°: Argentina, Rep. Dominicana, México, Costa Rica, Colombia)
+- AI Tutor con tono adaptado a niño K-6
+- Gamificación con Coin (mismo modelo económico que v1 HS, ADR-004)
+- Parent Dashboard con planificador semanal AI
+- Offline mode: descarga de PDFs y videos para zonas sin internet
+- Voice-first interface para pre-lectores K-2
 
 **Idioma:** 100% Español (es-ES/es-MX/es-AR variantes de contenido donde aplique)
 
@@ -161,12 +193,13 @@ Midsea es una plataforma de homeschooling integral, **bilingüe por diseño** (e
    - Se comunica con el padre: "Hoy Juan tardó 40% más en fracciones. Sugiero actividad offline con pizza real mañana. ¿Aprobado?"
    - **Code-switching natural:** Si el estudiante mezcla español e inglés, el tutor sigue el lead
 
-2. **Gamificación con Propósito Pedagógico ("Learn-to-Earn" real)**
-   - Economía virtual "Coin": 100 por lección completada con mastery (80%+), como Miacademy pero con más sinks
-   - "Clanes de Aprendizaje": Grupos de 4-6 estudiantes para proyectos PBL (Project Based Learning) con recompensas colectivas
-   - "Worlds": Mundos temáticos ("Antiguo Egipto" para historia, "Laboratorio Químico" para ciencias) donde el progreso desbloquea áreas
-   - Sistema de "Logros de Transferencia": Recompensas por aplicar conocimiento al mundo real (foto de experimento, video explicando a hermano)
-   - **Parent-controlled store:** Padre aprueba compras, establece límites, ve historial (como Miacademy pero más granular)
+2. **Gamificación con Propósito Pedagógico ("Learn-to-Earn" real) — ACTUALIZADO ADR-004**
+   - **Coin como moneda interna con poder pedagógico real, NO cosmético**: 100 Coin por lección completada con mastery ≥80%. Lo que en Miacademy compra ropa de avatar, en Midsea desbloquea cursos especializados, masterclasses y electivos en la tienda Coin.
+   - **Tienda Coin con productos premium**: cursos especializados (preparación CBC universitario, AP-equivalentes, programación), masterclasses (método de estudio, técnicas de ensayo), electivos (Música avanzada, Historia del Arte argentino). Solo se compran con Coin, nunca con cash directo.
+   - **Coin packs comprables vía Stripe** (single use, no subscription): $9 = 1000 Coin, $25 = 3000 Coin, $50 = 7000 Coin. El padre los regala al hijo. Preserva la narrativa de mérito sin frustrar al padre que quiere apoyar.
+   - **Parent-controlled store con approval flow**: toda compra del hijo en tienda Coin requiere aprobación del padre por default. Auto-approve hasta cap configurable (v1.1+).
+   - **Clanes de Aprendizaje** (Study Pods) y **Worlds temáticos**: postponed a v2+ post-PMF. El pilot v1 se enfoca en el loop económico individual + Angela coach + catálogo a la carta.
+   - **Sistema de Logros de Transferencia** (recompensas por aplicar conocimiento al mundo real con evidencia foto/video): v1.1+. En pilot, las "actividades hands-on" están sugeridas en cada lección pero sin tracking formal.
 
 3. **Parent Copilot: De Gestor a Director Ejecutivo (Bilingüe)**
    - Dashboard de 5 minutos: "Hoy aprendió fracciones equivalentes. Dominó 85%. Mañana: fracciones impropias. Tiempo total: 42 min. Estado emocional: 😊"
