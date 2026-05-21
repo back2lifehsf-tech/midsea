@@ -236,6 +236,44 @@ Empieza por PASO -1 ahora.
 
 ---
 
-## Pendientes para Epic 04 (placeholder)
+## Pendientes para Epic 04
 
-A llenar al cierre del epic.
+### Touch-drag real del bottom sheet
+v1 expone el drag handle como botón cycle (tap → cambia snap 50→85→100). Real touch-drag (arrastrar para cambiar altura fluidamente) requiere pointer events + framer-motion o vaul. Punteado por simplicidad.
+
+### Animación entre pasos del chain-of-thought
+v1 renderiza los pasos como tarjetas apiladas, todas visibles a la vez. UX más rica: thinking → speaking transition entre paso y paso, con cada paso apareciendo en su turno. Requiere parseo durante el stream (detectar boundary en token deltas) + orchestration de state machine. Punteado por complejidad de coordinación.
+
+### Botón "Pedir ayuda" inline en `LessonSurface`
+HeaderAngelaHero + AngelaWidget se ocultan en `/student/lessons/*`. El reemplazo es un botón contextual dentro de LessonSurface (Epic 04) que abre Angela con curriculum context preset (qué lección, qué ejercicio).
+
+### CurriculumContextEngine
+Angela aún no sabe en qué lección está montada el estudiante en `/student/lessons/[slug]`. Cuando exista el contenido real (Epic 04), agregar `curriculumContext` al prompt + endpoint que lo provea.
+
+### EmotionDetector
+Heurística de frustración (consecutiveErrors > N en X tiempo, ms-since-last-interaction, sentiment del último mensaje). v1.1. Activaría avatar `suggesting` y bumpearía cap del rate-limit con cariño.
+
+### Avatar Rive 3D
+v1 sigue siendo SVG + CSS. Rive (~80KB runtime) o Lottie liviano para celebraciones (≤200KB). Decisión post-pilot basada en engagement metrics.
+
+### Re-enable ProactiveIntervention para `/student`
+ProactiveIntervention existe pero solo se dispara desde `recordAnswer` durante una lección. Para que la burbuja contextual de Epic 02.5 §6 dispare al cargar `/student` (e.g. "ayer dejaste fracciones pendientes"), agregar otro hook que evalúe contexto persistente (last-day-state) al hidratar.
+
+### Function calling de OpenAI
+Cuando Angela necesite ejecutar acciones estructuradas (lanzar ejercicio, marcar competencia, alertar padre), function calling reemplaza el parser cliente de `### Paso N`. Epic 04+.
+
+### Rate-limit diferenciado por modelo
+v1 cuenta cada turno como 1, sin importar si fue mini o reasoning. Costo real del reasoning model es ~10x. Para cap más justo: pesar por modelo (e.g. reasoning = 3 turns). Requiere split del schema TutorUsageDaily o columna nueva `tokensUsedReasoning`.
+
+### Tests E2E (Playwright)
+Heredado de Epic 01/02/03. Smoke tests Epic 02.5:
+- `/student` muestra Angela hero, click abre side panel desktop.
+- Mobile (375px) abre bottom sheet con drag handle, tap cicla snap.
+- Mensaje "resolvé 2x+5=11" dispara render multi-step.
+- Mensaje "hola Angela" sigue chat normal.
+
+### Code-switching dentro de una respuesta
+v1 fuerza locale de sesión. Si el estudiante hispano-bilingüe pregunta en spanglish, Angela responde en su locale principal. v2 podría detectar el idioma del mensaje y adaptar.
+
+### Persistir audienceTier por estudiante
+Hoy `audienceTier` default es 'HS' globalmente. Cuando exista contenido K-6 (v1.1), inferir del `gradeLevel` del estudiante (≤6 → CORE, ≥9 → HS, 7-8 → híbrido).
