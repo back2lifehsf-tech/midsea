@@ -384,6 +384,119 @@
       "subjectLanguage": "Lengua",
       "subjectScience": "Ciencias",
       "subjectSocial": "Sociales"
+    },
+    "students": {
+      "list": {
+        "subheading": "Mis estudiantes",
+        "heading": "Tu familia en Midsea",
+        "addCta": "Agregar estudiante",
+        "empty": {
+          "heading": "Aún no tienes estudiantes",
+          "subheading": "Agrega a tu primer hijo o hija. Le creamos su perfil con Angela y empiezas a usar Midsea hoy."
+        }
+      },
+      "card": {
+        "gradePreK": "PreK",
+        "gradeNumbered": "{n}° grado",
+        "viewProfileSoon": "Ver perfil — próximamente",
+        "completeHint": "Completa el pago de {amount} para activar a este estudiante.",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        },
+        "status": {
+          "active": "Activo",
+          "trialing": "Prueba",
+          "pending": "Pago pendiente",
+          "pastDue": "Pago atrasado",
+          "canceled": "Cancelado",
+          "paused": "Pausado"
+        }
+      },
+      "total": {
+        "aria": "Total mensual de la familia",
+        "heading": "Próximo cobro mensual",
+        "perMonth": "/mes",
+        "singleStudent": "1 estudiante en {plan}",
+        "planCount": "{n} {plan}",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        }
+      },
+      "dialog": {
+        "title": "Nuevo estudiante",
+        "close": "Cerrar",
+        "stepForm": "Paso 1 de 3",
+        "stepReauth": "Paso 2 de 3",
+        "stepPayment": "Paso 3 de 3",
+        "stepSuccess": "Listo",
+        "stepError": "Error",
+        "cycleMonthlyLabel": "mes",
+        "cycleAnnualLabel": "año"
+      },
+      "form": {
+        "nameLabel": "Nombre del estudiante",
+        "namePlaceholder": "Sofía",
+        "birthDateLabel": "Fecha de nacimiento",
+        "gradeLabel": "Grado",
+        "gradePreK": "PreK",
+        "gradeNumbered": "{n}° grado",
+        "localeLabel": "Idioma de aprendizaje",
+        "localeEs": "Español",
+        "localeEn": "Inglés",
+        "angelaNotesLabel": "Notas para Angela (opcional)",
+        "angelaNotesPlaceholder": "Cosas que ayudarían a Angela a acompañar mejor — diagnóstico, intereses, preferencias…",
+        "submit": "Continuar al pago",
+        "submitting": "Procesando…"
+      },
+      "reauth": {
+        "heading": "Confirma tu identidad",
+        "subheading": "Para autorizar el cobro de {amount} por {name} necesitamos tu contraseña.",
+        "passwordLabel": "Contraseña",
+        "submit": "Confirmar",
+        "submitting": "Verificando…",
+        "cancel": "Volver"
+      },
+      "payment": {
+        "payingFor": "Cobro para",
+        "amountLabel": "Total a pagar hoy:",
+        "disclaimer": "Se cobrará automáticamente cada {cycle}. Cancela cuando quieras.",
+        "confirm": "Confirmar y pagar {amount}",
+        "confirming": "Procesando pago…",
+        "back": "Volver"
+      },
+      "success": {
+        "heading": "¡{name} está adentro!",
+        "subheading": "Angela ya está conociendo a {name}. Cuando entre por primera vez, calibrarán juntos su Ruta de Aprendizaje.",
+        "goDashboard": "Ir al Dashboard"
+      },
+      "error": {
+        "heading": "No pudimos procesar el pago",
+        "subheading": "{name} está creado pero en espera. Puedes reintentar o intentar más tarde.",
+        "retry": "Reintentar",
+        "later": "Lo haré luego"
+      }
+    },
+    "errors": {
+      "name_required": "Necesitamos el nombre del estudiante.",
+      "birth_invalid": "Fecha de nacimiento inválida.",
+      "birth_future": "La fecha no puede estar en el futuro.",
+      "birth_too_old": "Esa fecha es demasiado antigua.",
+      "family_annual_unavailable": "Family solo está disponible con cobro mensual en v1.",
+      "create_failed": "No pudimos crear el estudiante. Inténtalo de nuevo.",
+      "subscribe_failed": "No pudimos iniciar el cobro. Inténtalo de nuevo.",
+      "customer_setup_failed": "Tuvimos un problema con el método de pago.",
+      "subscription_create_failed": "Stripe rechazó la creación de la suscripción.",
+      "subscription_exists": "Ya hay un cobro pendiente para este estudiante.",
+      "student_missing_plan": "Faltó elegir plan o ciclo.",
+      "invalid_password": "Contraseña incorrecta.",
+      "no_password_set": "Tu cuenta usó Google. Configura una contraseña primero.",
+      "unauthorized": "Tu sesión expiró. Inicia sesión otra vez.",
+      "payment_failed": "El pago falló. Revisa tu tarjeta o intenta otro método.",
+      "generic": "Algo salió mal. Inténtalo de nuevo."
     }
   },
   "student": {

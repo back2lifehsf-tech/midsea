@@ -384,6 +384,119 @@
       "subjectLanguage": "Language Arts",
       "subjectScience": "Science",
       "subjectSocial": "Social Studies"
+    },
+    "students": {
+      "list": {
+        "subheading": "My students",
+        "heading": "Your Midsea family",
+        "addCta": "Add a student",
+        "empty": {
+          "heading": "No students yet",
+          "subheading": "Add your first child. We'll create their profile with Angela and you can start using Midsea today."
+        }
+      },
+      "card": {
+        "gradePreK": "PreK",
+        "gradeNumbered": "Grade {n}",
+        "viewProfileSoon": "View profile — coming soon",
+        "completeHint": "Complete the {amount} payment to activate this student.",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        },
+        "status": {
+          "active": "Active",
+          "trialing": "Trial",
+          "pending": "Payment pending",
+          "pastDue": "Past due",
+          "canceled": "Canceled",
+          "paused": "Paused"
+        }
+      },
+      "total": {
+        "aria": "Family monthly total",
+        "heading": "Next monthly charge",
+        "perMonth": "/mo",
+        "singleStudent": "1 student on {plan}",
+        "planCount": "{n} {plan}",
+        "plan": {
+          "CORE": "Core",
+          "PRO": "Pro",
+          "FAMILY": "Family"
+        }
+      },
+      "dialog": {
+        "title": "Add a student",
+        "close": "Close",
+        "stepForm": "Step 1 of 3",
+        "stepReauth": "Step 2 of 3",
+        "stepPayment": "Step 3 of 3",
+        "stepSuccess": "Done",
+        "stepError": "Error",
+        "cycleMonthlyLabel": "month",
+        "cycleAnnualLabel": "year"
+      },
+      "form": {
+        "nameLabel": "Student's name",
+        "namePlaceholder": "Sofia",
+        "birthDateLabel": "Date of birth",
+        "gradeLabel": "Grade",
+        "gradePreK": "PreK",
+        "gradeNumbered": "Grade {n}",
+        "localeLabel": "Learning language",
+        "localeEs": "Spanish",
+        "localeEn": "English",
+        "angelaNotesLabel": "Notes for Angela (optional)",
+        "angelaNotesPlaceholder": "Anything that helps Angela support better — diagnosis, interests, preferences…",
+        "submit": "Continue to payment",
+        "submitting": "Processing…"
+      },
+      "reauth": {
+        "heading": "Confirm your identity",
+        "subheading": "To authorize the charge of {amount} for {name}, we need your password.",
+        "passwordLabel": "Password",
+        "submit": "Confirm",
+        "submitting": "Verifying…",
+        "cancel": "Back"
+      },
+      "payment": {
+        "payingFor": "Charge for",
+        "amountLabel": "Total today:",
+        "disclaimer": "Charged automatically every {cycle}. Cancel anytime.",
+        "confirm": "Confirm and pay {amount}",
+        "confirming": "Processing payment…",
+        "back": "Back"
+      },
+      "success": {
+        "heading": "{name} is in!",
+        "subheading": "Angela is getting to know {name}. The first time they sign in, they'll calibrate their Learning Path together.",
+        "goDashboard": "Go to dashboard"
+      },
+      "error": {
+        "heading": "We couldn't process the payment",
+        "subheading": "{name} is created but pending. You can retry or try later.",
+        "retry": "Retry",
+        "later": "I'll do it later"
+      }
+    },
+    "errors": {
+      "name_required": "We need the student's name.",
+      "birth_invalid": "Invalid date of birth.",
+      "birth_future": "Date can't be in the future.",
+      "birth_too_old": "That date is too far in the past.",
+      "family_annual_unavailable": "Family is only available on monthly billing in v1.",
+      "create_failed": "Couldn't create the student. Try again.",
+      "subscribe_failed": "Couldn't start the charge. Try again.",
+      "customer_setup_failed": "We hit a problem with the payment method.",
+      "subscription_create_failed": "Stripe declined the subscription creation.",
+      "subscription_exists": "There's already a pending charge for this student.",
+      "student_missing_plan": "Plan or cycle is missing.",
+      "invalid_password": "Wrong password.",
+      "no_password_set": "Your account signed up with Google. Set a password first.",
+      "unauthorized": "Your session expired. Sign in again.",
+      "payment_failed": "Payment failed. Check your card or try another method.",
+      "generic": "Something went wrong. Try again."
     }
   },
   "student": {

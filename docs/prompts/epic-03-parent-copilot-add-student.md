@@ -284,6 +284,102 @@ Empieza por PASO -1 ahora.
 
 ---
 
+## Definition of Done (cierre Epic 03)
+
+| # | Criterio | Estado | Nota |
+|---|----------|:---:|---|
+| 1 | type-check, lint, check:edunexo limpios | ✅ | |
+| 2 | Migration Prisma aplicada sin perder data | ✅ | Solo dev; SQL versionado en `prisma/migrations/manual/0003-billing-tables.sql` para aplicar a prod al merge a main |
+| 3 | Padre demo ve dashboard vacío con empty state | ✅ | Demo path: 2 cards sintéticas ACTIVE para preservar onboarding; real path con 0 students muestra empty state |
+| 4 | Click Agregar abre NewStudentDialog Step A | ✅ | |
+| 5 | Validación form (nombre, fecha, grado) | ✅ | Zod schema + 9 unit tests |
+| 6 | Step A → reauth gate | ✅ | Google parents skipean automáticamente vía probe 409 |
+| 7 | Reauth → Step B con Payment Element | ✅ | |
+| 8 | Tarjeta 4242 → ACTIVE en dashboard | ✅ | Verificado en vivo |
+| 9 | Tarjeta 4000…0002 → PENDING_PAYMENT | ⚠ | Implementado en código; no smoke-testeado a mano |
+| 10 | Webhook `payment_intent.succeeded` → ACTIVE via `StripeWebhookEvent` upsert | ✅ | `subscription.updated` es el camino primary; 15 eventos verificados |
+| 11 | Re-disparar mismo webhook → no duplica | ✅ | PK unique en StripeWebhookEvent + P2002 short-circuit |
+| 12 | MonthlyTotalBar suma con plan mix | ✅ | `2 Core · 1 Pro` formateado dinámicamente |
+| 13 | Cerrar modal Step A descarta sin crear Student | ✅ | El Student se crea AL submit del Step A; cerrar antes no toca DB |
+| 14 | Cerrar modal Step B → Student queda PENDING_PAYMENT | ✅ | Webhook eventualmente reconcilia |
+| 15 | Mobile (375px): Sheet bottom con drag handle | ⚠ | Sheet-from-bottom funcional; sin drag handle visible (Tailwind only) — punt v2 |
+| 16 | Cero strings hardcoded, keys nuevas bajo `parent.students.*` y `parent.errors.*` | ✅ | Verificado por grep |
+| 17 | Tests unit para `src/lib/billing/stripe.ts` | ✅ | 6 tests con mocks Stripe + Prisma |
+| 18 | Playwright smoke | ❌ | Punt Epic 04 (heredado de Epic 01/02 pendientes) |
+
+**Resultado: 15 ✅ / 3 ⚠ / 1 ❌**
+
+---
+
 ## Pendientes para Epic 04
 
-*(Se llena al cerrar el epic.)*
+### Aplicar migration a prod
+Script listo: `node scripts/apply-billing-migration.mjs --target=prod --url="<pooler-prod-url>"`. Correr ANTES del merge `develop → main` para evitar que el código de prod queries columnas que no existen.
+
+### Stripe webhook endpoint para prod
+Hoy `STRIPE_WEBHOOK_SECRET` está populated con el `whsec_` que emite Stripe CLI (dev). Para prod:
+1. Crear webhook endpoint en Stripe Dashboard → URL `https://midsea-pearl.vercel.app/api/webhooks/stripe`.
+2. Suscribir eventos: `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `payment_intent.succeeded`, `payment_intent.payment_failed`, `invoice.payment_failed`.
+3. Tomar el `whsec_*` que da el dashboard y agregarlo a Vercel Production env vars como `STRIPE_WEBHOOK_SECRET`.
+4. Configurar Stripe Dashboard para keys live (`sk_live_*`, `pk_live_*`) + crear Price IDs equivalentes en live mode + actualizar `STRIPE_PRICE_*` en Vercel Production.
+
+### Cancelar suscripción / reactivar
+Hoy las cards `CANCELED`/`PAUSED` muestran badge + grayscale sin CTA real. UX completo:
+- Card en ACTIVE → menú con "Cancelar suscripción" (AlertDialog + confirma).
+- Endpoint `POST /api/billing/cancel-subscription` → `stripe.subscriptions.update(id, { cancel_at_period_end: true })`.
+- Card en CANCELED con `currentPeriodEnd` futuro → "Reactivar antes de {date}" → endpoint `subscriptions.update({ cancel_at_period_end: false })`.
+
+### Retry de Student PENDING_PAYMENT
+Hoy un student PENDING (post-fallo de pago o modal cerrado mid-flow) NO tiene CTA para retomar. Necesita:
+- Endpoint `POST /api/billing/retry-payment` que toma el student.id y abre un PaymentSheet inline para el sub existente (o crea uno nuevo si la sub fue cancelled).
+- CTA en `<StudentCard variant="pending">` → "Completar pago $X" abre el modal Step B directamente.
+
+### Pre-auth con WebAuthn (incluye Google parents)
+Hoy Google parents skipean el reauth gate por completo (sesión OAuth = suficiente). Hardening real:
+- Implementar WebAuthn (passkey) en signup → `passkey_credentials` table en Prisma.
+- Reauth para CUALQUIER parent: passkey prompt en vez de password input.
+- Mantener password-fallback solo para devices viejos.
+
+### Rate-limit del reauth endpoint
+Punt de Epic 03: 3-fails/15min con `lastReauthFailedAt`+`reauthFailedCount` en Parent. Sin esto, un atacante con sesión válida puede brute-forzear el password.
+
+### Upgrade/downgrade de plan
+ADR-001 §6 dice "proration habilitada para upgrades/downgrades". UI:
+- Menú en `<StudentCard>` → "Cambiar plan" → modal con Core/Pro/Family + ciclo.
+- Endpoint `POST /api/billing/change-plan` → `subscriptions.update(id, { items:[{ id, price }] })`.
+
+### Migrar a Family plan
+Epic 03 dice "Family con multi-hijos: futuro". Cuando un Parent tiene ≥3 hijos individuales, el dashboard sugiere migrar a Family ($29*3=$87 → $69 ahorrando $18/mes). Requiere:
+- Detectar la oportunidad: `kidsCount >= 3 && noFamilySub`.
+- Modal de migración: confirma cancelar las N subs individuales y crear 1 Family con quantity=N.
+- Manejo de proration: cobrar/acreditar diferencia.
+
+### Métodos de pago adicionales
+ADR-001 §7 v1.5: OXXO (México) vía Stripe Payment Methods. Activar agregando `payment_method_types: ['card', 'oxxo']` en `subscription.create`.
+
+### Cleanup demo mode + Epic 01 leftovers
+Heredado de Epic 01/02. El demo path (`isDemo: true`) sigue funcionando con cards sintéticas; cuando lo desmontemos:
+- Quitar la rama `parent.isDemo` en `loadStudents`.
+- Borrar `src/lib/demo/data.ts`, `DEMO_PARENT_CONTEXT`, `DEMO_OVERVIEW_KIDS`.
+- Quitar la cookie `midsea_demo_role` y todo el branching en `session.ts`.
+
+### Limpieza de PENDING_PAYMENT orphans
+Hoy si el padre cierra el modal post-Student-create pero pre-subscribe, queda un Student PENDING sin Stripe sub asociada (`stripeSubscriptionId = null`). Auto-cleanup:
+- Cron job (Vercel Cron o pg_cron) que cada hora borra students PENDING con `stripeSubscriptionId IS NULL AND createdAt < NOW() - INTERVAL '24h'`.
+- O endpoint `DELETE /api/students/[id]` para que el padre los borre desde el dashboard.
+
+### Sheet con drag handle en mobile
+Hoy el modal en mobile es full-width sheet-from-bottom sin drag handle visible. UX completo (vaul, framer-motion drag, o shadcn Sheet) lo agrega.
+
+### Formalize Prisma migrations
+Aplicación de schema cambios sigue siendo via raw SQL + script, NO via `prisma migrate dev` con carpeta `prisma/migrations/` versionada. Heredado de Epic 01/02. Vale la pena cuando el equipo crezca y haya múltiples devs aplicando cambios.
+
+### Playwright smoke E2E
+Heredado de Epic 01/02. Casos críticos para Epic 03:
+- Padre signup → Google login → add 1 student → tarjeta 4242 → dashboard muestra ACTIVE.
+- Tarjeta declinada → student queda PENDING_PAYMENT → retry path.
+- Mid-flow cancel en Step A → AlertDialog confirma → Student no se crea.
+- Webhook idempotency: replay del mismo evento → no-op.
+
+### Tests adicionales del webhook handler
+El handler de webhooks está inline en `src/app/api/webhooks/stripe/route.ts`. Si extraemos la lógica a `src/lib/billing/webhook-handler.ts` podemos testearla con mocks de Prisma + Stripe event fixtures (Stripe SDK exposes `Stripe.Event` types).
