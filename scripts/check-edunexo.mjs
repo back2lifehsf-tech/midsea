@@ -26,7 +26,14 @@ const SKIP_FILES = new Set([
 // Subpaths que documentan reglas/protocolos (epic specs, retros) y que pueden
 // referenciar el nombre viejo en contexto de prohibición. Match por path
 // relativo desde la raíz, no por basename.
-const SKIP_PATH_PREFIXES = ['docs/prompts/', 'docs\\prompts\\'];
+const SKIP_PATH_PREFIXES = [
+  'docs/prompts/',
+  'docs\\prompts\\',
+  'docs/runbooks/',
+  'docs\\runbooks\\',
+  'docs/decisions/',
+  'docs\\decisions\\'
+];
 const PATTERN = /edunexo/i;
 
 let hits = 0;

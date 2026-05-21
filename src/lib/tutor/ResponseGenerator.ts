@@ -1,6 +1,6 @@
 import 'server-only';
 import { getOpenAI, TUTOR_MODEL } from '@/lib/openai';
-import { buildAngelaSystemPrompt } from './prompts';
+import { buildAngelaSystemPrompt, type AudienceTier } from './prompts';
 import type { StudentSummary, TokenUsage } from './types';
 
 /**
@@ -34,21 +34,36 @@ export interface GenerateStreamParams {
   conversation: Array<{ role: 'user' | 'assistant'; content: string }>;
   /** Recibe el reporte de tokens cuando OpenAI cierra el stream. */
   onComplete?: (usage: TokenUsage) => void;
+  /** CORE = K-6 (Epic 02), HS = pilot HS (Epic 02.5+). Default: HS. */
+  audienceTier?: AudienceTier;
+  /**
+   * Override del modelo OpenAI (e.g., `gpt-4o` para problemas STEM
+   * detectados por heurística en `model-selector.ts`). Default: el
+   * `TUTOR_MODEL` (gpt-4o-mini) del cliente singleton.
+   */
+  model?: string;
 }
 
 export async function generateStream(
   params: GenerateStreamParams
 ): Promise<AsyncIterable<string>> {
-  const { locale, student, conversation, onComplete } = params;
+  const {
+    locale,
+    student,
+    conversation,
+    onComplete,
+    audienceTier = 'HS',
+    model
+  } = params;
 
-  const systemPrompt = buildAngelaSystemPrompt(locale, student);
+  const systemPrompt = buildAngelaSystemPrompt(locale, student, audienceTier);
   const messages = [
     { role: 'system' as const, content: systemPrompt },
     ...conversation.map((m) => ({ role: m.role, content: m.content }))
   ];
 
   const stream = await getOpenAI().chat.completions.create({
-    model: TUTOR_MODEL,
+    model: model ?? TUTOR_MODEL,
     messages,
     stream: true,
     stream_options: { include_usage: true }
