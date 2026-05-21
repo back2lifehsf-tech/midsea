@@ -17,7 +17,12 @@ import type { AngelaState } from '@/lib/tutor/angela-state';
  *   - celebrating: bounce con sparkles dorados
  *   - resting:     ojos cerrados, Zzz flotando
  *
- * Sizes via wrapper Tailwind: sm = 40px, md = 64px, lg = 96px.
+ * Sizes via wrapper Tailwind:
+ *   - `sm`     = 40px (chat header, inline button)
+ *   - `md`     = 64px (collapsed widget — Epic 02 default)
+ *   - `lg`     = 96px (focus mode header)
+ *   - `medium` = 56px mobile / 80px tablet+ (intent flows /stuck, /prep, /explore, /review — Epic 02.5)
+ *   - `hero`   = 72px mobile / 120px tablet+ (student dashboard header — Epic 02.5)
  */
 export function AngelaAvatar({
   state = 'idle',
@@ -27,13 +32,21 @@ export function AngelaAvatar({
   ariaLabel
 }: {
   state?: AngelaState;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'medium' | 'hero';
   onClick?: () => void;
   className?: string;
   ariaLabel?: string;
 }) {
   const sizeClass =
-    size === 'sm' ? 'h-10 w-10' : size === 'lg' ? 'h-24 w-24' : 'h-16 w-16';
+    size === 'sm'
+      ? 'h-10 w-10'
+      : size === 'lg'
+        ? 'h-24 w-24'
+        : size === 'medium'
+          ? 'h-14 w-14 md:h-20 md:w-20'
+          : size === 'hero'
+            ? 'h-[72px] w-[72px] md:h-[120px] md:w-[120px]'
+            : 'h-16 w-16';
 
   const isClickable = Boolean(onClick);
   const showThinking = state === 'explaining';

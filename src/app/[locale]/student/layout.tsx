@@ -4,6 +4,7 @@ import { CoinBadge } from '@/components/gamification/CoinBadge';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { UserMenu } from '@/components/auth/UserMenu';
 import { AngelaWidget } from '@/components/tutoring/AngelaWidget';
+import { HeaderAngelaHero } from '@/components/tutoring/HeaderAngelaHero';
 import { requireStudent } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { DEMO_TOTAL_COIN } from '@/lib/demo/data';
@@ -46,16 +47,12 @@ export default async function StudentLayout({
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white/70 px-4 py-3 ring-1 ring-midsea-ocean/10 shadow-wave backdrop-blur">
         <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href={`/${locale}`}
-            className="flex items-center gap-2 font-display text-base font-bold text-midsea-deep"
-          >
-            <span
-              aria-hidden
-              className="inline-block h-7 w-7 rounded-full bg-gradient-to-br from-midsea-lagoon to-midsea-ocean shadow-wave"
-            />
-            Midsea
-          </Link>
+          {/* Epic 02.5 §1: Angela hero reemplaza el círculo Midsea como
+              protagonista del student space. La marca Midsea pasa al
+              footer para no competir con Angela como personaje.
+              HeaderAngelaHero se oculta en /stuck y /lessons (espeja el
+              path-check de AngelaWidget). */}
+          <HeaderAngelaHero />
           <nav aria-label="Student sections" className="flex flex-wrap items-center gap-1 text-sm">
             {items.map((item) => (
               <Link
@@ -75,6 +72,18 @@ export default async function StudentLayout({
         </div>
       </div>
       {children}
+      <footer className="pt-4 text-center text-xs text-midsea-ink/40">
+        <Link
+          href={`/${locale}`}
+          className="inline-flex items-center gap-1.5 hover:text-midsea-ink/70"
+        >
+          <span
+            aria-hidden
+            className="inline-block h-3 w-3 rounded-full bg-gradient-to-br from-midsea-lagoon to-midsea-ocean"
+          />
+          Midsea Academy
+        </Link>
+      </footer>
       <AngelaWidget />
     </div>
   );
