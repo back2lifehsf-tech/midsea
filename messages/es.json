@@ -364,7 +364,57 @@
       "students": "Mis hijos",
       "planner": "Planificador",
       "reports": "Reportes",
-      "settings": "Ajustes"
+      "settings": "Ajustes",
+      "backToDashboard": "Volver al panel"
+    },
+    "studentDetail": {
+      "subtitle": "Activá los cursos que va a tomar {name}.",
+      "gradePreK": "PreK",
+      "gradeNumbered": "{n}° grado",
+      "status": {
+        "ACTIVE": "Suscripción activa",
+        "TRIALING": "Período de prueba",
+        "PENDING_PAYMENT": "Pago pendiente",
+        "PAST_DUE": "Pago atrasado",
+        "CANCELED": "Cancelado",
+        "PAUSED": "Pausado"
+      },
+      "activeCoursesHeading": "Cursos activos ({n})",
+      "noActiveCourses": "Todavía no activaste cursos para este estudiante. Elegí del catálogo de abajo.",
+      "availableCoursesHeading": "Catálogo disponible",
+      "allActivated": "Activaste todos los cursos del catálogo. Próximamente más en rolling release.",
+      "progress": "{mastered}/{total} lecciones dominadas ({pct}%)",
+      "activatedOn": "Activado el {date}",
+      "catalogStats": "{lessons} lecciones · {competencies} competencias"
+    },
+    "courses": {
+      "actions": {
+        "activate": "Activar",
+        "deactivate": "Desactivar"
+      },
+      "dialog": {
+        "activateTitle": "Activar «{course}» para {name}",
+        "deactivateTitle": "Desactivar «{course}» para {name}",
+        "lessons": "Lecciones",
+        "competencies": "Competencias",
+        "includedInPlan": "El acceso a este curso ya está incluido en tu plan. No hay cobro adicional.",
+        "deactivateWarning": "Tu hijo dejará de ver este curso. El progreso y el Coin ganado se conservan; podés reactivarlo después sin perderlos.",
+        "cancel": "Cancelar",
+        "activateConfirm": "Activar para {name}",
+        "deactivateConfirm": "Sí, desactivar",
+        "submitting": "Procesando…"
+      },
+      "errors": {
+        "generic": "Algo salió mal. Intentá de nuevo.",
+        "unauthorized": "Tu sesión expiró. Volvé a iniciar sesión.",
+        "parent_not_found": "No encontramos tu cuenta de padre.",
+        "student_not_found": "Este estudiante no existe o no pertenece a tu familia.",
+        "course_not_found": "Este curso no existe.",
+        "course_not_published": "Este curso aún no está disponible.",
+        "enrollment_not_found": "No hay una activación que desactivar.",
+        "already_inactive": "Este curso ya estaba desactivado.",
+        "invalid_body": "Datos inválidos."
+      }
     },
     "dashboard": {
       "heading": "Panel de la familia",
@@ -399,6 +449,7 @@
         "gradePreK": "PreK",
         "gradeNumbered": "{n}° grado",
         "viewProfileSoon": "Ver perfil — próximamente",
+        "manageCourses": "Gestionar cursos",
         "completeHint": "Completa el pago de {amount} para activar a este estudiante.",
         "plan": {
           "CORE": "Core",
@@ -623,7 +674,12 @@
       "recentHeading": "Logros recientes",
       "noActivity": "Aún no tienes actividad. Elige una intención arriba para empezar.",
       "masteryLabel": "{pct}% dominado",
-      "completedTag": "Dominado"
+      "completedTag": "Dominado",
+      "coursesHeading": "Mis cursos",
+      "courseProgress": "{mastered}/{total} lecciones dominadas ({pct}%)",
+      "nextLesson": "Próxima lección sugerida",
+      "continueCourse": "Continuar el curso",
+      "courseCompleted": "¡Completaste todas las lecciones de este curso!"
     },
     "angela": {
       "open": "Abrir a Angela",

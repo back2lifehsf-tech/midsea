@@ -21,10 +21,22 @@ import {
 // solo presentados de forma distinta (no grid de materias, sino contexto de
 // "donde estabas" + "logros recientes" alrededor de las intenciones).
 
+interface ActiveCourse {
+  courseId: string;
+  slug: string;
+  titleEs: string;
+  titleEn: string;
+  subject: string;
+  totalLessons: number;
+  masteredLessons: number;
+  nextLesson: { slug: string; titleEs: string; titleEn: string; monthIndex: number | null } | null;
+}
+
 interface DashboardData {
   inProgress: { slug: string; titleEs: string; titleEn: string; masteryPct: number; attempts: number } | null;
   recentMastered: Array<{ slug: string; titleEs: string; titleEn: string }>;
   reviewableCount: number;
+  activeCourses: ActiveCourse[];
 }
 
 async function loadDashboardData(
@@ -50,26 +62,92 @@ async function loadDashboardData(
         .map((p) => DEMO_LESSONS.find((l) => l.slug === p.slug))
         .filter((l): l is NonNullable<typeof l> => Boolean(l))
         .map((l) => ({ slug: l.slug, titleEs: l.titleEs, titleEn: l.titleEn })),
-      reviewableCount: masteredP.length
+      reviewableCount: masteredP.length,
+      activeCourses: []
     };
   }
 
-  const [inProgress, recentMastered, masteredCount] = await Promise.all([
-    prisma.lessonProgress.findFirst({
-      where: { studentId: activeStudentId, status: 'IN_PROGRESS' },
-      orderBy: { lastAttempt: 'desc' },
-      include: { lesson: { select: { slug: true, titleEs: true, titleEn: true } } }
-    }),
-    prisma.lessonProgress.findMany({
-      where: { studentId: activeStudentId, status: 'MASTERED' },
-      orderBy: { updatedAt: 'desc' },
-      take: 5,
-      include: { lesson: { select: { slug: true, titleEs: true, titleEn: true } } }
-    }),
-    prisma.lessonProgress.count({
-      where: { studentId: activeStudentId, status: 'MASTERED' }
-    })
-  ]);
+  const [inProgress, recentMastered, masteredCount, activeEnrollments] =
+    await Promise.all([
+      prisma.lessonProgress.findFirst({
+        where: { studentId: activeStudentId, status: 'IN_PROGRESS' },
+        orderBy: { lastAttempt: 'desc' },
+        include: { lesson: { select: { slug: true, titleEs: true, titleEn: true } } }
+      }),
+      prisma.lessonProgress.findMany({
+        where: { studentId: activeStudentId, status: 'MASTERED' },
+        orderBy: { updatedAt: 'desc' },
+        take: 5,
+        include: { lesson: { select: { slug: true, titleEs: true, titleEn: true } } }
+      }),
+      prisma.lessonProgress.count({
+        where: { studentId: activeStudentId, status: 'MASTERED' }
+      }),
+      prisma.studentCourseEnrollment.findMany({
+        where: { studentId: activeStudentId, active: true },
+        include: {
+          course: {
+            select: {
+              id: true,
+              slug: true,
+              titleEs: true,
+              titleEn: true,
+              subject: true,
+              orderIndex: true,
+              _count: { select: { lessons: true } },
+              lessons: {
+                orderBy: [{ monthIndex: 'asc' }, { orderIndex: 'asc' }],
+                select: { id: true, slug: true, titleEs: true, titleEn: true, monthIndex: true }
+              }
+            }
+          }
+        },
+        orderBy: { activatedAt: 'desc' }
+      })
+    ]);
+
+  // Próxima lección = primera lección del curso (orden monthIndex,
+  // orderIndex) que NO esté MASTERED. Una query agregada por
+  // (studentId, lessonId IN active courses).
+  const allLessonIds = activeEnrollments.flatMap((e) =>
+    e.course.lessons.map((l) => l.id)
+  );
+  const masteredIds = new Set<string>();
+  if (allLessonIds.length > 0) {
+    const rows = await prisma.lessonProgress.findMany({
+      where: {
+        studentId: activeStudentId,
+        lessonId: { in: allLessonIds },
+        status: 'MASTERED'
+      },
+      select: { lessonId: true }
+    });
+    for (const r of rows) masteredIds.add(r.lessonId);
+  }
+
+  const activeCourses: ActiveCourse[] = activeEnrollments.map((enr) => {
+    const nextLesson = enr.course.lessons.find((l) => !masteredIds.has(l.id));
+    const masteredInCourse = enr.course.lessons.filter((l) =>
+      masteredIds.has(l.id)
+    ).length;
+    return {
+      courseId: enr.course.id,
+      slug: enr.course.slug,
+      titleEs: enr.course.titleEs,
+      titleEn: enr.course.titleEn,
+      subject: enr.course.subject,
+      totalLessons: enr.course._count.lessons,
+      masteredLessons: masteredInCourse,
+      nextLesson: nextLesson
+        ? {
+            slug: nextLesson.slug,
+            titleEs: nextLesson.titleEs,
+            titleEn: nextLesson.titleEn,
+            monthIndex: nextLesson.monthIndex
+          }
+        : null
+    };
+  });
 
   return {
     inProgress: inProgress
@@ -86,7 +164,8 @@ async function loadDashboardData(
       titleEs: p.lesson.titleEs,
       titleEn: p.lesson.titleEn
     })),
-    reviewableCount: masteredCount
+    reviewableCount: masteredCount,
+    activeCourses
   };
 }
 
@@ -131,6 +210,64 @@ export default async function StudentDashboardPage({
         </h1>
         <p className="text-base text-midsea-ink/70">{tDash('subheading')}</p>
       </header>
+
+      {data.activeCourses.length > 0 ? (
+        <section aria-labelledby="courses-heading" className="space-y-3">
+          <h2
+            id="courses-heading"
+            className="font-display text-xl font-semibold text-midsea-deep"
+          >
+            {tDash('coursesHeading')}
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {data.activeCourses.map((c) => {
+              const pct =
+                c.totalLessons > 0
+                  ? Math.round((c.masteredLessons / c.totalLessons) * 100)
+                  : 0;
+              return (
+                <Card key={c.courseId}>
+                  <h3 className="font-display text-base font-bold text-midsea-deep">
+                    {isEs ? c.titleEs : c.titleEn}
+                  </h3>
+                  <p className="mt-1 text-xs text-midsea-ink/60">
+                    {tDash('courseProgress', {
+                      mastered: c.masteredLessons,
+                      total: c.totalLessons,
+                      pct
+                    })}
+                  </p>
+                  <div className="mt-3 max-w-md">
+                    <ProgressBar value={pct} label={`${pct}%`} />
+                  </div>
+                  {c.nextLesson ? (
+                    <div className="mt-4">
+                      <p className="text-xs text-midsea-ink/50">
+                        {tDash('nextLesson')}
+                      </p>
+                      <p className="mt-1 line-clamp-2 text-sm font-medium text-midsea-deep">
+                        {isEs ? c.nextLesson.titleEs : c.nextLesson.titleEn}
+                      </p>
+                      <Button
+                        as={Link}
+                        href={`/${locale}/student/lessons/${c.nextLesson.slug}`}
+                        variant="primary"
+                        className="mt-3"
+                      >
+                        {tDash('continueCourse')}
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="mt-4 text-sm font-medium text-emerald-700">
+                      {tDash('courseCompleted')}
+                    </p>
+                  )}
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
 
       <section aria-labelledby="intents-heading" className="space-y-4">
         <h2 id="intents-heading" className="font-display text-xl font-semibold text-midsea-deep">

@@ -364,7 +364,57 @@
       "students": "My kids",
       "planner": "Planner",
       "reports": "Reports",
-      "settings": "Settings"
+      "settings": "Settings",
+      "backToDashboard": "Back to dashboard"
+    },
+    "studentDetail": {
+      "subtitle": "Activate the courses {name} will take.",
+      "gradePreK": "PreK",
+      "gradeNumbered": "Grade {n}",
+      "status": {
+        "ACTIVE": "Active subscription",
+        "TRIALING": "Trial period",
+        "PENDING_PAYMENT": "Payment pending",
+        "PAST_DUE": "Payment past due",
+        "CANCELED": "Canceled",
+        "PAUSED": "Paused"
+      },
+      "activeCoursesHeading": "Active courses ({n})",
+      "noActiveCourses": "No active courses yet for this student. Pick from the catalog below.",
+      "availableCoursesHeading": "Available catalog",
+      "allActivated": "You've activated every course in the catalog. More coming in rolling release.",
+      "progress": "{mastered}/{total} lessons mastered ({pct}%)",
+      "activatedOn": "Activated on {date}",
+      "catalogStats": "{lessons} lessons · {competencies} competencies"
+    },
+    "courses": {
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
+      "dialog": {
+        "activateTitle": "Activate \"{course}\" for {name}",
+        "deactivateTitle": "Deactivate \"{course}\" for {name}",
+        "lessons": "Lessons",
+        "competencies": "Competencies",
+        "includedInPlan": "Access to this course is included in your plan. No additional charge.",
+        "deactivateWarning": "Your child will stop seeing this course. Progress and earned Coin are preserved; you can reactivate later without losing them.",
+        "cancel": "Cancel",
+        "activateConfirm": "Activate for {name}",
+        "deactivateConfirm": "Yes, deactivate",
+        "submitting": "Processing…"
+      },
+      "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "unauthorized": "Your session expired. Please sign in again.",
+        "parent_not_found": "We couldn't find your parent account.",
+        "student_not_found": "This student doesn't exist or isn't in your family.",
+        "course_not_found": "This course doesn't exist.",
+        "course_not_published": "This course isn't available yet.",
+        "enrollment_not_found": "There's no activation to deactivate.",
+        "already_inactive": "This course was already deactivated.",
+        "invalid_body": "Invalid data."
+      }
     },
     "dashboard": {
       "heading": "Family dashboard",
@@ -399,6 +449,7 @@
         "gradePreK": "PreK",
         "gradeNumbered": "Grade {n}",
         "viewProfileSoon": "View profile — coming soon",
+        "manageCourses": "Manage courses",
         "completeHint": "Complete the {amount} payment to activate this student.",
         "plan": {
           "CORE": "Core",
@@ -623,7 +674,12 @@
       "recentHeading": "Recent wins",
       "noActivity": "No activity yet. Pick an intent above to get started.",
       "masteryLabel": "{pct}% mastered",
-      "completedTag": "Mastered"
+      "completedTag": "Mastered",
+      "coursesHeading": "My courses",
+      "courseProgress": "{mastered}/{total} lessons mastered ({pct}%)",
+      "nextLesson": "Next suggested lesson",
+      "continueCourse": "Continue the course",
+      "courseCompleted": "You completed every lesson in this course!"
     },
     "angela": {
       "open": "Open Angela",
