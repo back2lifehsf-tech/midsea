@@ -110,19 +110,55 @@ function splitSystemUser(rendered) {
   return { system: '', user: rendered.trim() };
 }
 
+// Parsea el mensaje de error 429 buscando "try again in Xs" o "Xms".
+// Devuelve segundos a esperar (con piso de 1s y techo de 60s).
+function parseRetryAfter(errMessage) {
+  if (typeof errMessage !== 'string') return null;
+  const msMatch = errMessage.match(/try again in ([\d.]+)ms/i);
+  if (msMatch) return Math.max(1, Math.min(60, Math.ceil(parseFloat(msMatch[1]) / 1000)));
+  const sMatch = errMessage.match(/try again in ([\d.]+)s/i);
+  if (sMatch) return Math.max(1, Math.min(60, Math.ceil(parseFloat(sMatch[1]))));
+  return null;
+}
+
 async function callOpenAI({ system, user, model, apiKey }) {
   const client = new OpenAI({ apiKey });
-  const completion = await client.chat.completions.create({
-    model,
-    response_format: { type: 'json_object' },
-    temperature: 0.7,
-    messages: [
-      { role: 'system', content: system },
-      { role: 'user', content: user }
-    ]
-  });
-  const content = completion.choices[0]?.message?.content ?? '';
-  return { content, tokensUsed: completion.usage?.total_tokens };
+  const MAX_RETRIES = 4;
+  let lastError;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const completion = await client.chat.completions.create({
+        model,
+        response_format: { type: 'json_object' },
+        temperature: 0.7,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: user }
+        ]
+      });
+      const content = completion.choices[0]?.message?.content ?? '';
+      return { content, tokensUsed: completion.usage?.total_tokens };
+    } catch (e) {
+      lastError = e;
+      const status = e?.status ?? e?.code;
+      const is429 = status === 429 || /rate limit/i.test(e?.message ?? '');
+      const is5xx = typeof status === 'number' && status >= 500 && status < 600;
+      if (!is429 && !is5xx) throw e;
+      if (attempt === MAX_RETRIES) break;
+      // Para 429 usamos el wait time del mensaje; para 5xx backoff exponencial.
+      const retryAfterSec =
+        (is429 ? parseRetryAfter(e?.message) : null) ?? Math.pow(2, attempt) + 1;
+      // Jitter +0-500ms para evitar thundering herd cuando varios subprocesos
+      // de generate-course salen del 429 al mismo tiempo.
+      const jitterMs = Math.floor(Math.random() * 500);
+      const waitMs = retryAfterSec * 1000 + jitterMs;
+      console.warn(
+        `  ⏸ retry ${attempt + 1}/${MAX_RETRIES} en ${(waitMs / 1000).toFixed(1)}s — ${is429 ? '429' : status}`
+      );
+      await new Promise((r) => setTimeout(r, waitMs));
+    }
+  }
+  throw lastError;
 }
 
 function buildLessonSlug(competencyCode) {
