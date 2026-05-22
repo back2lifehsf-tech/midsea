@@ -67,6 +67,30 @@ enum BillingCycle {
   ANNUAL
 }
 
+// Epic 04 + ADR-005 §7: catálogo a la carta. SubjectArea reemplaza
+// (a futuro) al enum Subject — coexisten en v1 mientras migramos las
+// lecciones legacy. SubjectArea cubre las 6 materias del pilot HS +
+// catch-all electivas para v1.1.
+enum SubjectArea {
+  MATH
+  LANGUAGE
+  ENGLISH_ESL
+  HISTORY
+  SCIENCE
+  MUSIC
+  ELECTIVE_OTHER
+}
+
+// GradeBand abstrae "qué nivel del Secundario argentino cubre el
+// curso". Mapeo per ADR-003: Ciclo Básico = 9°-10° (1°-2° Sec AR);
+// Ciclo Orientado = 11°-12° (3°-5° Sec AR). TRANSVERSAL para cursos
+// que no se atan a 1 año (Inglés ESL, Historia, Música).
+enum GradeBand {
+  CICLO_BASICO
+  CICLO_ORIENTADO
+  TRANSVERSAL
+}
+
 enum CoinReason {
   LESSON_MASTERY
   BADGE
@@ -101,6 +125,9 @@ model Parent {
   // crea on-demand al primer cobro (no en signup) para evitar Customers
   // huérfanos que no van a comprar.
   stripeCustomerId String? @unique
+
+  // Epic 04 + ADR-005: el padre activa cursos por hijo. Back-relation.
+  courseActivations StudentCourseEnrollment[]
 
   @@index([familyId])
 }
@@ -141,6 +168,7 @@ model Student {
   earnedBadges    EarnedBadge[]
   tutorSessions   TutorSession[]
   tutorUsage      TutorUsageDaily[]
+  enrollments     StudentCourseEnrollment[]
 
   @@index([familyId])
   @@index([subscriptionStatus])
@@ -161,9 +189,129 @@ model Lesson {
   orderIndex  Int          @default(0)
   createdAt   DateTime     @default(now())
 
-  progress    LessonProgress[]
+  // Epic 04 + ADR-005: cada Lesson pertenece a un Course del catálogo.
+  // Nullable en v1 para permitir lecciones legacy (Epic 01 seed) sin
+  // ruptura; el pipeline de generación (Tarea 2-4) siempre lo seta.
+  course      Course?      @relation(fields: [courseId], references: [id])
+  courseId    String?
+  // mes del calendario académico del outline (1..12) — sirve para
+  // ordenar lecciones secuencialmente dentro de un curso aunque el
+  // estudiante navegue libre. nullable hasta ingestar contenido real.
+  monthIndex  Int?
+  // Body en markdown + activities array + reflexión cristiana opcional
+  // (ADR-007). Schema completo del ingest se define en Tarea 2 vía Zod.
+  bodyMd      String?      @db.Text
+  activities  Json?
+  reflectionEs String?     @db.Text
+  reflectionEn String?     @db.Text
+
+  progress      LessonProgress[]
+  competencies  LessonCompetency[]
+  quizQuestions QuizQuestion[]
 
   @@index([subject, gradeLevel])
+  @@index([courseId, monthIndex, orderIndex])
+}
+
+// Epic 04 + ADR-005 §7: catálogo HS Pilot Mínimo de 8 cursos.
+// Cada Course es la unidad atómica que el padre activa por hijo.
+// `slug` es la clave canónica que el pipeline usa para vincular las
+// lecciones generadas con el curso correcto.
+model Course {
+  id            String       @id @default(cuid())
+  slug          String       @unique
+  titleEs       String
+  titleEn       String
+  descriptionEs String       @db.Text
+  descriptionEn String       @db.Text
+  subject       SubjectArea
+  gradeBand     GradeBand
+  orderIndex    Int          @default(0)
+  published     Boolean      @default(false)
+  thumbnailUrl  String?
+  createdAt     DateTime     @default(now())
+
+  lessons       Lesson[]
+  competencies  Competency[]
+  enrollments   StudentCourseEnrollment[]
+
+  @@index([subject, gradeBand, published])
+}
+
+// Epic 04 + ADR-005 §7: competencias dentro de un Course. `code` es
+// una clave semántica tipo "ARG-MATH-CB-01". `prerequisites`/`unblocks`
+// es self-relation many-to-many (una competencia puede requerir otras
+// + desbloquear otras). El MasteryMap del estudiante es derivable de
+// LessonProgress agregado por Competency.
+model Competency {
+  id            String   @id @default(cuid())
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId      String
+  code          String
+  descriptionEs String   @db.Text
+  descriptionEn String   @db.Text
+  orderIndex    Int      @default(0)
+
+  prerequisites Competency[] @relation("CompetencyPrereqs")
+  unblocks      Competency[] @relation("CompetencyPrereqs")
+
+  lessons       LessonCompetency[]
+
+  @@unique([courseId, code])
+}
+
+// Epic 04 + ADR-005 §7: join Lesson ↔ Competency. `weight` permite
+// que una lección "cuente" 100% para una competencia pero solo 30%
+// para otra (e.g. lección de fracciones aporta a "operar racionales"
+// + parcialmente a "resolver problemas de proporcionalidad").
+model LessonCompetency {
+  lesson       Lesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId     String
+  competency   Competency  @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+  competencyId String
+  weight       Int         @default(100)
+
+  @@id([lessonId, competencyId])
+}
+
+// Epic 04 + ADR-005: enrollment del estudiante en un curso del catálogo.
+// La fuente de verdad de "qué cursos toma cada hijo". onDelete:Restrict
+// sobre Course evita borrar un curso con enrollments activos (proteger
+// progreso del estudiante).
+model StudentCourseEnrollment {
+  id                  String   @id @default(cuid())
+  student             Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId           String
+  course              Course   @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  courseId            String
+  activatedAt         DateTime @default(now())
+  activatedBy         Parent   @relation(fields: [activatedByParentId], references: [id])
+  activatedByParentId String
+  deactivatedAt       DateTime?
+  active              Boolean  @default(true)
+
+  @@unique([studentId, courseId])
+  @@index([studentId, active])
+}
+
+// Epic 04 §4: preguntas del quiz final de una lección. `correctAnswer`
+// se mantiene server-side; el cliente envía respuestas, el server las
+// puntúa. `type` controla el render: 'multiple_choice', 'fill_in_blank',
+// 'short_answer', 'step_by_step'.
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId      String
+  orderIndex    Int      @default(0)
+  type          String
+  promptEs      String   @db.Text
+  promptEn      String   @db.Text
+  options       Json?
+  correctAnswer Json
+  explanationEs String?  @db.Text
+  explanationEn String?  @db.Text
+
+  @@index([lessonId, orderIndex])
 }
 
 model LessonProgress {

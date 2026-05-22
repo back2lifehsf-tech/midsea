@@ -27,10 +27,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 function parseArgs() {
-  const out = { target: null, url: null };
+  const out = { target: null, url: null, file: null };
   for (const a of process.argv.slice(2)) {
     if (a.startsWith('--target=')) out.target = a.split('=')[1];
     else if (a.startsWith('--url=')) out.url = a.split('=')[1];
+    else if (a.startsWith('--file=')) out.file = a.split('=')[1];
   }
   return out;
 }
@@ -73,15 +74,15 @@ async function main() {
   const args = parseArgs();
   const url = resolveUrl(args);
 
-  const sqlPath = path.join(
-    __dirname,
-    '..',
-    'prisma',
-    'migrations',
-    'manual',
-    '0003-billing-tables.sql'
-  );
+  // Por compat con Epic 03, default al SQL del billing si --file no se
+  // pasa. Para migrations posteriores (Epic 04+): --file=<path-rel-o-abs>.
+  const fileArg =
+    args.file ?? 'prisma/migrations/manual/0003-billing-tables.sql';
+  const sqlPath = path.isAbsolute(fileArg)
+    ? fileArg
+    : path.join(__dirname, '..', fileArg);
   const sql = fs.readFileSync(sqlPath, 'utf8');
+  console.log('SQL file:', path.relative(path.join(__dirname, '..'), sqlPath));
 
   // Split en statements separados por `;` al final de línea, ignorando los
   // que están dentro de `DO $$ ... $$;` (Postgres dollar-quoted).
