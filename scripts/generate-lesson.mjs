@@ -141,13 +141,32 @@ async function callOpenAI({ system, user, model, apiKey }) {
     } catch (e) {
       lastError = e;
       const status = e?.status ?? e?.code;
-      const is429 = status === 429 || /rate limit/i.test(e?.message ?? '');
+      const msg = e?.message ?? '';
+      // OpenAI usa 429 para DOS cosas distintas:
+      //   - Rate limit por TPM (temporal): "Rate limit reached on tokens per min".
+      //     code: 'rate_limit_exceeded'.
+      //   - Quota agotada (billing): "You exceeded your current quota".
+      //     code: 'insufficient_quota'.
+      // Solo la primera se puede recuperar con retry. La segunda requiere
+      // top-up de créditos — reintentar es perder tiempo.
+      const isQuotaExhausted =
+        e?.code === 'insufficient_quota' ||
+        /exceeded your current quota/i.test(msg) ||
+        /check your plan and billing/i.test(msg);
+      if (isQuotaExhausted) {
+        const err = new Error(
+          'OpenAI quota agotada. Recargá créditos en https://platform.openai.com/settings/organization/billing y re-corré el bulk con --skip-existing.'
+        );
+        err.code = 'insufficient_quota';
+        throw err;
+      }
+      const is429 = status === 429 || /rate limit/i.test(msg);
       const is5xx = typeof status === 'number' && status >= 500 && status < 600;
       if (!is429 && !is5xx) throw e;
       if (attempt === MAX_RETRIES) break;
       // Para 429 usamos el wait time del mensaje; para 5xx backoff exponencial.
       const retryAfterSec =
-        (is429 ? parseRetryAfter(e?.message) : null) ?? Math.pow(2, attempt) + 1;
+        (is429 ? parseRetryAfter(msg) : null) ?? Math.pow(2, attempt) + 1;
       // Jitter +0-500ms para evitar thundering herd cuando varios subprocesos
       // de generate-course salen del 429 al mismo tiempo.
       const jitterMs = Math.floor(Math.random() * 500);
