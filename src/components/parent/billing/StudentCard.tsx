@@ -2,6 +2,7 @@
 import { useTranslations } from 'next-intl';
 import { formatUsd } from '@/lib/pricing/format';
 import type { SubscriptionStatus, PlanTier } from '@prisma/client';
+import { StudentActions } from './StudentActions';
 
 export interface StudentCardData {
   id: string;
@@ -10,6 +11,9 @@ export interface StudentCardData {
   subscriptionStatus: SubscriptionStatus;
   planTier: PlanTier | null;
   monthlyAmountCents: number | null;
+  /** true si hay un `stripeSubscriptionId` persistido. Determina si el
+   *  menu "Cancelar suscripción" debe aparecer (vs solo "Eliminar"). */
+  hasStripeSubscription?: boolean;
 }
 
 interface StudentCardProps {
@@ -57,7 +61,15 @@ export function StudentCard({ student, locale }: StudentCardProps) {
           </h3>
           <p className="text-xs text-midsea-ink/60">{gradeLabel}</p>
         </div>
-        <Avatar name={student.displayName} variant={variant} />
+        <div className="flex items-start gap-1">
+          <StudentActions
+            studentId={student.id}
+            studentName={student.displayName}
+            subscriptionStatus={student.subscriptionStatus}
+            hasStripeSubscription={student.hasStripeSubscription ?? false}
+          />
+          <Avatar name={student.displayName} variant={variant} />
+        </div>
       </header>
 
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
