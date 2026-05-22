@@ -3,6 +3,54 @@
     "title": "MIDSEA Academy — Educación cristiana bilingüe K-12",
     "description": "Escuela virtual cristiana bilingüe acreditada en Florida. Currículo PreK-12 con valores, herramientas para padres y aprendizaje desde casa."
   },
+  "catalog": {
+    "meta": {
+      "title": "Catálogo de cursos — MIDSEA Academy",
+      "description": "Ver los cursos disponibles del pilot HS antes de inscribirse. Matemática, Lengua, Inglés ESL, Historia, Ciencias y Música con enfoque cristiano y español LATAM neutro."
+    },
+    "hero": {
+      "eyebrow": "Pilot HS — Latinoamérica",
+      "title": "Conocé el catálogo antes de inscribirte",
+      "subtitle": "Educación cristiana bilingüe para adolescentes de 9°-10° grado. Activá los cursos que tu hijo necesita, sin paquetes cerrados ni materias forzadas.",
+      "stat": {
+        "courses": "{n} cursos del Pilot Mínimo",
+        "lessons": "{n} lecciones interactivas",
+        "gradeBand": "Grados 9° y 10° (Ciclo Básico)"
+      },
+      "primaryCta": "Empezar ahora",
+      "secondaryCta": "Ver precios",
+      "transparencyNote": "Plan Core incluye acceso ilimitado al catálogo. Activás los cursos que tu hijo va a tomar, sin cobro extra por curso."
+    },
+    "list": {
+      "heading": "Cursos del Pilot Mínimo",
+      "subheading": "Cada curso fue diseñado con enfoque cristiano y currículo internacional. El tono de las lecciones es español LATAM neutro: tu hijo no se va a topar con voseo argentino, vosotros español ni localismos regionales.",
+      "empty": "Estamos publicando los cursos. Volvé en unos días."
+    },
+    "card": {
+      "cta": "Empezar",
+      "stats": "{lessons} lecciones · {competencies} competencias"
+    },
+    "subjectLabel": {
+      "MATH": "Matemática",
+      "LANGUAGE": "Lengua",
+      "ENGLISH_ESL": "Inglés ESL",
+      "HISTORY": "Historia",
+      "SCIENCE": "Ciencias",
+      "MUSIC": "Música",
+      "ELECTIVE_OTHER": "Electiva"
+    },
+    "gradeBandLabel": {
+      "CICLO_BASICO": "9°-10°",
+      "CICLO_ORIENTADO": "11°-12°",
+      "TRANSVERSAL": "9°-12°"
+    },
+    "finalCta": {
+      "title": "Probá Midsea sin compromiso",
+      "body": "Creás tu cuenta, activás un curso para tu hijo y empezás hoy. Cancelás cuando quieras.",
+      "primary": "Crear cuenta",
+      "secondary": "Ya tengo cuenta"
+    }
+  },
   "landing": {
     "brand": "MIDSEA Academy",
     "brandShort": "Midsea",
@@ -11,6 +59,7 @@
       "pricing": "Precios",
       "forParents": "Para Padres",
       "forStudents": "Para Estudiantes",
+      "catalog": "Catálogo",
       "enter": "Entrar",
       "openMenu": "Abrir menú",
       "closeMenu": "Cerrar menú"
@@ -199,6 +248,7 @@
       "columnProduct": "Producto",
       "columnIdentity": "Identidad",
       "columnLegal": "Legal",
+      "catalog": "Catálogo de cursos",
       "features": "Características",
       "pricing": "Precios",
       "forParents": "Para padres",

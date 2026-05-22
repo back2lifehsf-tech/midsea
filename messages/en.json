@@ -3,6 +3,54 @@
     "title": "MIDSEA Academy — Christian bilingual K-12 education",
     "description": "Florida-accredited Christian bilingual virtual school. PreK-12 curriculum with values, parent tools, and home-based learning."
   },
+  "catalog": {
+    "meta": {
+      "title": "Course catalog — MIDSEA Academy",
+      "description": "See available HS pilot courses before signing up. Math, Language, English ESL, History, Science and Music with Christian worldview and neutral LATAM Spanish tone."
+    },
+    "hero": {
+      "eyebrow": "HS Pilot — Latin America",
+      "title": "See the catalog before signing up",
+      "subtitle": "Christian bilingual education for teens in grades 9-10. Activate the courses your child needs — no closed bundles, no forced subjects.",
+      "stat": {
+        "courses": "{n} Pilot Mínimo courses",
+        "lessons": "{n} interactive lessons",
+        "gradeBand": "Grades 9 and 10 (Ciclo Básico)"
+      },
+      "primaryCta": "Get started",
+      "secondaryCta": "See pricing",
+      "transparencyNote": "Core plan includes unlimited access to the catalog. Activate the courses your child will take — no extra cost per course."
+    },
+    "list": {
+      "heading": "Pilot Mínimo courses",
+      "subheading": "Each course is designed with a Christian worldview and an international curriculum. Lesson tone is neutral Latin American Spanish — no regional slang, no Argentine voseo, no peninsular vosotros.",
+      "empty": "We're publishing the courses. Check back in a few days."
+    },
+    "card": {
+      "cta": "Get started",
+      "stats": "{lessons} lessons · {competencies} competencies"
+    },
+    "subjectLabel": {
+      "MATH": "Math",
+      "LANGUAGE": "Language",
+      "ENGLISH_ESL": "English ESL",
+      "HISTORY": "History",
+      "SCIENCE": "Science",
+      "MUSIC": "Music",
+      "ELECTIVE_OTHER": "Elective"
+    },
+    "gradeBandLabel": {
+      "CICLO_BASICO": "9-10",
+      "CICLO_ORIENTADO": "11-12",
+      "TRANSVERSAL": "9-12"
+    },
+    "finalCta": {
+      "title": "Try Midsea with no commitment",
+      "body": "Create your account, activate a course for your child and start today. Cancel anytime.",
+      "primary": "Create account",
+      "secondary": "I already have an account"
+    }
+  },
   "landing": {
     "brand": "MIDSEA Academy",
     "brandShort": "Midsea",
@@ -11,6 +59,7 @@
       "pricing": "Pricing",
       "forParents": "For Parents",
       "forStudents": "For Students",
+      "catalog": "Catalog",
       "enter": "Sign in",
       "openMenu": "Open menu",
       "closeMenu": "Close menu"
@@ -199,6 +248,7 @@
       "columnProduct": "Product",
       "columnIdentity": "Identity",
       "columnLegal": "Legal",
+      "catalog": "Course catalog",
       "features": "Features",
       "pricing": "Pricing",
       "forParents": "For parents",

@@ -44,6 +44,12 @@ export function LandingNav() {
               {t(s.key)}
             </a>
           ))}
+          <Link
+            href={`/${locale}/catalog`}
+            className="rounded-lg px-3 py-1.5 text-midsea-deep hover:bg-midsea-foam"
+          >
+            {t('catalog')}
+          </Link>
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
@@ -115,6 +121,13 @@ export function LandingNav() {
               {t(s.key)}
             </a>
           ))}
+          <Link
+            href={`/${locale}/catalog`}
+            onClick={() => setOpen(false)}
+            className="rounded-lg px-3 py-2 text-sm text-midsea-deep hover:bg-midsea-foam"
+          >
+            {t('catalog')}
+          </Link>
           <div className="mt-2 flex items-center justify-between gap-2 border-t border-midsea-ocean/10 pt-3">
             <LocaleSwitcher />
             <Link
