@@ -76,10 +76,15 @@ export const QuizQuestionSchema = z.discriminatedUnion('type', [
 
 export const LessonIngestSchema = z.object({
   // Identidad — el slug es único y derivable del competencyCode.
+  // Permitimos `_` además de `-` y alfanuméricos porque los cursos del
+  // catálogo con grado combinado (e.g. `G09_10` en history/language/
+  // science-biology) producen slugs tipo `arg-his-g09_10-m04-t01-l01`.
+  // Mantener kebab-case-with-underscore en lugar de cambiar el formato
+  // del competencyCode (que ya está en uso y en ADR-005).
   slug: z
     .string()
     .min(3)
-    .regex(/^[a-z0-9-]+$/, 'slug debe ser kebab-case lowercase'),
+    .regex(/^[a-z0-9_-]+$/, 'slug debe ser kebab-case lowercase'),
   courseSlug: z.string().min(1),
   competencyCode: z
     .string()
