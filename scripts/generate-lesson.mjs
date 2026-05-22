@@ -33,7 +33,7 @@ import { loadEnv, repoRoot } from './lib/env.mjs';
 import { LessonIngestSchema } from './lib/lesson-ingest-schema.mjs';
 import { parseOutline } from './parsers/outline-parser.mjs';
 
-const PROMPT_VERSION = 'v1.0';
+const PROMPT_VERSION = 'v1.1';
 const DEFAULT_MODEL = 'gpt-4o';
 
 function parseArgs() {
