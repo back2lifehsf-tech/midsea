@@ -418,6 +418,7 @@
           "cancel": "Cancelar suscripción",
           "delete": "Eliminar estudiante",
           "noActions": "Sin acciones disponibles",
+          "afterCancelHint": "Suscripción cancelada. Si querés borrar el perfil ahora, está abajo.",
           "cancelConfirm": {
             "title": "¿Cancelar la suscripción de {name}?",
             "body": "El acceso se interrumpe ahora y no se cobrará el próximo mes. Luego podrás eliminar el perfil si quieres.",

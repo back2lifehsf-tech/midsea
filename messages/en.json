@@ -418,6 +418,7 @@
           "cancel": "Cancel subscription",
           "delete": "Delete student",
           "noActions": "No actions available",
+          "afterCancelHint": "Subscription canceled. If you want to delete the profile now, it's below.",
           "cancelConfirm": {
             "title": "Cancel {name}'s subscription?",
             "body": "Access stops now and we won't charge next month. You can delete the profile afterward if you want.",
