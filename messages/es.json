@@ -412,6 +412,24 @@
           "pastDue": "Pago atrasado",
           "canceled": "Cancelado",
           "paused": "Pausado"
+        },
+        "actions": {
+          "menuLabel": "Acciones para {name}",
+          "cancel": "Cancelar suscripción",
+          "delete": "Eliminar estudiante",
+          "noActions": "Sin acciones disponibles",
+          "cancelConfirm": {
+            "title": "¿Cancelar la suscripción de {name}?",
+            "body": "Mantendrá acceso hasta el final del período pagado. No se cobrará el próximo mes.",
+            "confirm": "Sí, cancelar",
+            "cancel": "Volver"
+          },
+          "deleteConfirm": {
+            "title": "¿Eliminar a {name}?",
+            "body": "Esta acción borra el perfil, el progreso y todo el historial con Angela. No se puede deshacer.",
+            "confirm": "Sí, eliminar",
+            "cancel": "Volver"
+          }
         }
       },
       "total": {
@@ -502,6 +520,11 @@
       "no_password_set": "Tu cuenta usó Google. Configura una contraseña primero.",
       "unauthorized": "Tu sesión expiró. Inicia sesión otra vez.",
       "payment_failed": "El pago falló. Revisa tu tarjeta o intenta otro método.",
+      "no_active_subscription": "Este estudiante no tiene suscripción activa.",
+      "student_not_found": "No encontramos a ese estudiante.",
+      "student_active_cancel_first": "Cancela la suscripción primero para poder eliminar.",
+      "student_pending_cancel_first": "Hay un cobro pendiente. Cancela la suscripción primero.",
+      "cancel_failed": "No pudimos cancelar la suscripción. Inténtalo de nuevo.",
       "generic": "Algo salió mal. Inténtalo de nuevo."
     }
   },

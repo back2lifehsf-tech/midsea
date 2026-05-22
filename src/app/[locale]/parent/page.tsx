@@ -51,7 +51,7 @@ async function loadStudents(parent: ParentContext): Promise<StudentCardData[]> {
       }
     ];
   }
-  return prisma.student.findMany({
+  const rows = await prisma.student.findMany({
     where: { familyId: parent.family.id },
     orderBy: { createdAt: 'asc' },
     select: {
@@ -60,9 +60,14 @@ async function loadStudents(parent: ParentContext): Promise<StudentCardData[]> {
       gradeLevel: true,
       subscriptionStatus: true,
       planTier: true,
-      monthlyAmountCents: true
+      monthlyAmountCents: true,
+      stripeSubscriptionId: true
     }
   });
+  return rows.map(({ stripeSubscriptionId, ...rest }) => ({
+    ...rest,
+    hasStripeSubscription: stripeSubscriptionId !== null
+  }));
 }
 
 function normalizePlan(raw?: string): PlanTier | undefined {

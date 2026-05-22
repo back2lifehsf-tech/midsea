@@ -412,6 +412,24 @@
           "pastDue": "Past due",
           "canceled": "Canceled",
           "paused": "Paused"
+        },
+        "actions": {
+          "menuLabel": "Actions for {name}",
+          "cancel": "Cancel subscription",
+          "delete": "Delete student",
+          "noActions": "No actions available",
+          "cancelConfirm": {
+            "title": "Cancel {name}'s subscription?",
+            "body": "They keep access until the end of the paid period. We won't charge next month.",
+            "confirm": "Yes, cancel",
+            "cancel": "Back"
+          },
+          "deleteConfirm": {
+            "title": "Delete {name}?",
+            "body": "This deletes the profile, progress, and all conversation history with Angela. Can't be undone.",
+            "confirm": "Yes, delete",
+            "cancel": "Back"
+          }
         }
       },
       "total": {
@@ -502,6 +520,11 @@
       "no_password_set": "Your account signed up with Google. Set a password first.",
       "unauthorized": "Your session expired. Sign in again.",
       "payment_failed": "Payment failed. Check your card or try another method.",
+      "no_active_subscription": "This student has no active subscription.",
+      "student_not_found": "We couldn't find that student.",
+      "student_active_cancel_first": "Cancel the subscription first to enable delete.",
+      "student_pending_cancel_first": "There's a pending charge. Cancel the subscription first.",
+      "cancel_failed": "We couldn't cancel the subscription. Try again.",
       "generic": "Something went wrong. Try again."
     }
   },
