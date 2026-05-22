@@ -39,6 +39,7 @@ export function StudentActions({
   const [confirm, setConfirm] = useState<ActionKind | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [justCanceled, setJustCanceled] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Click-outside + Esc para cerrar el menú.
@@ -85,7 +86,13 @@ export function StudentActions({
         throw new Error(j.error ?? 'generic');
       }
       setConfirm(null);
-      setOpen(false);
+      // Mantengo el menu abierto + flag de nudge para que el padre vea
+      // inmediatamente la opción "Eliminar" recién habilitada por el
+      // cambio de estado. Auto-reset a los 8s. router.refresh() no
+      // desmonta este client component, solo re-renderiza la card padre.
+      setJustCanceled(true);
+      setOpen(true);
+      setTimeout(() => setJustCanceled(false), 8000);
       router.refresh();
     } catch (e) {
       setError((e as Error).message || 'generic');
@@ -130,8 +137,15 @@ export function StudentActions({
       {open ? (
         <div
           role="menu"
-          className="absolute right-0 top-9 z-20 min-w-[200px] rounded-xl bg-white py-1 shadow-wave ring-1 ring-midsea-ocean/15"
+          className="absolute right-0 top-9 z-20 min-w-[240px] rounded-xl bg-white py-1 shadow-wave ring-1 ring-midsea-ocean/15"
         >
+          {justCanceled ? (
+            <div className="border-b border-midsea-ocean/10 px-3 py-2">
+              <p className="text-xs leading-snug text-midsea-ink/70">
+                {t('afterCancelHint')}
+              </p>
+            </div>
+          ) : null}
           {canCancel ? (
             <button
               type="button"
@@ -146,8 +160,14 @@ export function StudentActions({
             <button
               type="button"
               role="menuitem"
+              autoFocus={justCanceled}
               onClick={() => setConfirm('delete')}
-              className="block w-full px-3 py-2 text-left text-sm text-rose-700 hover:bg-rose-50 focus-visible:outline-none focus-visible:bg-rose-50"
+              className={[
+                'block w-full px-3 py-2 text-left text-sm text-rose-700 hover:bg-rose-50 focus-visible:outline-none focus-visible:bg-rose-50',
+                justCanceled
+                  ? 'ring-2 ring-rose-300 ring-inset bg-rose-50/60'
+                  : ''
+              ].join(' ')}
             >
               {t('delete')}
             </button>
