@@ -137,35 +137,28 @@ export async function ingestLesson(prisma, lesson, courseMeta) {
   // 4. Lesson upsert (slug es @unique)
   const subjectLegacy = SUBJECT_AREA_TO_LEGACY[courseMeta.subject];
   const gradeLevel = gradeLevelFromCode(courseMeta.gradeCode);
+  // Lesson tiene titleEs/En + summaryEs/En (bilingüe nativo desde Epic
+  // 01, no `title` plano). Mapeamos campos del JSON ingest a esos.
+  const lessonData = {
+    titleEs: lesson.titleEs,
+    titleEn: lesson.titleEn,
+    summaryEs: lesson.summaryEs,
+    summaryEn: lesson.summaryEn,
+    estMinutes: lesson.estMinutes,
+    subject: subjectLegacy,
+    gradeLevel,
+    orderIndex: lesson.lessonOrderIndex,
+    courseId: course.id,
+    monthIndex: lesson.monthIndex,
+    bodyMd: lesson.contentMarkdownEs,
+    activities: lesson.activities,
+    reflectionEs: lesson.reflectionEs ?? null,
+    reflectionEn: lesson.reflectionEn ?? null
+  };
   const lessonRow = await prisma.lesson.upsert({
     where: { slug: lesson.slug },
-    create: {
-      slug: lesson.slug,
-      title: lesson.titleEs,
-      estMinutes: lesson.estMinutes,
-      subject: subjectLegacy,
-      gradeLevel,
-      orderIndex: lesson.lessonOrderIndex,
-      courseId: course.id,
-      monthIndex: lesson.monthIndex,
-      bodyMd: lesson.contentMarkdownEs,
-      activities: lesson.activities,
-      reflectionEs: lesson.reflectionEs ?? null,
-      reflectionEn: lesson.reflectionEn ?? null
-    },
-    update: {
-      title: lesson.titleEs,
-      estMinutes: lesson.estMinutes,
-      subject: subjectLegacy,
-      gradeLevel,
-      orderIndex: lesson.lessonOrderIndex,
-      courseId: course.id,
-      monthIndex: lesson.monthIndex,
-      bodyMd: lesson.contentMarkdownEs,
-      activities: lesson.activities,
-      reflectionEs: lesson.reflectionEs ?? null,
-      reflectionEn: lesson.reflectionEn ?? null
-    }
+    create: { slug: lesson.slug, ...lessonData },
+    update: lessonData
   });
 
   // 5. LessonCompetency upsert

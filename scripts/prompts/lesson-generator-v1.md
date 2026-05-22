@@ -1,6 +1,10 @@
-# Lesson Generator Prompt — v1.0
+# Lesson Generator Prompt — v1.1
 
-> **Versión**: `v1.0` — fijada el 2026-05-22 para el bulk del Pilot Mínimo.
+> **Versión**: `v1.1` — actualizada el 2026-05-22 tras validar 5 lecciones
+> piloto de math-grade-9. Cambio vs v1.0: se aclara que `contentMarkdownEs/En`
+> es SOLO prosa educativa — sin headers de actividades, reflexión o quiz
+> (esos viven en sus propios campos del JSON y el lesson player los
+> renderiza aparte).
 > **Modelo target**: `gpt-4o` (NO `gpt-4o-mini`). ADR-006 §3.
 >
 > Si cambias este prompt, sube la versión (`v1.1`, `v2.0`) y deja claro en
@@ -57,14 +61,18 @@ bilingüe cristiana para HS LATAM) en formato JSON estricto.
 4. **Duración**: 6-10 minutos (`estMinutes` entre 6 y 10). Eso es
    ~600-900 palabras de contenido + actividades.
 
-5. **3 actividades intercaladas en el cuerpo** (no al final). Tipos
-   disponibles: `multiple_choice`, `fill_in_blank`, `short_answer`,
+5. **3 actividades intercaladas** durante la experiencia de aprendizaje.
+   Tipos disponibles: `multiple_choice`, `fill_in_blank`, `short_answer`,
    `step_by_step`. Variá los tipos — no uses 3 del mismo tipo. Para
-   Math/Ciencias, incluí al menos 1 `step_by_step`.
+   Math/Ciencias, incluí al menos 1 `step_by_step`. Las actividades
+   viven SOLO en el array `activities[]` del JSON output — el lesson
+   player las inserta inline en su propio render. **No las menciones
+   en `contentMarkdownEs/En`** (ver regla 10).
 
 6. **Quiz final** con 4-5 preguntas mezclando 3 tipos válidos del quiz:
    `multiple_choice`, `fill_in_blank`, `short_answer`. NO uses
-   `step_by_step` en el quiz.
+   `step_by_step` en el quiz. Las preguntas viven SOLO en
+   `quiz.questions[]`. **No las menciones en el markdown**.
 
 7. **Sugerencia hands-on** (`handsOnSuggestionEs/En`): 1-2 oraciones
    conectando el aprendizaje al mundo físico, tomada o derivada del
@@ -81,6 +89,23 @@ bilingüe cristiana para HS LATAM) en formato JSON estricto.
    SCHEMA` de abajo. Si no podés cumplir alguna restricción, fallá
    explícitamente con un campo `_error: "<motivo>"` en el JSON — no
    inventes datos.
+
+10. **`contentMarkdownEs/En` es SOLO prosa educativa continua**:
+    explicaciones, ejemplos resueltos, definiciones, conceptos,
+    chain-of-thought visible para Math/Ciencias, KaTeX, placeholders
+    de imagen. **PROHIBIDO** dentro del markdown:
+    - Headers tipo `### Actividad N`, `## Quiz`, `## Reflexión` — el
+      player renderiza esos bloques desde campos separados, mezclarlos
+      en el markdown produce duplicación visual.
+    - El texto de las preguntas/opciones de actividades o quiz — son
+      campos separados.
+    - El texto de la reflexión cristiana — vive en `reflectionEs/En`
+      cuando aplica.
+    El markdown debe leerse como un mini-ensayo o capítulo de libro de
+    texto: introducción → desarrollo (con secciones `##` o `###`
+    temáticas como "Introducción", "Definiciones", "Ejemplos",
+    "Aplicaciones") → cierre. Sin meta-comentarios del estilo
+    "ahora vamos a hacer una actividad" o "responde el siguiente quiz".
 
 ### FORMATO MARKDOWN dentro de `contentMarkdownEs/En`
 
