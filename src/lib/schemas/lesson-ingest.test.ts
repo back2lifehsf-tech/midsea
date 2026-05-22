@@ -98,8 +98,18 @@ describe('LessonIngestSchema', () => {
   });
 
   it('rechaza slug con caracteres inválidos', () => {
-    const bad = { ...baseLesson(), slug: 'Arg_Math_G09' };
+    const bad = { ...baseLesson(), slug: 'Arg.Math.G09' };
     expect(LessonIngestSchema.safeParse(bad).success).toBe(false);
+  });
+
+  it('acepta slug con guion bajo (cursos con grado combinado G09_10)', () => {
+    const ok = {
+      ...baseLesson(),
+      slug: 'arg-his-g09_10-m04-t01-l01',
+      courseSlug: 'history-ancient-civ-2-grade-9-10',
+      competencyCode: 'ARG-HIS-G09_10-M04-T01-L01'
+    };
+    expect(LessonIngestSchema.safeParse(ok).success).toBe(true);
   });
 
   it('rechaza competencyCode con formato inválido', () => {
