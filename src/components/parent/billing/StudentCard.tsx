@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { formatUsd } from '@/lib/pricing/format';
 import type { SubscriptionStatus, PlanTier } from '@prisma/client';
@@ -86,9 +87,12 @@ export function StudentCard({ student, locale }: StudentCardProps) {
       ) : null}
 
       <footer className="mt-auto pt-4">
-        <span className="block text-[11px] text-midsea-ink/40">
-          {t('viewProfileSoon')}
-        </span>
+        <Link
+          href={`/${locale}/parent/students/${student.id}`}
+          className="text-xs font-medium text-midsea-ocean hover:underline"
+        >
+          {t('manageCourses')} →
+        </Link>
       </footer>
     </article>
   );
