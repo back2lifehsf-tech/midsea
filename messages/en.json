@@ -420,7 +420,7 @@
           "noActions": "No actions available",
           "cancelConfirm": {
             "title": "Cancel {name}'s subscription?",
-            "body": "They keep access until the end of the paid period. We won't charge next month.",
+            "body": "Access stops now and we won't charge next month. You can delete the profile afterward if you want.",
             "confirm": "Yes, cancel",
             "cancel": "Back"
           },

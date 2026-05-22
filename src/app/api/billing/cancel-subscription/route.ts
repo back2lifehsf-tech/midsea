@@ -10,18 +10,17 @@ import { getStripe, mapStripeStatusToPrisma } from '@/lib/billing/stripe';
  *
  * Body: `{ studentId }`. El Parent autenticado debe ser dueño del Student.
  *
- * Comportamiento: `cancel_at_period_end: true`. El estudiante mantiene
- * acceso hasta `currentPeriodEnd`; en ese momento Stripe dispara
- * `customer.subscription.deleted` y el webhook actualiza
- * `subscriptionStatus = CANCELED`.
+ * Comportamiento v1: **cancelación inmediata** vía `stripe.subscriptions.cancel`.
+ * Stripe marca el sub como `canceled`, el `mapStripeStatusToPrisma` lo
+ * traduce a `CANCELED`, y la tarjeta queda visualmente actualizada al
+ * instante. El padre puede luego click "Eliminar" para borrar el
+ * registro.
  *
- * Decisión de UX: NO hacemos cancelación inmediata. Si el padre pagó
- * por el mes corriente, el estudiante tiene derecho a ese período.
- * "Cancelar" significa "no me cobres el próximo mes".
- *
- * Reactivar (uncancel antes de period_end) queda como Pendiente Epic 04
- * — requiere otro endpoint + UI state distinto (CANCELED-pending vs
- * CANCELED-final).
+ * Trade-off conocido: el padre pierde los días restantes del período
+ * pagado. Aceptable en test mode + pilot beta. Para production real
+ * deberíamos restaurar `cancel_at_period_end: true` + columna
+ * `cancelAtPeriodEnd` + banner "Se cancela el {date}" + endpoint de
+ * reactivar. Punteado a Pendiente Epic 04 (requiere migration).
  */
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -62,24 +61,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const stripe = getStripe();
-    const updated = await stripe.subscriptions.update(
-      student.stripeSubscriptionId,
-      { cancel_at_period_end: true }
+    const canceled = await stripe.subscriptions.cancel(
+      student.stripeSubscriptionId
     );
     await prisma.student.update({
       where: { id: student.id },
       data: {
-        subscriptionStatus: mapStripeStatusToPrisma(updated.status)
+        subscriptionStatus: mapStripeStatusToPrisma(canceled.status)
       }
     });
-    return Response.json({
-      ok: true,
-      cancelAtPeriodEnd: true,
-      currentPeriodEnd:
-        (updated as unknown as { current_period_end?: number }).current_period_end ??
-        updated.items.data[0]?.current_period_end ??
-        null
-    });
+    return Response.json({ ok: true });
   } catch (e) {
     console.error('[billing] cancel-subscription failed:', e);
     return jsonError(500, 'cancel_failed');

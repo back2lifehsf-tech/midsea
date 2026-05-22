@@ -420,7 +420,7 @@
           "noActions": "Sin acciones disponibles",
           "cancelConfirm": {
             "title": "¿Cancelar la suscripción de {name}?",
-            "body": "Mantendrá acceso hasta el final del período pagado. No se cobrará el próximo mes.",
+            "body": "El acceso se interrumpe ahora y no se cobrará el próximo mes. Luego podrás eliminar el perfil si quieres.",
             "confirm": "Sí, cancelar",
             "cancel": "Volver"
           },
