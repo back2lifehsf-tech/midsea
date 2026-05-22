@@ -39,3 +39,11 @@ tsconfig.tsbuildinfo
 Thumbs.db
 
 .vercel
+
+# Pipeline de generación de contenido (ADR-006). Los JSON crudos +
+# curados son borradores locales — la fuente de verdad post-ingest es
+# la DB. No commitear para evitar inflar el repo + leakear material en
+# revisión.
+outputs/gen/
+outputs/curated/
+outputs/**/rework.md
