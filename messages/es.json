@@ -569,7 +569,49 @@
       "rewardPreview": "+{coin} COIN si dominas la lección",
       "masteryProgress": "Tu dominio actual",
       "placeholderHeading": "Contenido de la lección",
-      "placeholderBody": "Aquí irán el video, las actividades interactivas y la evaluación. Si te atascas, pulsa el botón Pedir ayuda y Angela te orienta sin darte la respuesta."
+      "placeholderBody": "Aquí irán el video, las actividades interactivas y la evaluación. Si te atascas, pulsa el botón Pedir ayuda y Angela te orienta sin darte la respuesta.",
+      "reflection": "Momento de reflexión",
+      "activity": {
+        "label": "Actividad {n}",
+        "check": "Comprobar",
+        "correct": "¡Correcto!",
+        "incorrect": "Aún no es correcto.",
+        "incorrectOrder": "El orden no es el correcto.",
+        "inputPlaceholder": "Tu respuesta",
+        "inputPlaceholderShort": "Escribe tu respuesta en una o dos oraciones",
+        "shortOk": "Tu respuesta cubre {hits} de {total} ideas clave.",
+        "shortMissed": "Te faltó mencionar al menos una de estas ideas: {keywords}.",
+        "acceptedAnswers": "Respuestas aceptadas",
+        "sampleAnswer": "Ver respuesta modelo",
+        "stepHint": "Ordena los pasos usando los botones de flecha.",
+        "moveUp": "Mover hacia arriba",
+        "moveDown": "Mover hacia abajo"
+      },
+      "quiz": {
+        "title": "Evaluación de la lección",
+        "subtitle": "Responde {total} preguntas. Necesitas 80% para dominar la lección y ganar Coin.",
+        "submit": "Enviar respuestas",
+        "submitting": "Enviando…",
+        "retry": "Intentar de nuevo",
+        "correct": "Correcto",
+        "incorrect": "Incorrecto",
+        "mastered": "¡Lección dominada!",
+        "keepPracticing": "Sigue practicando — todavía no llegas al 80%.",
+        "score": "Respondiste correctamente {correct} de {total} ({pct}%).",
+        "coinAwarded": "+{n} Coin agregados a tu balance.",
+        "coinAlreadyEarned": "Ya habías dominado esta lección antes — el Coin no se duplica.",
+        "fillPlaceholder": "Tu respuesta",
+        "shortPlaceholder": "Escribe tu respuesta breve",
+        "error": "Algo salió mal. Intenta de nuevo.",
+        "unauthorized": "Tu sesión expiró. Vuelve a iniciar sesión.",
+        "lesson_not_found": "Esta lección no existe.",
+        "no_quiz_questions": "Esta lección aún no tiene quiz."
+      },
+      "askAngela": {
+        "label": "Pedir ayuda a Angela",
+        "hint": "Te orienta sobre esta lección sin darte la respuesta.",
+        "ariaLabel": "Pedir ayuda a Angela sobre esta lección, {name}"
+      }
     },
     "dashboard": {
       "greeting": "¿Qué necesitas hoy, {name}?",

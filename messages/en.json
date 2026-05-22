@@ -569,7 +569,49 @@
       "rewardPreview": "+{coin} COIN for mastering the lesson",
       "masteryProgress": "Your current mastery",
       "placeholderHeading": "Lesson content",
-      "placeholderBody": "Video, interactive activities and the assessment will live here. If you get stuck, tap Ask for help and Angela will guide you without giving the answer away."
+      "placeholderBody": "Video, interactive activities and the assessment will live here. If you get stuck, tap Ask for help and Angela will guide you without giving the answer away.",
+      "reflection": "Moment of reflection",
+      "activity": {
+        "label": "Activity {n}",
+        "check": "Check",
+        "correct": "Correct!",
+        "incorrect": "Not quite yet.",
+        "incorrectOrder": "The order is not quite right.",
+        "inputPlaceholder": "Your answer",
+        "inputPlaceholderShort": "Write your answer in one or two sentences",
+        "shortOk": "Your answer covers {hits} of {total} key ideas.",
+        "shortMissed": "You missed mentioning at least one of these ideas: {keywords}.",
+        "acceptedAnswers": "Accepted answers",
+        "sampleAnswer": "See sample answer",
+        "stepHint": "Reorder the steps using the arrow buttons.",
+        "moveUp": "Move up",
+        "moveDown": "Move down"
+      },
+      "quiz": {
+        "title": "Lesson assessment",
+        "subtitle": "Answer {total} questions. You need 80% to master the lesson and earn Coin.",
+        "submit": "Submit answers",
+        "submitting": "Submitting…",
+        "retry": "Try again",
+        "correct": "Correct",
+        "incorrect": "Incorrect",
+        "mastered": "Lesson mastered!",
+        "keepPracticing": "Keep practicing — you're not at 80% yet.",
+        "score": "You got {correct} out of {total} correct ({pct}%).",
+        "coinAwarded": "+{n} Coin added to your balance.",
+        "coinAlreadyEarned": "You had already mastered this lesson — Coin isn't doubled.",
+        "fillPlaceholder": "Your answer",
+        "shortPlaceholder": "Write your short answer",
+        "error": "Something went wrong. Try again.",
+        "unauthorized": "Your session expired. Please sign in again.",
+        "lesson_not_found": "This lesson doesn't exist.",
+        "no_quiz_questions": "This lesson doesn't have a quiz yet."
+      },
+      "askAngela": {
+        "label": "Ask Angela for help",
+        "hint": "She'll guide you about this lesson without giving the answer.",
+        "ariaLabel": "Ask Angela for help with this lesson, {name}"
+      }
     },
     "dashboard": {
       "greeting": "What do you need today, {name}?",
