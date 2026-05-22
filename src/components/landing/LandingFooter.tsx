@@ -8,6 +8,7 @@ export async function LandingFooter({ locale }: { locale: string }) {
     {
       heading: t('columnProduct'),
       links: [
+        { label: t('catalog'), href: `/${locale}/catalog` },
         { label: t('features'), href: '#features' },
         { label: t('pricing'), href: '#pricing' },
         { label: t('forParents'), href: '#parents' },
