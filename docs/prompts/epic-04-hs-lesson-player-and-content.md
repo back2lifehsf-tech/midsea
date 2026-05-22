@@ -268,6 +268,27 @@ Empieza por PASO -1 ahora.
 
 ---
 
+## Estado de cierre Epic 04 (2026-05-22)
+
+| Tarea | Estado | Commit |
+|---|---|---|
+| 1. Schema + seed 8 cursos | ✅ shipped | #15 |
+| 2. Pipeline generación + Zod + parser dual | ✅ shipped | #16 |
+| 3. Prompt v1.1 + piloto math-grade-9 (5 lecciones) | ✅ shipped | #17 |
+| 4. Bulk de 8 cursos (~280 lecciones) | 🔄 founder track — paralelo |
+| 5. Lesson player + KaTeX + 4 activities + Quiz | ✅ shipped | #18 |
+| 6. Course activation padre↔hijo + dashboard | ✅ shipped | #19 |
+| 7. Catálogo público pre-signup | ✅ shipped | #20 |
+| 8. Tests unit adicionales + doc | ✅ shipped | #21 |
+
+**Cobertura de tests**: 200+ unit tests pasan. Cubre parser dual A/B, Zod schema de ingest, scoring del quiz (correctness + edge cases), tokenizer markdown, catalog-map (slug → metadata, buildCompetencyCode).
+
+**Playwright e2e** — diferido conscientemente. Razón: el happy path (signup parent → activate course → student login → lesson → quiz → coin) requiere Stripe test mode + OpenAI keys + timing de SSE de Angela. Para un pilot de 10-30 familias el manual QA es más confiable que un e2e flaky. Se reconsidera para v1.1 si el churn por bugs justifica la inversión.
+
+**Bulk ingest de contenido** — chore separado del founder track. Cuando los 8 cursos estén curated, correr `node scripts/ingest-course.mjs --course <slug>` por cada uno. El loop UX ya funciona con cualquier cantidad de lecciones ingestadas (5 hoy de math-grade-9 → 40 cuando termine el bulk).
+
+---
+
 ## Pendientes para Epic 05 (placeholder)
 
 A llenar al cierre del epic. Antemano se anticipan:
