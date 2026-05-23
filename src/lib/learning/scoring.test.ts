@@ -2,7 +2,7 @@
  * Tests del scoring de quiz. Cubre los 3 tipos de pregunta v1.
  */
 import { describe, expect, it } from 'vitest';
-import { isQuestionCorrect, scoreQuiz } from './scoring';
+import { isQuestionCorrect, keywordMatches, scoreQuiz } from './scoring';
 
 const MC = {
   id: 'q1',
@@ -159,5 +159,69 @@ describe('isQuestionCorrect — edge cases adicionales', () => {
     };
     expect(isQuestionCorrect(SHORT, 'Una ECUACION resuelta')).toBe(true);
     expect(isQuestionCorrect(SHORT, 'una ECUACIÓN resuelta')).toBe(true);
+  });
+});
+
+describe('keywordMatches — stemming heurístico', () => {
+  it('keyword plural matchea answer singular (fracciones vs fracción)', () => {
+    expect(keywordMatches('el cociente entre dos enteros es una fracción', 'fracciones')).toBe(true);
+  });
+
+  it('keyword singular matchea answer plural', () => {
+    expect(keywordMatches('los racionales son fracciones de enteros', 'fracción')).toBe(true);
+  });
+
+  it('exact phrase match funciona (multi-word)', () => {
+    expect(
+      keywordMatches('el decimal es no repetitivo y no finito', 'no repetitivo')
+    ).toBe(true);
+  });
+
+  it('multi-word con paráfrasis verbal NO matchea (limitación conocida v1)', () => {
+    // El heurístico de 5-char no captura morfología verbal compleja:
+    // `repetitivo` → stem `repet`, pero `repiten` (conjugación) empieza
+    // con `repit` y no matchea. Requiere stemmer Snowball real (v1.1).
+    // Por ahora, el estudiante que quiere mastery debe usar el termino
+    // del prompt: "repetitivo" o sinónimos más cercanos a la raíz.
+    expect(
+      keywordMatches('es no periódico — los decimales no se repiten', 'no repetitivo')
+    ).toBe(false);
+  });
+
+  it('multi-word con orden distinto en answer matchea (paráfrasis simple)', () => {
+    // Caso que SI matchea: el estudiante invierte orden pero usa las
+    // mismas raíces que el keyword.
+    expect(
+      keywordMatches(
+        'son los decimales que son no repetitivos',
+        'no repetitivo'
+      )
+    ).toBe(true);
+  });
+
+  it('caso real del smoke test 2026-05-22: "fracción de enteros"', () => {
+    // Keyword del quiz: "fracciones", "enteros", "no repetitivo".
+    // Respuesta del estudiante con singular debe matchear.
+    expect(keywordMatches('un racional es una fracción de enteros', 'fracciones')).toBe(true);
+    expect(keywordMatches('un racional es una fracción de entero', 'enteros')).toBe(true);
+  });
+
+  it('no false positive — palabras no relacionadas no matchean', () => {
+    expect(keywordMatches('la ecuación tiene dos lados', 'fracciones')).toBe(false);
+    expect(keywordMatches('habla del clima de hoy', 'racional')).toBe(false);
+  });
+
+  it('keyword corto (≤4 chars) no se trunca, requiere match como prefijo', () => {
+    expect(keywordMatches('el numero pi es irracional', 'pi')).toBe(true);
+    expect(keywordMatches('no es repetitivo', 'no')).toBe(true);
+  });
+
+  it('answer vacio o keyword vacio → false', () => {
+    expect(keywordMatches('', 'fracciones')).toBe(false);
+    expect(keywordMatches('algo', '')).toBe(false);
+  });
+
+  it('normaliza tildes y mayúsculas', () => {
+    expect(keywordMatches('Las FRACCIONES son útiles', 'fracción')).toBe(true);
   });
 });
