@@ -16,6 +16,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { InlineMath } from 'react-katex';
+import { normalize, keywordMatches } from '@/lib/learning/scoring';
 
 export type ActivityData =
   | {
@@ -172,14 +173,6 @@ function MultipleChoice({ activity, isEs, index }: ActivityProps) {
   );
 }
 
-function normalize(s: string): string {
-  return s
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .trim();
-}
-
 function FillInBlank({ activity, isEs, index }: ActivityProps) {
   const t = useTranslations('student.lesson.activity');
   const [value, setValue] = useState('');
@@ -247,8 +240,10 @@ function ShortAnswer({ activity, isEs, index }: ActivityProps) {
   );
   const hits = useMemo(() => {
     if (!submitted) return 0;
-    const norm = normalize(value);
-    return keywords.filter((k) => norm.includes(normalize(k))).length;
+    // Mismo stemming heuristico que el API quiz (scoring.ts) — acepta
+    // variantes morfologicas: `fracción` matchea keyword `fracciones`,
+    // etc. Ver scoring.ts § keywordMatches para detalles.
+    return keywords.filter((k) => keywordMatches(value, k)).length;
   }, [submitted, value, keywords]);
   if (activity.type !== 'short_answer') return null;
   const prompt = isEs ? activity.promptEs : activity.promptEn;

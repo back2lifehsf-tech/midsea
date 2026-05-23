@@ -36,6 +36,62 @@ export function normalize(s: string): string {
     .trim();
 }
 
+/**
+ * Stemming heuristico ES/EN para keyword matching del quiz short_answer.
+ *
+ * Problema (detectado en smoke test 2026-05-22): el prompt v1.1 produce
+ * keywords con forma morfologica especifica (ej. `fracciones` plural,
+ * `enteros` plural). El estudiante escribe `fracción` (singular) o
+ * `entero` (singular) y el `includes` exacto falla aunque la respuesta
+ * sea conceptualmente correcta.
+ *
+ * Solucion v1: token-level prefix match. Truncamos cada keyword a sus
+ * primeros 5 caracteres (suficiente para discriminar conceptos en
+ * espanol — `fracc` matchea fracción/fracciones/fraccional, `enter`
+ * matchea entero/enteros sin matchear "enterprise" en EN).
+ *
+ * Multi-word keywords (e.g. "no repetitivo"): primero intentamos exact
+ * phrase match (caso del estudiante que reproduce literal). Si no, cada
+ * palabra del keyword debe matchear como prefijo de algun token del
+ * answer. Permite "no se repite" vs "no repetitivo".
+ *
+ * Esto es heuristica simple, no stemmer real (no se importa Snowball ni
+ * `natural`). Sufficient for pilot. v1.1+ podemos formalizar.
+ */
+const STEM_LEN = 5;
+
+function stem(word: string): string {
+  if (word.length <= 4) return word;
+  return word.slice(0, STEM_LEN);
+}
+
+function tokenize(text: string): string[] {
+  return text.split(/[\s.,;:!?¿¡()\[\]{}"'/-]+/).filter(Boolean);
+}
+
+export function keywordMatches(answer: string, keyword: string): boolean {
+  const normAnswer = normalize(answer);
+  const normKeyword = normalize(keyword);
+  if (!normAnswer || !normKeyword) return false;
+
+  // Exact phrase substring match (caso facil — student reproduce literal).
+  if (normAnswer.includes(normKeyword)) return true;
+
+  // Tokenize answer una vez para reusar.
+  const answerTokens = tokenize(normAnswer);
+  if (answerTokens.length === 0) return false;
+
+  const keywordWords = normKeyword.split(/\s+/).filter(Boolean);
+  if (keywordWords.length === 0) return false;
+
+  // Cada palabra del keyword debe matchear como prefijo de algun token
+  // del answer (en cualquier orden — el estudiante puede parafrasear).
+  return keywordWords.every((kw) => {
+    const s = stem(kw);
+    return answerTokens.some((t) => t.startsWith(s));
+  });
+}
+
 export function isQuestionCorrect(
   q: QuizQuestionShape,
   answer: StudentAnswer
@@ -51,9 +107,8 @@ export function isQuestionCorrect(
   }
   if (q.type === 'short_answer' && typeof answer === 'string') {
     if (!('keywordsEs' in ca)) return false;
-    const norm = normalize(answer);
     const all = [...ca.keywordsEs, ...ca.keywordsEn];
-    return all.some((k) => norm.includes(normalize(k)));
+    return all.some((k) => keywordMatches(answer, k));
   }
   return false;
 }
