@@ -47,3 +47,10 @@ Thumbs.db
 outputs/gen/
 outputs/curated/
 outputs/**/rework.md
+
+# Artefactos del bulk runner: logs operacionales (rotan por timestamp)
+# + sitio HTML estático generado por export-review-html (regenerable
+# desde curated/). El zip de review es efímero por entrega.
+outputs/bulk-generate-*.log
+outputs/review-site/
+midsea-review*.zip
