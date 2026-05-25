@@ -98,7 +98,7 @@ async function loadLessonReal(
     status: progress?.status ?? 'AVAILABLE',
     masteryPct: progress?.masteryPct ?? 0,
     bodyMd: lesson.bodyMd ?? null,
-    bodyMdEn: null,
+    bodyMdEn: lesson.bodyMdEn ?? null,
     reflectionEs: lesson.reflectionEs ?? null,
     reflectionEn: lesson.reflectionEn ?? null,
     activities: (lesson.activities as ActivityData[] | null) ?? null,
@@ -139,6 +139,10 @@ export default async function LessonDetailPage({
   const subject = tSubjects(data.subject);
   const studentFirstName = activeStudent.displayName.split(/\s+/)[0];
   const reflection = isEs ? data.reflectionEs : data.reflectionEn;
+  // El cuerpo de la lección es bilingüe (bodyMd = es, bodyMdEn = en).
+  // Si falta la versión en inglés (lecciones viejas pre-backfill), caemos
+  // al español para no romper la lección.
+  const body = isEs ? data.bodyMd : data.bodyMdEn ?? data.bodyMd;
 
   const lessonCtx: LessonContext = {
     lessonId: data.id,
@@ -191,7 +195,7 @@ export default async function LessonDetailPage({
             studentFirstName={studentFirstName}
           />
           <Card>
-            <LessonMarkdown markdown={data.bodyMd!} />
+            <LessonMarkdown markdown={body!} />
           </Card>
 
           {data.activities && data.activities.length > 0 ? (

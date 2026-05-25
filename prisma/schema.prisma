@@ -200,7 +200,11 @@ model Lesson {
   monthIndex  Int?
   // Body en markdown + activities array + reflexión cristiana opcional
   // (ADR-007). Schema completo del ingest se define en Tarea 2 vía Zod.
+  // bodyMd = español (contentMarkdownEs); bodyMdEn = inglés
+  // (contentMarkdownEn). El pipeline genera ambos; el lesson player
+  // elige según locale (fallback a bodyMd si bodyMdEn falta).
   bodyMd      String?      @db.Text
+  bodyMdEn    String?      @db.Text
   activities  Json?
   reflectionEs String?     @db.Text
   reflectionEn String?     @db.Text

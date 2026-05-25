@@ -151,6 +151,7 @@ export async function ingestLesson(prisma, lesson, courseMeta) {
     courseId: course.id,
     monthIndex: lesson.monthIndex,
     bodyMd: lesson.contentMarkdownEs,
+    bodyMdEn: lesson.contentMarkdownEn ?? null,
     activities: lesson.activities,
     reflectionEs: lesson.reflectionEs ?? null,
     reflectionEn: lesson.reflectionEn ?? null
