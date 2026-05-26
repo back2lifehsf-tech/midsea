@@ -679,6 +679,11 @@
         "backToReading": "Volver a la Lectura",
         "nextLesson": "Siguiente lección"
       },
+      "notebook": {
+        "label": "Notebook de la lección",
+        "download": "Descargar PDF",
+        "hint": "Explicación ampliada, vocabulario y resumen visual"
+      },
       "stepper": {
         "ariaLabel": "Etapas de la lección",
         "video": "Video",

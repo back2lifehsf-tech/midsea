@@ -208,6 +208,10 @@ model Lesson {
   activities  Json?
   reflectionEs String?     @db.Text
   reflectionEn String?     @db.Text
+  // Mejora 5: PDF "notebook" expandido (explicación profunda, vocabulario,
+  // resumen visual). URL pública en CDN/Storage; lo produce el equipo
+  // editorial. Nullable — no todas las lecciones lo tienen.
+  notebookUrl String?
 
   progress      LessonProgress[]
   competencies  LessonCompetency[]

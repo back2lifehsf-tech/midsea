@@ -28,7 +28,8 @@ import {
   CoinsIcon,
   SparklesIcon,
   ArrowLeftIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  FileDownIcon
 } from './lessonIcons';
 import type { LessonContext } from '@/lib/tutor/LessonContext';
 
@@ -59,6 +60,7 @@ export interface LessonPlayerShellProps {
   summaryEn: string | null;
   reflectionEs: string | null;
   reflectionEn: string | null;
+  notebookUrl?: string; // PDF expandido descargable (Mejora 5); ausente si no hay
   activities: ActivityData[];
   quizQuestions: ShellQuizQuestion[];
 
@@ -181,6 +183,7 @@ export default function LessonPlayerShell(props: LessonPlayerShellProps) {
                 bodyMd={props.bodyMd}
                 summary={summary}
                 reflection={reflection}
+                notebookUrl={props.notebookUrl}
                 activities={props.activities}
                 isEs={isEs}
                 backHref={props.backHref}
@@ -223,6 +226,7 @@ function ReadingView({
   bodyMd,
   summary,
   reflection,
+  notebookUrl,
   activities,
   isEs,
   backHref,
@@ -233,6 +237,7 @@ function ReadingView({
   bodyMd: string | null;
   summary: string | null;
   reflection: string | null;
+  notebookUrl?: string;
   activities: ActivityData[];
   isEs: boolean;
   backHref: string;
@@ -261,6 +266,22 @@ function ReadingView({
       <LessonPullQuote text={summary ?? ''} />
 
       {activities.length > 0 ? <ActivityList activities={activities} isEs={isEs} /> : null}
+
+      {/* Mejora 5: PDF expandido descargable. Solo si la lección tiene uno. */}
+      {notebookUrl ? (
+        <a
+          href={notebookUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-6 inline-flex items-center gap-2 rounded-lg border border-midsea-border bg-midsea-foam px-4 py-2.5 text-sm text-midsea-ink transition-colors hover:border-midsea-lagoon/40 hover:text-midsea-lagoon"
+        >
+          <FileDownIcon className="h-[15px] w-[15px] shrink-0" />
+          <span>
+            <span className="font-semibold">{t('notebook.download')}</span>
+            <span className="ml-1.5 font-normal text-midsea-muted">— {t('notebook.hint')}</span>
+          </span>
+        </a>
+      ) : null}
 
       {reflection ? (
         <div className="mt-6 rounded-xl border border-coin/20 bg-coin-light px-4 py-3">

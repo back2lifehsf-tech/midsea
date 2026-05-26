@@ -105,3 +105,16 @@ export function ArrowRightIcon({ className }: IconProps) {
     </Svg>
   );
 }
+
+// Equivalente al `FileDown` de Lucide (documento con flecha de descarga).
+// Inline para no agregar lucide-react — mismo patrón que el resto del archivo.
+export function FileDownIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+      <polyline points="14 3 14 9 20 9" />
+      <line x1="12" y1="12" x2="12" y2="17" />
+      <polyline points="9 14 12 17 15 14" />
+    </Svg>
+  );
+}

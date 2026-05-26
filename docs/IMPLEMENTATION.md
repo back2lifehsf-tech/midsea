@@ -1091,3 +1091,407 @@ RESTRICCIONES IMPORTANTES:
 
 Referencia completa: docs/IMPLEMENTATION.md → "Mejora 4: LessonPlayerShell".
 ```
+
+---
+
+## Mejora 5: PDF Expandido — Notebook descargable por lección
+
+> Paso 5 del Flujo Curricular. Permite al estudiante descargar un PDF con explicación profunda, vocabulario, gráficos y resumen visual de la lección. Crítico para autonomía académica en HS secundaria.
+
+---
+
+### Contexto
+
+El modelo `Lesson` en Prisma no tiene campo para el PDF. La mejora requiere una migración de DB mínima (un campo nullable), un botón de descarga en la vista Lectura, y nada más. El contenido del PDF lo produce el equipo editorial externamente y se sube a un CDN (puede ser Supabase Storage, S3, o simplemente una URL pública). Esta mejora **no toca la lógica de Angela ni el quiz**.
+
+---
+
+### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `prisma/schema.prisma` | Agregar campo `notebookUrl String?` al modelo `Lesson` |
+| `src/app/[locale]/student/lessons/[slug]/page.tsx` | Pasar `notebookUrl: data.notebookUrl` como prop a `LessonPlayerShell` |
+| `src/components/learning/LessonPlayerShell.tsx` | Agregar `notebookUrl?: string` a `LessonPlayerShellProps`. En `ReadingView`, renderizar el botón de descarga si existe. |
+| `messages/es.json` | Agregar `student.lesson.notebook.download` y `student.lesson.notebook.label` |
+| `messages/en.json` | Ídem en inglés |
+
+**Keys a agregar:**
+```json
+"notebook": {
+  "label": "Notebook de la lección",
+  "download": "Descargar PDF",
+  "hint": "Explicación ampliada, vocabulario y resumen visual"
+}
+```
+
+---
+
+### Migración de Prisma
+
+```prisma
+model Lesson {
+  // ... campos existentes ...
+  notebookUrl   String?   // URL pública del PDF expandido (Supabase / S3 / CDN)
+}
+```
+
+Después de editar el schema:
+```bash
+npx prisma migrate dev --name add_lesson_notebook_url
+npx prisma generate
+```
+
+---
+
+### Botón de descarga en `ReadingView`
+
+El botón va **al final del cuerpo de lectura**, antes de la reflexión amber y antes del footer de navegación. Solo se renderiza si `notebookUrl` tiene valor.
+
+```tsx
+{notebookUrl && (
+  <a
+    href={notebookUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-flex items-center gap-2 rounded-lg border border-midsea-border bg-midsea-foam px-4 py-2.5 text-sm font-medium text-midsea-ink hover:border-midsea-lagoon/40 hover:text-midsea-lagoon transition-colors mt-6"
+  >
+    <FileDown size={15} className="shrink-0" />
+    <span>
+      <span className="font-semibold">{t('student.lesson.notebook.download')}</span>
+      <span className="ml-1.5 text-midsea-muted font-normal">
+        — {t('student.lesson.notebook.hint')}
+      </span>
+    </span>
+  </a>
+)}
+```
+
+> Usar `<a>` nativo con `target="_blank"` — no `<Button>`. El PDF abre en pestaña nueva o dispara descarga según el Content-Type del servidor. Agregar el ícono `FileDown` de `lucide-react`.
+
+---
+
+### Tokens de diseño del botón
+
+| Elemento | Clase Tailwind | Hex efectivo |
+|----------|---------------|-------------|
+| Container | `inline-flex items-center gap-2 rounded-lg border border-midsea-border bg-midsea-foam px-4 py-2.5` | borde `#E5E7EB`, fondo `#FFFFFF` |
+| Texto principal | `text-sm font-semibold text-midsea-ink` | `#1A1A1A` |
+| Texto hint | `text-midsea-muted font-normal` | `#6B7280` |
+| Hover | `hover:border-midsea-lagoon/40 hover:text-midsea-lagoon` | teal sutil |
+| Ícono | `FileDown` size 15, hereda color del texto | — |
+
+---
+
+### Criterios de aceptación
+
+- [ ] `npx prisma migrate dev` corre sin errores.
+- [ ] Si `notebookUrl` es `null`, el botón de descarga **no aparece** (sin espacio vacío).
+- [ ] Si `notebookUrl` tiene valor, el botón aparece entre el cuerpo y la reflexión.
+- [ ] El PDF abre en pestaña nueva.
+- [ ] `npm run type-check` pasa sin errores.
+- [ ] En mobile, el botón se ve correctamente (no se corta el texto).
+
+---
+
+### Prompt para Claude Code (PDF Expandido):
+
+```
+Implementá la Mejora 5 del docs/IMPLEMENTATION.md: PDF Expandido — Notebook descargable.
+
+PASOS EN ORDEN:
+
+1. Editar prisma/schema.prisma:
+   En el modelo Lesson, agregar campo: notebookUrl  String?
+   Luego ejecutar: npx prisma migrate dev --name add_lesson_notebook_url
+   Luego: npx prisma generate
+
+2. Actualizar page.tsx:
+   En el fetch de la lección, ya llega data.notebookUrl (Prisma lo incluye automáticamente).
+   Pasar notebookUrl={data.notebookUrl ?? undefined} como prop a <LessonPlayerShell>.
+
+3. Actualizar LessonPlayerShell.tsx:
+   Agregar notebookUrl?: string a LessonPlayerShellProps.
+   En ReadingView, después de <ActivityList> y antes de la reflexión amber, agregar el botón:
+   - Solo si notebookUrl tiene valor (condicional).
+   - Es un <a> nativo con target="_blank" rel="noopener noreferrer".
+   - Ícono: FileDown de lucide-react, size 15.
+   - Clases: ver tokens en IMPLEMENTATION.md Mejora 5.
+   - Texto: t('student.lesson.notebook.download') + hint en muted.
+
+4. Agregar keys i18n en messages/es.json y messages/en.json:
+   Bajo student.lesson, agregar objeto "notebook" con:
+   - label: "Notebook de la lección" / "Lesson Notebook"
+   - download: "Descargar PDF" / "Download PDF"
+   - hint: "Explicación ampliada, vocabulario y resumen visual" / "Extended explanation, vocabulary and visual summary"
+
+5. npm run type-check. Corregir errores antes de continuar.
+6. npm run lint.
+
+RESTRICCIONES:
+- No usar componente <Button> para la descarga — usar <a> nativo.
+- No modificar Quiz.tsx, AngelaWidget.tsx ni ningún componente fuera de los listados.
+- Si notebookUrl es null o undefined, el botón NO debe renderizarse (sin espacio vacío).
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 5: PDF Expandido".
+```
+
+---
+
+## Mejora 6: Cierre Emocional — Pantalla de celebración post-quiz
+
+> Paso 10 del Flujo Curricular. Reemplaza el `ResultBanner` actual (que solo muestra el puntaje y el Coin) por una pantalla de celebración completa: felicitación, resumen de lo que aprendió, barra de progreso animada y siguiente paso claro. Sin cambio de DB.
+
+---
+
+### Contexto
+
+El `ResultBanner` actual en `Quiz.tsx` muestra el resultado del quiz de forma funcional pero fría. El documento de flujo curricular dice: **"Nunca termines simplemente con 'submit'."** Esta mejora reemplaza ese componente por `LessonCompletionScreen` — una pantalla de celebración que transforma el cierre en un momento emocional positivo.
+
+No requiere migración de DB. Toda la información necesaria ya está disponible en el componente: `masteryPct`, `rewardCoin`, `questions.length`, el título de la lección.
+
+---
+
+### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/components/learning/Quiz.tsx` | Reemplazar el `ResultBanner` existente por `<LessonCompletionScreen>` cuando `step === 'result'` |
+| `messages/es.json` | Agregar `student.lesson.completion.*` |
+| `messages/en.json` | Ídem en inglés |
+
+### Archivos a crear
+
+| Ruta | Tipo | Descripción |
+|------|------|-------------|
+| `src/components/learning/LessonCompletionScreen.tsx` | Client Component | Pantalla de celebración post-quiz. Recibe el resultado e invoca `onComplete` del shell para actualizar el stepper. |
+
+---
+
+### Props de `LessonCompletionScreen`
+
+```typescript
+interface LessonCompletionScreenProps {
+  masteryPct: number          // 0–100
+  rewardCoin: number          // coins ganados (solo si masteryPct >= 80)
+  questionCount: number       // total de preguntas respondidas
+  lessonTitle: string         // para el bloque "Hoy aprendiste..."
+  onRetry: () => void         // volver al quiz (si masteryPct < 80)
+  onContinue: () => void      // siguiente lección o volver al dashboard
+  isEs: boolean
+}
+```
+
+---
+
+### Keys i18n a agregar
+
+```json
+"completion": {
+  "masteredTitle": "¡Lección dominada!",
+  "masteredSubtitle": "Completaste la lección con {pct}% de dominio.",
+  "partialTitle": "¡Buen intento!",
+  "partialSubtitle": "Llegaste a {pct}%. Necesitás 80% para ganar tus coins.",
+  "coinEarned": "+{coin} Coin ganados",
+  "learnedLabel": "Hoy aprendiste:",
+  "learnedItems": [
+    "Respondiste {count} preguntas de evaluación",
+    "Completaste la lección completa",
+    "Avanzaste en tu progreso del curso"
+  ],
+  "retryButton": "Reintentar quiz",
+  "continueButton": "Continuar"
+}
+```
+
+```json
+"completion": {
+  "masteredTitle": "Lesson Mastered!",
+  "masteredSubtitle": "You completed the lesson with {pct}% mastery.",
+  "partialTitle": "Good effort!",
+  "partialSubtitle": "You reached {pct}%. You need 80% to earn your coins.",
+  "coinEarned": "+{coin} Coins earned",
+  "learnedLabel": "Today you learned:",
+  "learnedItems": [
+    "Answered {count} assessment questions",
+    "Completed the full lesson",
+    "Advanced your course progress"
+  ],
+  "retryButton": "Retry quiz",
+  "continueButton": "Continue"
+}
+```
+
+---
+
+### Estructura visual de `LessonCompletionScreen`
+
+```
+┌─────────────────────────────────────────────┐
+│                                             │
+│   🎉  ¡Lección dominada!   (o ¡Buen intento!)
+│                                             │
+│   ████████████████░░░░  87%                 │  ← barra animada
+│                                             │
+│   [badge amber]  +20 Coin ganados           │  ← solo si ≥80%
+│                                             │
+│   Hoy aprendiste:                           │
+│   ✓ Respondiste 8 preguntas de evaluación   │
+│   ✓ Completaste la lección completa         │
+│   ✓ Avanzaste en tu progreso del curso      │
+│                                             │
+│   [Reintentar quiz]    [Continuar →]        │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### Tokens de diseño
+
+#### Cuando `masteryPct >= 80` (maestría alcanzada)
+
+| Elemento | Clase Tailwind | Hex efectivo |
+|----------|---------------|-------------|
+| Container | `flex flex-col items-center gap-6 py-10 px-6 text-center` | — |
+| Ícono celebración | `text-4xl` (emoji 🎉 o ícono Trophy de lucide) | — |
+| Título | `font-serif text-2xl font-normal text-midsea-ink` | `#1A1A1A` |
+| Subtítulo | `text-sm text-midsea-muted` | `#6B7280` |
+| Barra de progreso — fondo | `w-full max-w-xs h-2 rounded-full bg-midsea-lagoon-light` | `#E8F5F0` |
+| Barra de progreso — fill | `h-2 rounded-full bg-midsea-lagoon transition-all duration-700` | `#3D9E7A` |
+| Badge Coin | `inline-flex items-center gap-1.5 rounded-full bg-coin-light px-3 py-1 text-sm font-semibold text-coin-dark` | fondo `#FEF3E2`, texto `#C47A1A` |
+| Bloque "Hoy aprendiste" | `w-full max-w-xs text-left` | — |
+| Label "Hoy aprendiste:" | `text-xs font-semibold tracking-widest text-midsea-muted uppercase mb-2` | `#6B7280` |
+| Ítem de lista | `flex items-center gap-2 text-sm text-midsea-ink py-1` | `#1A1A1A` |
+| Checkmark ítem | `w-4 h-4 rounded-full bg-midsea-lagoon-light flex items-center justify-center shrink-0` + SVG check `stroke-midsea-lagoon` | fondo `#E8F5F0` |
+| Botón "Continuar" | `<Button variant="primary">` existente + `ArrowRight` size 14 | `#1800AA` |
+
+#### Cuando `masteryPct < 80` (sin maestría)
+
+Igual que arriba pero:
+- Sin badge Coin
+- Botón secundario "Reintentar quiz" a la izquierda (`variant="ghost"`)
+- Botón "Continuar" igual a la derecha
+- Barra de progreso fill en `bg-midsea-muted` en lugar de `bg-midsea-lagoon`
+
+---
+
+### Lógica de la barra de progreso animada
+
+```tsx
+// Animar la barra al montar: arrancar en 0, llegar a masteryPct en 700ms
+const [barWidth, setBarWidth] = useState(0)
+
+useEffect(() => {
+  const timer = setTimeout(() => setBarWidth(masteryPct), 50)
+  return () => clearTimeout(timer)
+}, [masteryPct])
+
+// JSX:
+<div className="w-full max-w-xs h-2 rounded-full bg-midsea-lagoon-light">
+  <div
+    className="h-2 rounded-full bg-midsea-lagoon transition-all duration-700"
+    style={{ width: `${barWidth}%` }}
+  />
+</div>
+```
+
+---
+
+### Integración con `Quiz.tsx` y el shell
+
+1. En `Quiz.tsx`, cuando `step === 'result'`, en lugar de `<ResultBanner>` renderizar `<LessonCompletionScreen>`.
+2. `onRetry` → `setStep('active')` + reset de answers (lógica ya existente en el retry del `ResultBanner`).
+3. `onContinue` → invocar `props.onComplete?.({ masteryPct: result.score })` para que el shell actualice el stepper, luego navegar al dashboard con `router.push(backHref)` — pero `backHref` no está en `Quiz.tsx`. Solución: pasar `onContinue` como prop desde `LessonPlayerShell` → `QuizView` → `<Quiz>`.
+
+```typescript
+// En LessonPlayerShell, en QuizView:
+<Quiz
+  ...
+  onComplete={handleQuizComplete}
+  onContinue={() => router.push(backHref)}
+/>
+
+// Agregar prop opcional a Quiz.tsx:
+// onContinue?: () => void
+```
+
+---
+
+### Criterios de aceptación
+
+- [ ] Al terminar el quiz con ≥80%, se muestra la pantalla de celebración con título "¡Lección dominada!", badge de Coin y lista "Hoy aprendiste".
+- [ ] Al terminar con <80%, se muestra "¡Buen intento!" sin badge Coin, con botón "Reintentar quiz".
+- [ ] La barra de progreso se anima de 0% al `masteryPct` en ~700ms al montar la pantalla.
+- [ ] "Reintentar quiz" vuelve al formulario del quiz y resetea las respuestas.
+- [ ] "Continuar" navega de vuelta al dashboard.
+- [ ] El stepper se actualiza correctamente (via `onComplete` del shell).
+- [ ] `ResultBanner` queda en el codebase pero sin uso — no eliminar.
+- [ ] `npm run type-check` pasa sin errores.
+
+---
+
+### Prompt para Claude Code (Cierre Emocional):
+
+```
+Implementá la Mejora 6 del docs/IMPLEMENTATION.md: LessonCompletionScreen — Cierre Emocional.
+
+OBJETIVO: Reemplazar el ResultBanner actual en Quiz.tsx por una pantalla de celebración completa
+con barra de progreso animada, bloque "Hoy aprendiste" y CTA claro.
+
+PASOS EN ORDEN:
+
+1. Agregar keys i18n en messages/es.json y messages/en.json:
+   Bajo student.lesson, agregar objeto "completion" con todas las keys del IMPLEMENTATION.md Mejora 6.
+
+2. Agregar props opcionales a Quiz.tsx (NO romper usos existentes):
+   onContinue?: () => void
+
+3. Crear src/components/learning/LessonCompletionScreen.tsx (Client Component).
+   Props: masteryPct, rewardCoin, questionCount, lessonTitle, onRetry, onContinue, isEs.
+   
+   Barra de progreso animada: useState(0) → useEffect con setTimeout 50ms → setBarWidth(masteryPct).
+   Clase de la barra: transition-all duration-700, width por style (no clase Tailwind dinámica).
+   
+   Cuando masteryPct >= 80:
+   - Título: t('student.lesson.completion.masteredTitle') en font-serif text-2xl
+   - Barra: bg-midsea-lagoon
+   - Badge Coin: bg-coin-light text-coin-dark con ícono Coins de lucide-react
+   - Lista "Hoy aprendiste" con 3 ítems (checkmarks teal)
+   - Botón único: "Continuar →" variant primary, onClick={onContinue}
+   
+   Cuando masteryPct < 80:
+   - Título: t('student.lesson.completion.partialTitle') en font-serif text-2xl
+   - Barra: bg-midsea-muted (sin color teal)
+   - Sin badge Coin
+   - Lista "Hoy aprendiste" igual
+   - Dos botones: "Reintentar quiz" (variant ghost, onClick={onRetry}) + "Continuar →" (variant primary)
+   
+   Íconos a usar de lucide-react: Trophy o PartyPopper para la celebración, Coins para el badge,
+   Check size 10 dentro del círculo de cada ítem de la lista.
+
+4. Actualizar Quiz.tsx:
+   Cuando step === 'result', renderizar <LessonCompletionScreen> en lugar de <ResultBanner>.
+   Pasar: masteryPct={result.score}, rewardCoin={rewardCoin}, questionCount={questions.length},
+   lessonTitle (agregar como prop a Quiz si no existe, opcional con default ''),
+   onRetry={() => { setStep('active'); setAnswers({}) }},
+   onContinue={props.onContinue ?? (() => {})},
+   isEs={isEs}.
+   ResultBanner: dejar en el archivo pero sin uso (no eliminar).
+
+5. Actualizar LessonPlayerShell.tsx en QuizView:
+   Pasar onContinue={() => router.push(backHref)} al <Quiz>.
+   Importar useRouter de 'next/navigation'.
+
+6. npm run type-check. Corregir todos los errores.
+7. npm run lint.
+
+RESTRICCIONES:
+- La barra de progreso usa style={{ width: `${barWidth}%` }} — NO clases Tailwind dinámicas
+  (Tailwind purga clases generadas dinámicamente).
+- ResultBanner: NO eliminar del codebase, solo dejar sin uso.
+- onContinue y onComplete en Quiz.tsx son OPCIONALES — no romper usos sin esas props.
+- No tocar prisma/schema.prisma en esta mejora (sin migración de DB).
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 6: Cierre Emocional".
+```

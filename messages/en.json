@@ -679,6 +679,11 @@
         "backToReading": "Back to reading",
         "nextLesson": "Next lesson"
       },
+      "notebook": {
+        "label": "Lesson Notebook",
+        "download": "Download PDF",
+        "hint": "Extended explanation, vocabulary and visual summary"
+      },
       "stepper": {
         "ariaLabel": "Lesson stages",
         "video": "Video",
