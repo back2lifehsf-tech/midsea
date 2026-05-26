@@ -25,10 +25,10 @@ export default async function StudentLayout({
 
   const t = await getTranslations({ locale, namespace: 'student.nav' });
 
-  const items: { key: 'home' | 'lessons' | 'rewards' | 'profile'; href: string }[] = [
+  const items: { key: 'home' | 'lessons' | 'store' | 'profile'; href: string }[] = [
     { key: 'home', href: `/${locale}/student` },
     { key: 'lessons', href: `/${locale}/student/lessons` },
-    { key: 'rewards', href: `/${locale}/student/rewards` },
+    { key: 'store', href: `/${locale}/student/store` },
     { key: 'profile', href: `/${locale}/student/profile` }
   ];
 
@@ -67,7 +67,7 @@ export default async function StudentLayout({
           </nav>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <CoinBadge amount={totalCoin} />
+          <CoinBadge amount={totalCoin} href={`/${locale}/student/store`} />
           <LocaleSwitcher />
           <UserMenu callbackUrl={`/${locale}/student`} />
         </div>

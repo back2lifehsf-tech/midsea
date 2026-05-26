@@ -1495,3 +1495,1357 @@ RESTRICCIONES:
 
 Referencia completa: docs/IMPLEMENTATION.md → "Mejora 6: Cierre Emocional".
 ```
+
+---
+
+## Mejora 7: Versículo del Día + Bienvenida Bíblica
+
+> Paso 1 del Flujo Curricular. Cada lección abre con un momento espiritual breve: versículo del día, reflexión corta de 1–2 líneas y pregunta de conexión "¿Cómo aplicamos esto hoy?". Es lo primero que ve el estudiante al entrar a la vista Lectura — antes del título, antes del contenido.
+
+---
+
+### Contexto
+
+Hoy la reflexión cristiana existe (`reflectionEs`/`reflectionEn`) pero aparece **al final** de la lección, después de todo el contenido. El flujo curricular pide lo contrario: **abrir** con el momento espiritual para enmarcar el aprendizaje desde la cosmovisión cristiana. Además, no existe ningún sistema de versículo del día.
+
+Esta mejora tiene **dos partes**:
+
+- **Parte A — Versículo del Día en el dashboard del estudiante:** un bloque fijo visible al abrir el dashboard, con un versículo diferente cada día (rotación por fecha, sin llamada a API externa).
+- **Parte B — Bienvenida Bíblica al inicio de cada lección:** la `ReadingView` abre con una card de bienvenida que muestra el versículo del día + la reflexión específica de la lección (si existe) + la pregunta de conexión.
+
+---
+
+### Parte A — Versículo del Día en el Dashboard
+
+#### Arquitectura
+
+No requiere DB ni API externa. Los versículos se almacenan en un array estático en el código y se seleccionan por `dayOfYear % verses.length`. Esto garantiza que todos los estudiantes vean el mismo versículo el mismo día, sin costo de infraestructura.
+
+#### Archivos a crear
+
+| Ruta | Tipo | Descripción |
+|------|------|-------------|
+| `src/lib/verses.ts` | Módulo estático | Array de 60+ versículos en español e inglés con referencia bíblica. Función `getDailyVerse(date: Date): Verse`. |
+| `src/components/student/DailyVerseCard.tsx` | Server Component | Card del versículo del día. Se renderiza en el dashboard. |
+
+#### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/app/[locale]/student/page.tsx` (dashboard) | Importar `getDailyVerse` y renderizar `<DailyVerseCard>` como primer elemento visible, antes de la lista de lecciones/cursos activos. |
+| `messages/es.json` | Agregar `student.dashboard.verse.*` |
+| `messages/en.json` | Ídem en inglés |
+
+#### Estructura de `src/lib/verses.ts`
+
+```typescript
+export interface Verse {
+  textEs: string
+  textEn: string
+  referenceEs: string  // ej: "Proverbios 3:5"
+  referenceEn: string  // ej: "Proverbs 3:5"
+}
+
+// Mínimo 60 versículos — cubre 2 meses sin repetir.
+// Criterio de selección: versículos conocidos, denominacionalmente neutros,
+// relevantes para jóvenes de 13–17 años, tono de sabiduría y fe activa.
+// Ejemplos base (ampliar hasta 60+):
+const verses: Verse[] = [
+  {
+    textEs: "Confía en el Señor con todo tu corazón, y no te apoyes en tu propio entendimiento.",
+    textEn: "Trust in the Lord with all your heart and lean not on your own understanding.",
+    referenceEs: "Proverbios 3:5",
+    referenceEn: "Proverbs 3:5"
+  },
+  {
+    textEs: "Todo lo puedo en Cristo que me fortalece.",
+    textEn: "I can do all things through Christ who strengthens me.",
+    referenceEs: "Filipenses 4:13",
+    referenceEn: "Philippians 4:13"
+  },
+  // ... más versículos ...
+]
+
+export function getDailyVerse(date: Date = new Date()): Verse {
+  const start = new Date(date.getFullYear(), 0, 0)
+  const diff = date.getTime() - start.getTime()
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
+  return verses[dayOfYear % verses.length]
+}
+```
+
+> Incluir al menos 60 versículos en el array. Seleccionar versículos variados: Salmos, Proverbios, Nuevo Testamento — todos denominacionalmente abiertos (ADR-007). Sin doctrinas específicas de denominación.
+
+#### Keys i18n del dashboard
+
+```json
+"verse": {
+  "label": "Versículo del día",
+  "connectionQuestion": "¿Cómo aplicamos esto hoy?"
+}
+```
+
+#### Tokens de diseño de `DailyVerseCard`
+
+| Elemento | Clase Tailwind | Hex efectivo |
+|----------|---------------|-------------|
+| Card container | `rounded-xl border border-midsea-lagoon/20 bg-midsea-lagoon-light px-5 py-4 mb-6` | fondo `#E8F5F0`, borde teal suave |
+| Label "Versículo del día" | `text-[10px] font-semibold tracking-widest text-midsea-lagoon uppercase mb-2 flex items-center gap-1.5` | `#3D9E7A` |
+| Ícono label | Lucide `BookOpen` size 12 | hereda teal |
+| Texto del versículo | `font-serif italic text-[15px] text-midsea-ink leading-relaxed` | `#1A1A1A` |
+| Referencia bíblica | `text-xs font-medium text-midsea-lagoon mt-1.5` | `#3D9E7A` |
+| Separador | `border-t border-midsea-lagoon/20 mt-3 pt-3` | teal suave |
+| Pregunta de conexión | `text-sm text-midsea-muted italic` | `#6B7280` |
+
+---
+
+### Parte B — Bienvenida Bíblica al inicio de cada lección
+
+#### Arquitectura
+
+Al entrar a la lección, la `ReadingView` en `LessonPlayerShell.tsx` comienza con un bloque de bienvenida que combina:
+1. El versículo del día (mismo que el dashboard, calculado client-side con la fecha actual)
+2. La reflexión específica de la lección (`reflectionEs/En`) — si existe, se mueve aquí desde el final
+3. La pregunta de conexión fija: "¿Cómo aplicamos esto hoy?"
+
+> **Decisión de diseño importante:** La reflexión se mueve del final al inicio. Esto cambia el orden en `ReadingView`. El campo `reflectionEs/En` en Prisma no cambia — solo cambia dónde se renderiza.
+
+#### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/components/learning/LessonPlayerShell.tsx` | En `ReadingView`, agregar `<LessonWelcomeCard>` como **primer elemento**, antes del `<h1>` del título. Eliminar el bloque de reflexión del final. |
+| `messages/es.json` | Agregar `student.lesson.welcome.*` |
+| `messages/en.json` | Ídem en inglés |
+
+#### Archivos a crear
+
+| Ruta | Tipo | Descripción |
+|------|------|-------------|
+| `src/components/learning/LessonWelcomeCard.tsx` | Client Component (`'use client'`) | Card de bienvenida al inicio de la lección. Calcula el versículo del día client-side. Muestra versículo + reflexión de la lección (si existe) + pregunta de conexión. |
+
+#### Props de `LessonWelcomeCard`
+
+```typescript
+interface LessonWelcomeCardProps {
+  reflectionEs?: string   // campo reflectionEs de la lección (puede ser null)
+  reflectionEn?: string   // campo reflectionEn de la lección
+  locale: string          // 'es' | 'en'
+}
+```
+
+#### Keys i18n de la lección
+
+```json
+"welcome": {
+  "verseLabel": "Versículo del día",
+  "reflectionLabel": "Reflexión",
+  "connectionQuestion": "¿Cómo aplicamos esto hoy?"
+}
+```
+
+#### Tokens de diseño de `LessonWelcomeCard`
+
+| Elemento | Clase Tailwind | Hex efectivo |
+|----------|---------------|-------------|
+| Card container | `rounded-xl border border-midsea-lagoon/20 bg-midsea-lagoon-light px-5 py-4 mb-6` | fondo `#E8F5F0` |
+| Label versículo | `text-[10px] font-semibold tracking-widest text-midsea-lagoon uppercase mb-2 flex items-center gap-1.5` | `#3D9E7A` |
+| Texto versículo | `font-serif italic text-[15px] text-midsea-ink leading-relaxed` | `#1A1A1A` |
+| Referencia | `text-xs font-medium text-midsea-lagoon mt-1` | `#3D9E7A` |
+| Separador (si hay reflexión) | `border-t border-midsea-lagoon/20 mt-3 pt-3` | — |
+| Label reflexión | `text-[10px] font-semibold tracking-widest text-coin-dark uppercase mb-1 flex items-center gap-1` | `#C47A1A` |
+| Ícono reflexión | Lucide `Sparkles` size 11 | hereda amber |
+| Texto reflexión | `font-serif italic text-sm text-coin-dark leading-relaxed` | `#C47A1A` |
+| Separador final | `border-t border-midsea-lagoon/20 mt-3 pt-3` | — |
+| Pregunta conexión | `text-sm text-midsea-muted italic` | `#6B7280` |
+
+#### Estructura visual de `LessonWelcomeCard`
+
+```
+┌───────────────────────────────────────────────────┐  fondo #E8F5F0
+│  📖 VERSÍCULO DEL DÍA                             │  teal caps
+│                                                   │
+│  "Confía en el Señor con todo tu corazón,         │  serif italic ink
+│   y no te apoyes en tu propio entendimiento."     │
+│  Proverbios 3:5                                   │  teal pequeño
+│ ─────────────────────────────────────────────     │
+│  ✦ REFLEXIÓN                                      │  amber caps (solo si existe)
+│  "El conocimiento histórico nos recuerda          │  serif italic amber
+│   que Dios actúa en la historia humana."          │
+│ ─────────────────────────────────────────────     │
+│  ¿Cómo aplicamos esto hoy?                        │  muted italic
+└───────────────────────────────────────────────────┘
+```
+
+Si `reflectionEs/En` no existe, la card muestra solo versículo + pregunta de conexión (sin el bloque amber).
+
+---
+
+### Criterios de aceptación
+
+- [ ] El dashboard muestra `DailyVerseCard` como primer elemento visible al entrar.
+- [ ] El versículo cambia automáticamente cada día (diferente al del día anterior).
+- [ ] Todos los estudiantes ven el mismo versículo el mismo día.
+- [ ] La lección abre con `LessonWelcomeCard` antes del título `h1`.
+- [ ] Si la lección tiene `reflectionEs`, aparece en la card de bienvenida (no al final).
+- [ ] Si la lección no tiene `reflectionEs`, la card muestra solo versículo + pregunta.
+- [ ] La reflexión amber **ya no aparece al final** de `ReadingView`.
+- [ ] `npm run type-check` pasa sin errores.
+- [ ] En mobile, la card se ve correctamente sin overflow.
+
+---
+
+### Prompt para Claude Code (Versículo del Día + Bienvenida Bíblica):
+
+```
+Implementá la Mejora 7 del docs/IMPLEMENTATION.md: Versículo del Día + Bienvenida Bíblica.
+Son dos partes: (A) versículo en el dashboard, (B) card de bienvenida al inicio de cada lección.
+
+PASOS EN ORDEN:
+
+1. Crear src/lib/verses.ts:
+   - Interface Verse con textEs, textEn, referenceEs, referenceEn.
+   - Array de mínimo 60 versículos. Ejemplos variados (Salmos, Proverbios, Nuevo Testamento).
+     Todos denominacionalmente neutros — sin doctrinas específicas. Tono sabio y alentador
+     para jóvenes de 13–17 años.
+   - Función getDailyVerse(date: Date = new Date()): Verse
+     Lógica: dayOfYear = día del año (1–365) calculado desde el 1 de enero.
+     Índice: dayOfYear % verses.length. Mismo resultado para todos los usuarios ese día.
+
+2. Crear src/components/student/DailyVerseCard.tsx (Server Component):
+   Props: verse: Verse, locale: string.
+   Diseño: card teal claro (bg-midsea-lagoon-light, border border-midsea-lagoon/20).
+   Contenido: label "VERSÍCULO DEL DÍA" + BookOpen icon (teal) → texto serif italic →
+   referencia teal pequeña → separador → pregunta "¿Cómo aplicamos esto hoy?" en muted italic.
+   Ver tokens exactos en IMPLEMENTATION.md Mejora 7 Parte A.
+
+3. Agregar DailyVerseCard al dashboard del estudiante:
+   En src/app/[locale]/student/page.tsx, importar getDailyVerse y DailyVerseCard.
+   Renderizarla como PRIMER elemento dentro del contenido principal del dashboard,
+   antes de la lista de cursos activos o cualquier otro contenido.
+   Pasar: verse={getDailyVerse()} locale={locale}.
+
+4. Crear src/components/learning/LessonWelcomeCard.tsx (Client Component, 'use client'):
+   Props: reflectionEs?: string, reflectionEn?: string, locale: string.
+   Client Component porque necesita new Date() para calcular el versículo en el cliente.
+   Importar getDailyVerse de '@/lib/verses'.
+   
+   Lógica: const verse = getDailyVerse(new Date())
+   const isEs = locale === 'es'
+   const reflection = isEs ? reflectionEs : reflectionEn
+   
+   Estructura visual (ver IMPLEMENTATION.md Mejora 7 Parte B):
+   - Label "VERSÍCULO DEL DÍA" + BookOpen teal
+   - Texto del versículo en font-serif italic text-midsea-ink
+   - Referencia bíblica en text-midsea-lagoon text-xs
+   - Si reflection existe: separador + label "REFLEXIÓN" + Sparkles amber + texto amber
+   - Siempre al final: separador + "¿Cómo aplicamos esto hoy?" en muted italic
+   
+   Card container: rounded-xl border border-midsea-lagoon/20 bg-midsea-lagoon-light px-5 py-4 mb-6
+
+5. Actualizar LessonPlayerShell.tsx en ReadingView:
+   AGREGAR <LessonWelcomeCard> como PRIMER elemento, antes del <h1> del título.
+   Pasar: reflectionEs={reflectionEs} reflectionEn={reflectionEn} locale={locale}
+   ELIMINAR el bloque de reflexión amber que hoy está al FINAL de ReadingView
+   (el bloque con bg-coin-light que muestra el campo reflectionEs/En).
+   La reflexión ahora solo aparece en la LessonWelcomeCard al inicio.
+
+6. Agregar keys i18n en messages/es.json y messages/en.json:
+   Bajo student.dashboard: objeto "verse" con label y connectionQuestion.
+   Bajo student.lesson: objeto "welcome" con verseLabel, reflectionLabel, connectionQuestion.
+   Ver valores exactos en IMPLEMENTATION.md Mejora 7.
+
+7. npm run type-check. Corregir errores.
+8. npm run lint.
+
+RESTRICCIONES:
+- getDailyVerse NO hace fetch a ninguna API — es cálculo local puro con array estático.
+- DailyVerseCard es Server Component (puede usar getDailyVerse directamente).
+- LessonWelcomeCard es Client Component porque calcula la fecha en el cliente (hidratación correcta).
+- NO eliminar los campos reflectionEs/reflectionEn de Prisma — solo cambia dónde se renderizan.
+- NO eliminar el bloque amber del final de ReadingView si hay alguna referencia en otro lugar;
+  sólo eliminarlo de ReadingView específicamente.
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 7: Versículo del Día + Bienvenida Bíblica".
+```
+
+---
+
+## Mejora 8: Hook / Activador Mental
+
+> Paso 2 del Flujo Curricular. Un elemento visual breve que aparece DESPUÉS de la bienvenida bíblica y ANTES del cuerpo de la lectura, diseñado para despertar la curiosidad del estudiante: dato curioso, pregunta impactante, situación real, mini reto o imagen provocadora.
+
+---
+
+### Contexto
+
+El flujo actual va: `LessonWelcomeCard → h1 título → label LECTURA → bodyMd`. El estudiante pasa de la bienvenida directamente al contenido sin ningún puente que active la curiosidad. El Hook/Activador Mental es ese puente: crea tensión cognitiva positiva antes de que empiece a leer.
+
+Requiere un nuevo campo en Prisma (`hookEs`/`hookEn`) y un componente nuevo que se renderiza en `ReadingView` después de la bienvenida y antes del título. El pipeline de generación de contenido (ADR-006) deberá producir este campo para cada lección.
+
+---
+
+### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `prisma/schema.prisma` | Agregar `hookEs String?` y `hookEn String?` al modelo `Lesson` |
+| `src/lib/schemas/lesson-ingest.ts` | Agregar `hookEs` y `hookEn` al schema Zod de ingesta |
+| `src/app/[locale]/student/lessons/[slug]/page.tsx` | Pasar `hookEs: data.hookEs`, `hookEn: data.hookEn` como props a `LessonPlayerShell` |
+| `src/components/learning/LessonPlayerShell.tsx` | Agregar `hookEs?: string` y `hookEn?: string` a `LessonPlayerShellProps`. En `ReadingView`, renderizar `<LessonHookCard>` entre `<LessonWelcomeCard>` y el `<h1>` del título. |
+| `messages/es.json` | Agregar `student.lesson.hook.*` |
+| `messages/en.json` | Ídem en inglés |
+
+### Archivos a crear
+
+| Ruta | Tipo | Descripción |
+|------|------|-------------|
+| `src/components/learning/LessonHookCard.tsx` | Server Component | Card del activador mental. Texto en grande, diseño llamativo. Solo se renderiza si `hook` tiene valor. |
+
+#### Migración de Prisma
+
+```prisma
+model Lesson {
+  // ... campos existentes ...
+  hookEs        String?   // Activador mental en español (dato curioso, pregunta impactante, etc.)
+  hookEn        String?   // Activador mental en inglés
+}
+```
+
+```bash
+npx prisma migrate dev --name add_lesson_hook
+npx prisma generate
+```
+
+#### Actualización de `lesson-ingest.ts`
+
+```typescript
+// Agregar al schema Zod:
+hookEs: z.string().max(300).optional(),  // máx 300 chars — debe ser breve e impactante
+hookEn: z.string().max(300).optional(),
+```
+
+---
+
+### Props de `LessonHookCard`
+
+```typescript
+interface LessonHookCardProps {
+  hook: string    // ya seleccionado según locale (hookEs o hookEn)
+}
+```
+
+---
+
+### Keys i18n
+
+```json
+"hook": {
+  "label": "¿Sabías que…?"
+}
+```
+
+```json
+"hook": {
+  "label": "Did you know…?"
+}
+```
+
+---
+
+### Diseño de `LessonHookCard`
+
+El hook tiene que ser visualmente distinto del resto de la página — más grande, más llamativo, con un ícono que indique "esto es interesante". No es una card de datos, es una interpelación directa al estudiante.
+
+```
+┌────────────────────────────────────────────────────┐  fondo blanco, borde teal
+│  💡 ¿SABÍAS QUE…?                                  │  teal caps pequeño
+│                                                    │
+│  "¿Sabías que el Período de Entreguerras produjo   │  texto grande, serif bold
+│   más avances tecnológicos que cualquier otro      │
+│   período de igual duración en la historia?"       │
+│                                                    │
+└────────────────────────────────────────────────────┘
+```
+
+#### Tokens de diseño
+
+| Elemento | Clase Tailwind | Hex efectivo |
+|----------|---------------|-------------|
+| Card container | `rounded-xl border-2 border-midsea-lagoon/30 bg-midsea-foam px-5 py-5 mb-6` | borde teal medio, fondo blanco |
+| Label "¿SABÍAS QUE…?" | `text-[10px] font-semibold tracking-widest text-midsea-lagoon uppercase mb-3 flex items-center gap-1.5` | `#3D9E7A` |
+| Ícono label | Lucide `Lightbulb` size 12 | teal |
+| Texto del hook | `font-serif text-lg font-normal text-midsea-ink leading-snug` | `#1A1A1A`, más grande que el cuerpo |
+
+> El texto del hook va en **`font-serif text-lg`** — más grande que el cuerpo (`text-[15px]`) para crear contraste visual inmediato. Sin cursiva — el hook es una afirmación o pregunta directa, no una reflexión.
+
+---
+
+### Posición en el flujo de `ReadingView`
+
+```
+ReadingView (orden final con Mejoras 7 y 8):
+
+1. <LessonWelcomeCard>    ← Mejora 7: versículo + reflexión + pregunta conexión
+2. <LessonHookCard>       ← Mejora 8: activador mental (solo si hookEs/En existe)
+3. <h1> título            ← ya existía
+4. meta (grado, tipo)     ← ya existía
+5. label "LECTURA"        ← ya existía
+6. <LessonMarkdown>       ← ya existía
+7. <ActivityList>         ← ya existía
+8. <LessonPullQuote>      ← ya existía
+9. PDF download button    ← Mejora 5
+10. footer navegación     ← ya existía
+```
+
+---
+
+### Criterios de aceptación
+
+- [ ] `npx prisma migrate dev` corre sin errores.
+- [ ] Si `hookEs` tiene valor, `LessonHookCard` aparece entre `LessonWelcomeCard` y el `h1`.
+- [ ] Si `hookEs` es null, no aparece ningún espacio vacío.
+- [ ] El texto del hook es visualmente más grande que el cuerpo de la lectura.
+- [ ] El campo `hookEs` se puede ingestar vía el pipeline de lecciones (schema Zod actualizado).
+- [ ] `npm run type-check` pasa sin errores.
+- [ ] En mobile, la card no desborda el viewport.
+
+---
+
+### Prompt para Claude Code (Hook / Activador Mental):
+
+```
+Implementá la Mejora 8 del docs/IMPLEMENTATION.md: LessonHookCard — Activador Mental.
+
+IMPORTANTE: Esta mejora depende de que Mejora 7 ya esté implementada (LessonWelcomeCard existe
+en ReadingView). Si no está, implementar Mejora 7 primero.
+
+PASOS EN ORDEN:
+
+1. Editar prisma/schema.prisma:
+   En el modelo Lesson agregar:
+     hookEs  String?
+     hookEn  String?
+   Ejecutar: npx prisma migrate dev --name add_lesson_hook
+   Luego: npx prisma generate
+
+2. Actualizar src/lib/schemas/lesson-ingest.ts:
+   Agregar al schema Zod de ingesta:
+     hookEs: z.string().max(300).optional(),
+     hookEn: z.string().max(300).optional(),
+
+3. Crear src/components/learning/LessonHookCard.tsx (Server Component):
+   Props: hook: string  (ya seleccionado según locale, un string simple).
+   Diseño:
+   - Container: rounded-xl border-2 border-midsea-lagoon/30 bg-midsea-foam px-5 py-5 mb-6
+   - Label: text-[10px] font-semibold tracking-widest text-midsea-lagoon uppercase mb-3
+             flex items-center gap-1.5 + ícono Lightbulb size 12 de lucide-react
+   - Texto: font-serif text-lg font-normal text-midsea-ink leading-snug
+   El componente solo renderiza si se le pasa el prop (quien lo invoca decide si renderizar).
+
+4. Actualizar page.tsx:
+   En el fetch de la lección, data.hookEs y data.hookEn ya están disponibles (Prisma los incluye).
+   Pasar hookEs={data.hookEs ?? undefined} y hookEn={data.hookEn ?? undefined} a LessonPlayerShell.
+
+5. Actualizar LessonPlayerShell.tsx:
+   Agregar hookEs?: string y hookEn?: string a LessonPlayerShellProps.
+   En ReadingView, después de <LessonWelcomeCard> y ANTES del <h1> del título, agregar:
+     {hook && <LessonHookCard hook={hook} />}
+   donde: const hook = isEs ? hookEs : hookEn
+
+6. Agregar keys i18n en messages/es.json y messages/en.json:
+   Bajo student.lesson, en el objeto "hook":
+   - es: label: "¿Sabías que…?"
+   - en: label: "Did you know…?"
+   (El label se usa dentro de LessonHookCard como prop de texto o hardcodeado con t()).
+
+7. npm run type-check. Corregir errores.
+8. npm run lint.
+
+RESTRICCIONES:
+- LessonHookCard es Server Component — sin 'use client', sin useState, sin useEffect.
+- El componente recibe el hook ya seleccionado según locale (string simple, no objeto).
+  La selección hookEs vs hookEn la hace ReadingView antes de pasarlo.
+- No modificar el campo reflectionEs/reflectionEn en Prisma ni en lesson-ingest.ts.
+- Si hookEs es null en la DB, el componente NO debe renderizarse (condicional en ReadingView).
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 8: Hook / Activador Mental".
+```
+
+---
+
+## Mejora 9: Tienda Coin — Cursos canjeables con Coins
+
+> Implementa la tienda de Coins completa: modelo `StoreItem` en Prisma, ruta `/student/store` con listado de cursos premium canjeables, lógica de canje server-side, y acceso desde el navbar y el badge de Coins. Reemplaza la página "Coming Soon" de `/student/rewards`.
+
+---
+
+### Contexto del codebase
+
+- La ruta `/student/rewards` existe pero muestra `<ComingSoon />`. Esta mejora la reemplaza por la tienda real.
+- El modelo `CoinEntry` ya existe con `reason: STORE_PURCHASE` preparado pero sin uso.
+- El navbar del estudiante ya tiene un enlace a "Recompensas" (`/student/rewards`). Cambiaremos el label a "Tienda" y el href a `/student/store`.
+- El saldo de Coins se agrega desde `CoinEntry.amount` en el layout — esta lógica no cambia.
+- No existe modelo `StoreItem` en Prisma — hay que crearlo.
+
+---
+
+### Modelo de datos a crear
+
+```prisma
+model StoreItem {
+  id          String        @id @default(cuid())
+  titleEs     String
+  titleEn     String
+  descriptionEs String
+  descriptionEn String
+  coinPrice   Int           // precio en Coins
+  type        StoreItemType // COURSE, MASTERCLASS, ELECTIVE
+  courseSlug  String?       // slug del Course que se desbloquea (si type=COURSE)
+  imageUrl    String?       // imagen de portada del ítem
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  purchases   StorePurchase[]
+}
+
+enum StoreItemType {
+  COURSE
+  MASTERCLASS
+  ELECTIVE
+}
+
+model StorePurchase {
+  id          String      @id @default(cuid())
+  student     Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId   String
+  item        StoreItem   @relation(fields: [itemId], references: [id])
+  itemId      String
+  coinSpent   Int         // precio pagado al momento de la compra
+  approvedBy  String?     // parentId si la compra requirió aprobación
+  approvedAt  DateTime?
+  status      PurchaseStatus @default(PENDING_APPROVAL)
+  createdAt   DateTime    @default(now())
+
+  @@index([studentId])
+}
+
+enum PurchaseStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+}
+```
+
+> Agregar `purchases StorePurchase[]` al modelo `Student` existente.
+
+Migración:
+```bash
+npx prisma migrate dev --name add_store_items_and_purchases
+npx prisma generate
+```
+
+---
+
+### Archivos a crear
+
+| Ruta | Tipo | Descripción |
+|------|------|-------------|
+| `src/app/[locale]/student/store/page.tsx` | Server Component | Página principal de la tienda. Fetch de StoreItems activos. Muestra balance de Coins + grid de items. |
+| `src/components/store/StoreItemCard.tsx` | Client Component | Card de un ítem de la tienda. Muestra imagen, título, precio en Coins, botón de canje. Maneja estado de compra. |
+| `src/components/store/CoinBalanceHeader.tsx` | Server Component | Header de la tienda con saldo actual de Coins del estudiante y frase motivacional. |
+| `src/app/api/store/purchase/route.ts` | API Route (POST) | Endpoint de canje: valida saldo, crea `StorePurchase` + `CoinEntry` negativa, responde con status. |
+
+---
+
+### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `prisma/schema.prisma` | Agregar modelos `StoreItem`, `StorePurchase`, enums `StoreItemType`, `PurchaseStatus`. Agregar `purchases StorePurchase[]` a `Student`. |
+| `src/app/[locale]/student/rewards/page.tsx` | Reemplazar `<ComingSoon />` por un redirect a `/student/store` usando `redirect()` de Next.js. |
+| `src/app/[locale]/student/layout.tsx` | Cambiar el link "Recompensas" → label: `t('nav.store')`, href: `/${locale}/student/store`. |
+| `src/components/gamification/CoinBadge.tsx` | Convertir el badge en un `<Link>` que apunta a `/${locale}/student/store`. Así el estudiante puede ir a la tienda clickeando su saldo. |
+| `messages/es.json` | Agregar `student.store.*` y cambiar `student.nav.rewards` → `student.nav.store` |
+| `messages/en.json` | Ídem en inglés |
+
+---
+
+### Keys i18n
+
+```json
+"store": {
+  "title": "Tienda",
+  "subtitle": "Canjeá tus Coins por cursos y contenido premium",
+  "balance": "Tu saldo: {amount} Coins",
+  "emptyState": "No hay items disponibles en este momento.",
+  "coinPrice": "{price} Coins",
+  "buyButton": "Canjear",
+  "pendingApproval": "Esperando aprobación",
+  "approved": "Desbloqueado",
+  "insufficientCoins": "Coins insuficientes",
+  "purchaseSuccess": "¡Compra enviada! Tu padre/madre debe aprobarla.",
+  "purchaseError": "Hubo un error. Intentá de nuevo.",
+  "itemTypes": {
+    "COURSE": "Curso",
+    "MASTERCLASS": "Masterclass",
+    "ELECTIVE": "Electivo"
+  }
+},
+"nav": {
+  "store": "Tienda"
+}
+```
+
+---
+
+### Lógica del endpoint de canje (`/api/store/purchase`)
+
+```typescript
+// POST /api/store/purchase
+// Body: { itemId: string }
+// Auth: sesión activa del estudiante
+
+// 1. Validar sesión y obtener studentId
+// 2. Fetch del StoreItem (verificar que active === true)
+// 3. Calcular balance actual: SUM(CoinEntry.amount) WHERE studentId
+// 4. Validar que balance >= item.coinPrice
+// 5. Verificar que el estudiante no compró ya este ítem (StorePurchase existente con APPROVED)
+// 6. Transacción Prisma:
+//    a. Crear StorePurchase { status: 'PENDING_APPROVAL' }
+//    b. Crear CoinEntry { amount: -item.coinPrice, reason: 'STORE_PURCHASE', refId: purchase.id }
+// 7. TODO v1.1: notificar al padre para aprobación
+// 8. Responder { success: true, purchase: { id, status: 'PENDING_APPROVAL' } }
+```
+
+> En v1 del pilot, **toda compra queda en `PENDING_APPROVAL`** — el padre aprueba desde el Parent Dashboard (v1.1). Los Coins se descuentan de inmediato para reservar el saldo; si el padre rechaza, se crea una `CoinEntry` positiva de devolución.
+
+---
+
+### Diseño de `StoreItemCard`
+
+```
+┌─────────────────────────────────┐
+│  [imagen del curso]             │  imageUrl o placeholder gris
+│                                 │
+│  🏷 CURSO                       │  badge tipo item (teal o amber)
+│  Historia del Arte              │  font-serif text-base
+│  Exploración visual de los      │  text-sm text-midsea-muted
+│  grandes movimientos artísticos │
+│                                 │
+│  🪙 1.500 Coins                 │  coin-dark font-semibold
+│                                 │
+│  [    Canjear    ]              │  Button primary si tiene saldo
+│                                 │  Button ghost disabled si no
+└─────────────────────────────────┘
+```
+
+#### Tokens de diseño
+
+| Elemento | Clase Tailwind | Hex efectivo |
+|----------|---------------|-------------|
+| Card | `rounded-xl border border-midsea-border bg-midsea-foam overflow-hidden shadow-card` | — |
+| Imagen placeholder | `w-full h-36 bg-midsea-lagoon-light flex items-center justify-center` | `#E8F5F0` |
+| Badge tipo COURSE | `inline-flex items-center gap-1 rounded-full bg-midsea-lagoon-light px-2 py-0.5 text-[10px] font-semibold text-midsea-lagoon uppercase tracking-wide` | teal |
+| Badge tipo MASTERCLASS | ídem con `bg-coin-light text-coin-dark` | amber |
+| Título | `font-serif text-base font-normal text-midsea-ink mt-2` | `#1A1A1A` |
+| Descripción | `text-xs text-midsea-muted leading-snug mt-1 line-clamp-2` | `#6B7280` |
+| Precio | `flex items-center gap-1 text-sm font-semibold text-coin-dark mt-3` | `#C47A1A` |
+| Ícono Coin en precio | Lucide `Coins` size 14 | amber |
+| Botón Canjear (saldo OK) | `<Button variant="primary" className="w-full mt-3">` | `#1800AA` |
+| Botón deshabilitado | `<Button variant="ghost" disabled className="w-full mt-3 opacity-50">` | gris |
+| Badge "Desbloqueado" | `w-full mt-3 rounded-lg bg-midsea-lagoon-light py-2 text-center text-sm font-medium text-midsea-lagoon` | teal claro |
+
+---
+
+### Diseño de la página `/student/store`
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  🪙 Tu saldo: 2.450 Coins                               │  CoinBalanceHeader
+│  Canjeá tus Coins por cursos y contenido premium        │  subtitle muted
+├─────────────────────────────────────────────────────────┤
+│  [Card 1]  [Card 2]  [Card 3]                           │  grid 1-2-3 cols
+│  [Card 4]  [Card 5]  ...                                │
+└─────────────────────────────────────────────────────────┘
+```
+
+Grid: `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4`
+
+---
+
+### CoinBadge como link a la tienda
+
+El badge `⚡ 2.450 COIN` en el header pasa a ser clickeable:
+
+```tsx
+// En CoinBadge.tsx, envolver con Link:
+import Link from 'next/link'
+
+// Agregar prop opcional:
+interface CoinBadgeProps {
+  amount: number
+  href?: string   // si se pasa, el badge es un link
+}
+
+// Render:
+const Wrapper = href ? Link : 'div'
+return (
+  <Wrapper href={href ?? ''} className="...clases existentes + hover:opacity-80 transition-opacity">
+    ⚡ {amount.toLocaleString()} COIN
+  </Wrapper>
+)
+
+// En layout.tsx, pasar href:
+<CoinBadge amount={totalCoin} href={`/${locale}/student/store`} />
+```
+
+---
+
+### Criterios de aceptación
+
+- [ ] `npx prisma migrate dev` corre sin errores.
+- [ ] La ruta `/student/store` muestra el listado de StoreItems activos.
+- [ ] `/student/rewards` redirige a `/student/store`.
+- [ ] El navbar muestra "Tienda" en lugar de "Recompensas".
+- [ ] El badge de Coins en el header es clickeable y lleva a `/student/store`.
+- [ ] Cada StoreItemCard muestra: imagen/placeholder, tipo, título, descripción, precio en Coins.
+- [ ] Si el saldo del estudiante es menor al precio, el botón está deshabilitado con label "Coins insuficientes".
+- [ ] Si el estudiante ya compró el ítem (cualquier status), el botón muestra "Esperando aprobación" o "Desbloqueado".
+- [ ] Al hacer clic en "Canjear", el endpoint POST crea la `StorePurchase` + `CoinEntry` negativa en una sola transacción.
+- [ ] `npm run type-check` pasa sin errores.
+
+---
+
+### Prompt para Claude Code (Tienda Coin):
+
+```
+Implementá la Mejora 9 del docs/IMPLEMENTATION.md: Tienda Coin — Cursos canjeables.
+
+PASOS EN ORDEN:
+
+1. Editar prisma/schema.prisma:
+   Agregar modelos StoreItem, StorePurchase y enums StoreItemType, PurchaseStatus.
+   Agregar campo purchases StorePurchase[] al modelo Student existente.
+   Ver definición exacta en IMPLEMENTATION.md Mejora 9.
+   Ejecutar: npx prisma migrate dev --name add_store_items_and_purchases
+   Luego: npx prisma generate
+
+2. Crear src/app/api/store/purchase/route.ts (POST handler):
+   Lógica: validar sesión → fetch StoreItem → calcular balance → verificar saldo suficiente →
+   verificar que no compró ya → transacción Prisma (StorePurchase + CoinEntry negativa) →
+   responder { success: true, purchase }.
+   Ver lógica detallada en IMPLEMENTATION.md Mejora 9.
+   Usar Zod para validar el body: { itemId: z.string() }.
+
+3. Crear src/components/store/StoreItemCard.tsx (Client Component):
+   Props: item: StoreItem, studentBalance: number, existingPurchase?: StorePurchase | null.
+   Diseño según tokens en IMPLEMENTATION.md Mejora 9.
+   Botón "Canjear": llama POST /api/store/purchase con itemId.
+   Estados del botón:
+   - saldo >= precio y sin compra previa → "Canjear" (primary, activo)
+   - saldo < precio → "Coins insuficientes" (ghost, disabled)
+   - existingPurchase.status === 'PENDING_APPROVAL' → "Esperando aprobación" (ghost, disabled)
+   - existingPurchase.status === 'APPROVED' → badge "Desbloqueado" (div teal, sin botón)
+   Feedback post-canje: toast o mensaje inline "¡Compra enviada! Tu padre/madre debe aprobarla."
+
+4. Crear src/components/store/CoinBalanceHeader.tsx (Server Component):
+   Props: balance: number, locale: string.
+   Muestra: ícono Coins grande + "Tu saldo: {balance} Coins" en text-2xl + subtitle muted.
+
+5. Crear src/app/[locale]/student/store/page.tsx (Server Component):
+   Fetch: todos los StoreItems donde active === true, ordenados por coinPrice ASC.
+   Fetch: balance total del estudiante (SUM de CoinEntry.amount).
+   Fetch: compras existentes del estudiante (para pasar existingPurchase a cada card).
+   Render: <CoinBalanceHeader> + grid de <StoreItemCard>.
+   Si no hay items: mensaje de empty state.
+
+6. Reemplazar src/app/[locale]/student/rewards/page.tsx:
+   Importar redirect de 'next/navigation'.
+   Reemplazar todo el contenido por: redirect(`/${locale}/student/store`)
+
+7. Actualizar src/app/[locale]/student/layout.tsx:
+   Cambiar el link de "Recompensas" para que apunte a /${locale}/student/store.
+   Cambiar el label: usar t('student.nav.store') en lugar de t('student.nav.rewards').
+
+8. Actualizar src/components/gamification/CoinBadge.tsx:
+   Agregar prop opcional href?: string.
+   Si href existe, envolver el badge en <Link href={href}> con hover:opacity-80.
+   En layout.tsx, pasar href={`/${locale}/student/store`} al <CoinBadge>.
+
+9. Agregar keys i18n en messages/es.json y messages/en.json:
+   Bajo student, agregar objeto "store" con todas las keys del IMPLEMENTATION.md Mejora 9.
+   Cambiar student.nav.rewards → student.nav.store = "Tienda" / "Store".
+
+10. npm run type-check. Corregir errores.
+11. npm run lint.
+
+RESTRICCIONES:
+- En v1: TODA compra queda en PENDING_APPROVAL. El padre aprueba en v1.1.
+  Los Coins se descuentan de inmediato al momento del canje (reserva de saldo).
+- La transacción (StorePurchase + CoinEntry negativa) debe ser atómica: usar prisma.$transaction([]).
+- No agregar lógica de aprobación del padre en este sprint — solo crear el StorePurchase.
+- StoreItemCard es Client Component ('use client') porque maneja el click y el estado del botón.
+- StoreItemCard NO debe hacer fetch del balance — lo recibe como prop desde la página Server Component.
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 9: Tienda Coin".
+```
+
+---
+
+## Mejora 10: Angela — Rebrand visual y label "Preguntale a Angela, AI Tutor"
+
+> Dos cambios visuales coordinados: (1) agregar ícono de mundo/globo junto al avatar de Angela para reforzar el posicionamiento "bilingüe y global", y (2) cambiar el texto de todos los puntos de entrada de Angela de "Angela" a "Preguntale a Angela, AI Tutor" para que el estudiante entienda que es un tutor con IA, no solo un chatbot.
+
+---
+
+### Contexto del codebase
+
+- **Avatar de Angela**: SVG kawaii con cara amarilla (`AngelaAvatar.tsx`). No hay globo/mundo en ningún lugar.
+- **AngelaSidebarCard**: muestra inicial "A" en círculo teal + texto "Angela". Label hardcodeado.
+- **AngelaSidePanel header**: muestra `<AngelaAvatar size="sm">` + texto "Angela".
+- **HeaderAngelaHero**: solo el avatar SVG, sin texto descriptivo.
+- **AngelaWidget collapsed (FAB)**: solo el avatar, sin texto.
+- **Keys i18n actuales**: `student.angela.open` = "Abrir a Angela" / `focusTitle` = "Habla con Angela".
+
+---
+
+### Cambio 1 — Globo de mundo junto al avatar
+
+El ícono Lucide `Globe` aparece como un badge o elemento decorativo junto al avatar de Angela en tres lugares: `AngelaSidebarCard`, `AngelaSidePanel` (header), y `HeaderAngelaHero`. El globo refuerza visualmente "bilingüe + global" sin reemplazar el avatar kawaii.
+
+**Posición:** esquina inferior derecha del avatar, como un badge circular pequeño.
+
+```tsx
+// Wrapper relativo para posicionar el globo:
+<div className="relative w-fit">
+  <AngelaAvatar size="sm" />
+  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-midsea-deep flex items-center justify-center ring-2 ring-white">
+    <Globe size={10} className="text-white" />
+  </div>
+</div>
+```
+
+Este patrón se aplica igual en los tres lugares (tamaño del wrapper varía según el size del avatar).
+
+---
+
+### Cambio 2 — Label "Preguntale a Angela, AI Tutor"
+
+Reemplazar el texto "Angela" en todos los puntos de entrada por el label completo. Hay cuatro lugares:
+
+| Componente | Texto actual | Texto nuevo |
+|------------|-------------|------------|
+| `AngelaSidebarCard.tsx` — nombre sobre el mensaje | `"Angela"` | `"Preguntale a Angela, AI Tutor"` (es) / `"Ask Angela, AI Tutor"` (en) |
+| `AngelaSidePanel.tsx` — header del panel | `"Angela"` | `"Angela, AI Tutor"` |
+| `AngelaWidget.tsx` — aria-label del FAB | `t('student.angela.open')` = "Abrir a Angela" | `t('student.angela.open')` = "Preguntale a Angela, AI Tutor" |
+| `AngelaWidget.tsx` — focus mode title | `t('student.angela.focusTitle')` = "Habla con Angela" | `"Angela, AI Tutor"` |
+
+> En el sidebar de lección, el label completo "Preguntale a Angela, AI Tutor" es el más importante porque es la llamada a la acción principal. En el header del panel (AngelaSidePanel) y el focus title, usar "Angela, AI Tutor" (más corto) para no romper el layout.
+
+---
+
+### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `src/components/learning/AngelaSidebarCard.tsx` | Agregar globo badge junto al círculo "A". Cambiar texto "Angela" por label largo. |
+| `src/components/tutoring/AngelaSidePanel.tsx` | Agregar globo badge junto al avatar en el header. Cambiar "Angela" por "Angela, AI Tutor". |
+| `src/components/tutoring/HeaderAngelaHero.tsx` | Agregar globo badge junto al avatar hero. Agregar texto descriptivo debajo del avatar si el espacio lo permite. |
+| `src/components/tutoring/AngelaWidget.tsx` | Actualizar aria-label del FAB collapsed. |
+| `messages/es.json` | Actualizar keys de Angela: `open`, `focusTitle`, nuevo `sidebarLabel`, `panelLabel` |
+| `messages/en.json` | Ídem en inglés |
+
+---
+
+### Keys i18n actualizadas
+
+```json
+"angela": {
+  "sidebarLabel": "Preguntale a Angela, AI Tutor",
+  "panelLabel": "Angela, AI Tutor",
+  "open": "Preguntale a Angela, AI Tutor",
+  "openWithUnread": "Angela tiene una sugerencia para ti",
+  "focusTitle": "Angela, AI Tutor",
+  "minimize": "Minimizar",
+  "close": "Cerrar"
+}
+```
+
+```json
+"angela": {
+  "sidebarLabel": "Ask Angela, AI Tutor",
+  "panelLabel": "Angela, AI Tutor",
+  "open": "Ask Angela, AI Tutor",
+  "openWithUnread": "Angela has a suggestion for you",
+  "focusTitle": "Angela, AI Tutor",
+  "minimize": "Minimize",
+  "close": "Close"
+}
+```
+
+---
+
+### Tokens de diseño del globo badge
+
+| Elemento | Clase Tailwind | Hex efectivo |
+|----------|---------------|-------------|
+| Badge container | `absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-midsea-deep flex items-center justify-center ring-2 ring-white` | fondo `#1800AA`, anillo blanco |
+| Ícono Globe | Lucide `Globe` size 10, `className="text-white"` | blanco |
+
+> En `HeaderAngelaHero` donde el avatar es más grande (`size="hero"` = 72–120px), escalar el badge: `w-7 h-7` con Globe size 14.
+
+---
+
+### Diseño final de `AngelaSidebarCard` con los cambios
+
+```
+┌─────────────────────────────────────────────┐
+│  [🌐A]  Preguntale a Angela, AI Tutor       │  avatar con globo + label largo
+│                                             │
+│  "¿Hay algo de «Historia del Arte» que      │  serif italic muted
+│   quieras entender mejor antes del quiz?"   │
+└─────────────────────────────────────────────┘
+```
+
+El `[🌐A]` representa el círculo teal con inicial "A" + el badge azul con globo en la esquina inferior derecha.
+
+---
+
+### Criterios de aceptación
+
+- [ ] El badge de globo aparece en `AngelaSidebarCard`, `AngelaSidePanel` y `HeaderAngelaHero`.
+- [ ] El globo no tapa ni distorsiona el avatar kawaii de Angela.
+- [ ] `AngelaSidebarCard` muestra "Preguntale a Angela, AI Tutor" (es) o "Ask Angela, AI Tutor" (en).
+- [ ] `AngelaSidePanel` header muestra "Angela, AI Tutor".
+- [ ] El aria-label del FAB en modo collapsed usa el nuevo label.
+- [ ] El focus title del widget muestra "Angela, AI Tutor".
+- [ ] En mobile, el label largo no causa overflow en el sidebar de lección.
+- [ ] `npm run type-check` pasa sin errores.
+
+---
+
+### Prompt para Claude Code (Angela rebrand):
+
+```
+Implementá la Mejora 10 del docs/IMPLEMENTATION.md: Angela — rebrand visual y label.
+Son dos cambios: (1) badge de globo junto al avatar, (2) label "Preguntale a Angela, AI Tutor".
+
+PASOS EN ORDEN:
+
+1. Actualizar keys i18n en messages/es.json y messages/en.json:
+   Bajo student.angela, actualizar:
+   - sidebarLabel: "Preguntale a Angela, AI Tutor" / "Ask Angela, AI Tutor"
+   - panelLabel: "Angela, AI Tutor" / "Angela, AI Tutor"
+   - open: "Preguntale a Angela, AI Tutor" / "Ask Angela, AI Tutor"
+   - focusTitle: "Angela, AI Tutor" / "Angela, AI Tutor"
+   Dejar sin cambio: openWithUnread, minimize, close.
+
+2. Crear helper GlobeAvatarWrapper (puede ser inline en cada componente o un pequeño componente):
+   Wrapper div con position relative.
+   Dentro: {children} (el avatar) + badge absoluto:
+   <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-midsea-deep
+                   flex items-center justify-center ring-2 ring-white">
+     <Globe size={10} className="text-white" />
+   </div>
+   Importar Globe de lucide-react.
+
+3. Actualizar src/components/learning/AngelaSidebarCard.tsx:
+   En el header del card (donde está el círculo "A" teal + texto "Angela"):
+   - Envolver el círculo "A" con el GlobeAvatarWrapper (badge size normal: w-5 h-5 Globe size 10).
+   - Cambiar el texto "Angela" por t('student.angela.sidebarLabel').
+
+4. Actualizar src/components/tutoring/AngelaSidePanel.tsx:
+   En el header del panel (AngelaAvatar size="sm" + texto "Angela"):
+   - Envolver el AngelaAvatar con GlobeAvatarWrapper.
+   - Cambiar el texto "Angela" por t('student.angela.panelLabel').
+
+5. Actualizar src/components/tutoring/HeaderAngelaHero.tsx:
+   - Envolver el AngelaAvatar con GlobeAvatarWrapper.
+   - Para el hero (avatar grande), usar badge más grande: w-7 h-7 Globe size 14
+     en lugar de w-5 h-5 Globe size 10.
+
+6. Actualizar src/components/tutoring/AngelaWidget.tsx:
+   - En el FAB collapsed: actualizar aria-label al nuevo t('student.angela.open').
+   - En el focus mode title: usar t('student.angela.focusTitle').
+
+7. npm run type-check. Corregir errores.
+8. npm run lint.
+
+RESTRICCIONES:
+- NO modificar el SVG de AngelaAvatar.tsx — el avatar kawaii no cambia.
+- El badge de globo usa bg-midsea-deep (#1800AA) — el azul navy de Midsea, no el teal.
+- ring-2 ring-white para que el badge no se confunda con el avatar cuando hay fondo de color.
+- En AngelaSidebarCard, el label largo puede requerir ajuste de layout:
+  si el texto "Preguntale a Angela, AI Tutor" es muy largo para una línea,
+  aceptar que se corte en dos líneas o usar text-sm en lugar de text-base.
+- No tocar prisma/schema.prisma en esta mejora.
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 10: Angela rebrand".
+```
+
+---
+
+## Mejora 11: Student Device Pairing — El estudiante entra solo con su PIN
+
+> El estudiante debe poder abrir la app en cualquier tablet o PC y entrar directamente con su avatar + PIN, sin que el padre tenga que loguearse primero. Hoy esto no funciona en dispositivos nuevos o tras logout del padre.
+
+---
+
+### Diagnóstico del problema
+
+El sistema de PIN ya existe y funciona correctamente. El problema es de **bootstrapping de dispositivo**:
+
+- La ruta `/student-login` requiere que la cookie `midsea_device_family` esté seteada con un `familyId` válido para saber qué avatares mostrar.
+- Esa cookie solo se setea cuando el **padre** se loguea (`middleware.ts` — solo la escribe cuando detecta un JWT de padre).
+- En un dispositivo nuevo, o tras un logout del padre, la cookie no existe y el estudiante es redirigido a `/login` (login de padre), donde no puede hacer nada solo.
+
+**La infraestructura correcta ya está diseñada** — solo falta el mecanismo de vinculación inicial del dispositivo.
+
+---
+
+### Solución: Device Pairing Link
+
+El padre genera un link de vinculación desde su dashboard. Ese link setea la cookie `midsea_device_family` en el dispositivo del estudiante y redirige a `/student-login`. A partir de ahí el estudiante entra solo con PIN para siempre en ese dispositivo.
+
+**Flujo completo:**
+
+```
+SETUP (una sola vez, el padre):
+  Parent Dashboard → "Vincular dispositivo" → genera link o QR
+  → padre comparte el link al estudiante (WhatsApp, email, etc.)
+  → estudiante abre el link en su tablet/PC
+
+VINCULACIÓN (una sola vez, en el dispositivo del estudiante):
+  GET /device/link/[token]
+  → valida token → setea cookie midsea_device_family={familyId} (1 año)
+  → redirige a /[locale]/student-login
+
+USO DIARIO (el estudiante solo):
+  Abre la app → /student-login → elige avatar → PIN → /student
+```
+
+---
+
+### Modelo de datos a agregar
+
+```prisma
+model DeviceLinkToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())   // token seguro en la URL
+  familyId  String
+  family    Family   @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime                            // 7 días de validez para el link
+  usedAt    DateTime?                           // null = no usado aún
+  // Un token usado sigue siendo válido para auditoría, pero no se puede reutilizar
+  // en cadena — el dispositivo ya tiene la cookie, no necesita el link de nuevo.
+}
+```
+
+Agregar también `deviceLinkTokens DeviceLinkToken[]` al modelo `Family`.
+
+Migración:
+```bash
+npx prisma migrate dev --name add_device_link_tokens
+npx prisma generate
+```
+
+---
+
+### Archivos a crear
+
+| Ruta | Tipo | Descripción |
+|------|------|-------------|
+| `src/app/[locale]/device/link/[token]/route.ts` | Route Handler (GET) | Valida el token, setea la cookie `midsea_device_family`, redirige a `/student-login`. No es una page — es un redirect handler. |
+| `src/app/api/device/generate-link/route.ts` | API Route (POST) | Genera un `DeviceLinkToken` para la familia del padre autenticado. Retorna la URL del link y un QR en base64 opcional. |
+| `src/components/parent/DeviceLinkCard.tsx` | Client Component | Card en el Parent Dashboard para generar y compartir el link de vinculación. Muestra el link, botón de copiar y QR. |
+
+---
+
+### Archivos a modificar
+
+| Archivo | Cambio |
+|---------|--------|
+| `prisma/schema.prisma` | Agregar modelo `DeviceLinkToken` y relación en `Family`. |
+| `src/app/[locale]/student-login/page.tsx` | Cambiar la redirección cuando no hay cookie: en lugar de ir a `/login` (padre), ir a una página intermedia `/student-login/no-device` que explica cómo vincularse. |
+| `src/app/[locale]/parent/page.tsx` | Agregar `<DeviceLinkCard>` en el dashboard del padre. |
+| `messages/es.json` | Agregar `parent.deviceLink.*` y `student.noDevice.*` |
+| `messages/en.json` | Ídem en inglés |
+
+---
+
+### Lógica del Route Handler de vinculación
+
+```typescript
+// GET /[locale]/device/link/[token]
+// No requiere autenticación — es el primer punto de contacto del dispositivo
+
+export async function GET(
+  request: Request,
+  { params }: { params: { token: string; locale: string } }
+) {
+  const record = await prisma.deviceLinkToken.findUnique({
+    where: { token: params.token },
+    include: { family: true }
+  })
+
+  // Token inválido o no encontrado
+  if (!record) {
+    return redirect(`/${params.locale}/student-login/invalid-link`)
+  }
+
+  // Token expirado (más de 7 días)
+  if (record.expiresAt < new Date()) {
+    return redirect(`/${params.locale}/student-login/invalid-link?reason=expired`)
+  }
+
+  // Marcar como usado (primera vez)
+  if (!record.usedAt) {
+    await prisma.deviceLinkToken.update({
+      where: { id: record.id },
+      data: { usedAt: new Date() }
+    })
+  }
+  // Si ya fue usado: igual funciona — el padre puede compartir el mismo link
+  // a múltiples dispositivos. La cookie es lo que persiste, no el token.
+
+  // Setear cookie de familia en el dispositivo
+  const response = NextResponse.redirect(
+    new URL(`/${params.locale}/student-login`, request.url)
+  )
+  response.cookies.set('midsea_device_family', record.familyId, {
+    maxAge: 60 * 60 * 24 * 365, // 1 año
+    path: '/',
+    sameSite: 'lax',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production'
+  })
+  return response
+}
+```
+
+---
+
+### Lógica del endpoint de generación
+
+```typescript
+// POST /api/device/generate-link
+// Requiere sesión de padre autenticado
+
+export async function POST(request: Request) {
+  const parent = await requireParentApi(request) // helper existente
+  if (!parent) return jsonError(401, 'unauthorized')
+
+  const expiresAt = new Date()
+  expiresAt.setDate(expiresAt.getDate() + 7) // 7 días
+
+  const record = await prisma.deviceLinkToken.create({
+    data: {
+      familyId: parent.familyId,
+      expiresAt
+    }
+  })
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.midsea.com'
+  const locale = parent.family.locale ?? 'es'
+  const linkUrl = `${baseUrl}/${locale}/device/link/${record.token}`
+
+  return Response.json({ linkUrl, expiresAt: record.expiresAt })
+}
+```
+
+---
+
+### Diseño de `DeviceLinkCard` en el Parent Dashboard
+
+```
+┌─────────────────────────────────────────────────────┐
+│  📱 Vincular dispositivo del estudiante             │  título
+│                                                     │
+│  Compartí este link con tu hijo/a para que pueda    │  texto explicativo
+│  entrar solo con su PIN desde cualquier tablet.     │
+│                                                     │
+│  [  Generar link de acceso  ]                       │  Button primary
+│                                                     │
+│  ┌─────────────────────────────────────────────┐    │  (aparece al generar)
+│  │  https://app.midsea.com/es/device/link/xxx  │    │
+│  │                            [ 📋 Copiar ]    │    │
+│  └─────────────────────────────────────────────┘    │
+│                                                     │
+│  ⏱ Este link expira en 7 días.                      │  texto muted
+│  Podés generar uno nuevo cuando quieras.            │
+└─────────────────────────────────────────────────────┘
+```
+
+#### Tokens de diseño
+
+| Elemento | Clase Tailwind | Hex efectivo |
+|----------|---------------|-------------|
+| Card container | `rounded-xl border border-midsea-border bg-midsea-foam p-5` | borde `#E5E7EB` |
+| Título | `text-sm font-semibold text-midsea-ink flex items-center gap-2` | `#1A1A1A` |
+| Ícono | Lucide `Smartphone` size 16, `text-midsea-lagoon` | `#3D9E7A` |
+| Texto explicativo | `text-sm text-midsea-muted mt-1 mb-4 leading-snug` | `#6B7280` |
+| Botón generar | `<Button variant="primary">` existente | `#1800AA` |
+| Box del link | `mt-4 flex items-center gap-2 rounded-lg border border-midsea-border bg-midsea-surface px-3 py-2` | fondo `#FAFAFA` |
+| Texto del link | `flex-1 text-xs text-midsea-muted font-mono truncate` | `#6B7280` |
+| Botón copiar | Lucide `Copy` size 14, `text-midsea-lagoon hover:text-midsea-lagoon/70` | teal |
+| Expiración | `mt-2 text-xs text-midsea-muted` | `#6B7280` |
+
+---
+
+### Página intermedia cuando no hay cookie
+
+Cuando el estudiante llega a `/student-login` sin la cookie (dispositivo no vinculado), en lugar de redirigirlo al login del padre (que no tiene sentido para él), mostrar una pantalla amigable:
+
+```
+┌─────────────────────────────────────────────────────┐
+│                                                     │
+│            [Avatar Angela animado]                  │
+│                                                     │
+│        ¡Hola! Este dispositivo                      │  font-serif text-xl
+│        aún no está vinculado                        │
+│                                                     │
+│   Pedile a tu papá o mamá que genere un             │  text-sm muted
+│   link de acceso desde su cuenta de Midsea          │
+│   y abrilo en esta tablet o computadora.            │
+│                                                     │
+│   [  Ya tengo un link  ]                            │  input para pegar el link
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+Archivo: `src/app/[locale]/student-login/no-device/page.tsx`
+
+El botón "Ya tengo un link" muestra un `<input>` donde el estudiante puede pegar el link directamente (por si el padre se lo mandó por mensaje). Al submit, navegar a esa URL.
+
+---
+
+### Keys i18n
+
+```json
+"deviceLink": {
+  "cardTitle": "Vincular dispositivo del estudiante",
+  "cardDescription": "Compartí este link con tu hijo/a para que pueda entrar solo con su PIN desde cualquier tablet o computadora.",
+  "generateButton": "Generar link de acceso",
+  "generating": "Generando...",
+  "copyButton": "Copiar",
+  "copied": "¡Copiado!",
+  "expiresIn": "Este link expira en 7 días. Podés generar uno nuevo cuando quieras.",
+  "invalidLink": "Este link no es válido o ya expiró. Pedile a tu papá o mamá que genere uno nuevo."
+},
+"noDevice": {
+  "title": "Este dispositivo aún no está vinculado",
+  "description": "Pedile a tu papá o mamá que genere un link de acceso desde su cuenta de Midsea y abrilo en esta tablet o computadora.",
+  "hasLink": "Ya tengo un link",
+  "linkPlaceholder": "Pegá el link aquí..."
+}
+```
+
+---
+
+### Criterios de aceptación
+
+- [ ] `npx prisma migrate dev` corre sin errores.
+- [ ] El padre puede generar un link desde su dashboard.
+- [ ] El link se puede copiar al portapapeles.
+- [ ] Abrir el link en un dispositivo nuevo setea la cookie y redirige a `/student-login`.
+- [ ] El estudiante ve el grid de avatares sin que el padre esté logueado.
+- [ ] El estudiante puede entrar con su PIN y llegar a `/student`.
+- [ ] Si el token expiró (>7 días), muestra mensaje de error claro.
+- [ ] El mismo link puede usarse en múltiples dispositivos de la misma familia.
+- [ ] En dispositivos ya vinculados, `/student-login` sigue funcionando igual (sin cambio).
+- [ ] Si no hay cookie, el estudiante ve `/student-login/no-device` en lugar del login del padre.
+- [ ] `npm run type-check` pasa sin errores.
+
+---
+
+### Riesgos
+
+**Riesgo 1 — Seguridad del link:** El token es un `cuid()` de 25 caracteres — suficientemente largo para ser imposible de adivinar por fuerza bruta. La expiración de 7 días limita la ventana de exposición. Para v1.1 se puede agregar un límite de usos (ej. máximo 5 dispositivos por token).
+
+**Riesgo 2 — El padre no usa el dashboard:** Para el pilot, documentar en el onboarding que el primer paso es vincular el dispositivo del estudiante. Considerar que el flujo de setup inicial (cuando el padre crea el primer estudiante) ofrezca generar el link inmediatamente.
+
+**Riesgo 3 — `requireParentApi` helper:** Verificar si existe este helper o si hay que usar `getServerSession` directamente en el route handler.
+
+---
+
+### Prompt para Claude Code (Student Device Pairing):
+
+```
+Implementá la Mejora 11 del docs/IMPLEMENTATION.md: Student Device Pairing.
+OBJETIVO: El estudiante entra solo con su PIN sin necesitar al padre logueado en el dispositivo.
+
+PASOS EN ORDEN:
+
+1. Editar prisma/schema.prisma:
+   Agregar modelo DeviceLinkToken con campos: id, token (unique, default cuid()), familyId,
+   family (relation a Family), createdAt, expiresAt, usedAt (nullable).
+   Agregar deviceLinkTokens DeviceLinkToken[] al modelo Family.
+   Ver definición exacta en IMPLEMENTATION.md Mejora 11.
+   Ejecutar: npx prisma migrate dev --name add_device_link_tokens
+   Luego: npx prisma generate
+
+2. Crear src/app/api/device/generate-link/route.ts (POST handler):
+   Requiere sesión de padre. Obtener sesión con getServerSession(authOptions).
+   Si no hay sesión o role !== 'PARENT': retornar 401.
+   Crear DeviceLinkToken con expiresAt = now + 7 días.
+   Construir linkUrl con NEXT_PUBLIC_APP_URL + /${locale}/device/link/${record.token}.
+   Retornar { linkUrl, expiresAt }.
+   Ver lógica completa en IMPLEMENTATION.md Mejora 11.
+
+3. Crear src/app/[locale]/device/link/[token]/route.ts (GET handler — NO es una page):
+   No requiere autenticación.
+   Fetch DeviceLinkToken por token. Si no existe → redirect a /student-login/invalid-link.
+   Si expiresAt < new Date() → redirect a /student-login/invalid-link?reason=expired.
+   Si !usedAt → marcar usedAt = new Date().
+   Setear cookie 'midsea_device_family' con record.familyId (maxAge: 1 año, httpOnly, sameSite: lax).
+   Redirect a /${params.locale}/student-login.
+   Ver lógica completa en IMPLEMENTATION.md Mejora 11.
+
+4. Crear src/app/[locale]/student-login/no-device/page.tsx (Server Component):
+   Página amigable para estudiantes en dispositivos no vinculados.
+   Mostrar: AngelaAvatar (size hero) + título "Este dispositivo aún no está vinculado"
+   + descripción pidiendo al padre que genere el link.
+   Input donde el estudiante puede pegar el link + botón que navega a esa URL.
+   Ver diseño en IMPLEMENTATION.md Mejora 11.
+
+5. Modificar src/app/[locale]/student-login/page.tsx:
+   Buscar la lógica que chequea la cookie midsea_device_family.
+   Si no hay cookie, en lugar de redirect a /login, hacer redirect a
+   /${locale}/student-login/no-device.
+
+6. Crear src/components/parent/DeviceLinkCard.tsx (Client Component):
+   Props: locale: string.
+   Estado: linkUrl: string | null, loading: boolean, copied: boolean.
+   Botón "Generar link": hace POST /api/device/generate-link → muestra el link.
+   Box con el link + botón copiar (navigator.clipboard.writeText).
+   Feedback "¡Copiado!" por 2 segundos.
+   Ver diseño y tokens en IMPLEMENTATION.md Mejora 11.
+
+7. Agregar DeviceLinkCard al dashboard del padre:
+   En src/app/[locale]/parent/page.tsx, importar y renderizar <DeviceLinkCard locale={locale} />
+   cerca del área de gestión de estudiantes.
+
+8. Agregar keys i18n en messages/es.json y messages/en.json:
+   Bajo parent: objeto "deviceLink" con todas las keys.
+   Bajo student: objeto "noDevice" con title, description, hasLink, linkPlaceholder.
+   Ver valores exactos en IMPLEMENTATION.md Mejora 11.
+
+9. npm run type-check. Corregir errores.
+10. npm run lint.
+
+RESTRICCIONES CRÍTICAS:
+- El route handler /device/link/[token]/route.ts NO es una page — es un GET handler
+  que devuelve NextResponse.redirect(), NO JSX. Crear como route.ts, no como page.tsx.
+- El token NO expira al usarse por primera vez — permite múltiples dispositivos de la misma familia.
+  Solo expira por fecha (7 días desde creación).
+- La cookie midsea_device_family debe setearse con los MISMOS atributos que el middleware existente:
+  httpOnly: true, sameSite: 'lax', path: '/', maxAge: 365 días.
+  En producción agregar secure: true.
+- NO modificar el flujo de login cuando la cookie YA existe — solo cambiar qué pasa cuando NO existe.
+- NO tocar AuthOptions ni los providers de NextAuth.
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 11: Student Device Pairing".
+```

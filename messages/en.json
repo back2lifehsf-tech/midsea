@@ -634,8 +634,26 @@
     "nav": {
       "home": "Home",
       "lessons": "Lessons",
-      "rewards": "Rewards",
+      "store": "Store",
       "profile": "Profile"
+    },
+    "store": {
+      "title": "Store",
+      "subtitle": "Redeem your Coins for premium courses and content",
+      "balance": "Your balance: {amount} Coins",
+      "emptyState": "No items available right now.",
+      "coinPrice": "{price} Coins",
+      "buyButton": "Redeem",
+      "pendingApproval": "Awaiting approval",
+      "approved": "Unlocked",
+      "insufficientCoins": "Not enough Coins",
+      "purchaseSuccess": "Purchase submitted! A parent needs to approve it.",
+      "purchaseError": "Something went wrong. Try again.",
+      "itemTypes": {
+        "COURSE": "Course",
+        "MASTERCLASS": "Masterclass",
+        "ELECTIVE": "Elective"
+      }
     },
     "home": {
       "greeting": "Hi, {name}!",
@@ -683,6 +701,14 @@
         "label": "Lesson Notebook",
         "download": "Download PDF",
         "hint": "Extended explanation, vocabulary and visual summary"
+      },
+      "welcome": {
+        "verseLabel": "Verse of the day",
+        "reflectionLabel": "Reflection",
+        "connectionQuestion": "How do we apply this today?"
+      },
+      "hook": {
+        "label": "Did you know…?"
       },
       "stepper": {
         "ariaLabel": "Lesson stages",
@@ -751,6 +777,10 @@
       }
     },
     "dashboard": {
+      "verse": {
+        "label": "Verse of the day",
+        "connectionQuestion": "How do we apply this today?"
+      },
       "greeting": "What do you need today, {name}?",
       "subheading": "Pick where to start. Angela is with you in any of them.",
       "intentsHeading": "What do you want to do?",

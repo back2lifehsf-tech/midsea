@@ -634,8 +634,26 @@
     "nav": {
       "home": "Inicio",
       "lessons": "Lecciones",
-      "rewards": "Recompensas",
+      "store": "Tienda",
       "profile": "Perfil"
+    },
+    "store": {
+      "title": "Tienda",
+      "subtitle": "Canjeá tus Coins por cursos y contenido premium",
+      "balance": "Tu saldo: {amount} Coins",
+      "emptyState": "No hay items disponibles en este momento.",
+      "coinPrice": "{price} Coins",
+      "buyButton": "Canjear",
+      "pendingApproval": "Esperando aprobación",
+      "approved": "Desbloqueado",
+      "insufficientCoins": "Coins insuficientes",
+      "purchaseSuccess": "¡Compra enviada! Tu padre/madre debe aprobarla.",
+      "purchaseError": "Hubo un error. Intentá de nuevo.",
+      "itemTypes": {
+        "COURSE": "Curso",
+        "MASTERCLASS": "Masterclass",
+        "ELECTIVE": "Electivo"
+      }
     },
     "home": {
       "greeting": "¡Hola, {name}!",
@@ -683,6 +701,14 @@
         "label": "Notebook de la lección",
         "download": "Descargar PDF",
         "hint": "Explicación ampliada, vocabulario y resumen visual"
+      },
+      "welcome": {
+        "verseLabel": "Versículo del día",
+        "reflectionLabel": "Reflexión",
+        "connectionQuestion": "¿Cómo aplicamos esto hoy?"
+      },
+      "hook": {
+        "label": "¿Sabías que…?"
       },
       "stepper": {
         "ariaLabel": "Etapas de la lección",
@@ -751,6 +777,10 @@
       }
     },
     "dashboard": {
+      "verse": {
+        "label": "Versículo del día",
+        "connectionQuestion": "¿Cómo aplicamos esto hoy?"
+      },
       "greeting": "¿Qué necesitas hoy, {name}?",
       "subheading": "Elige por dónde empezar. Angela te acompaña en cualquiera.",
       "intentsHeading": "¿Qué quieres hacer?",

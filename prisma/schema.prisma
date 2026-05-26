@@ -169,6 +169,7 @@ model Student {
   tutorSessions   TutorSession[]
   tutorUsage      TutorUsageDaily[]
   enrollments     StudentCourseEnrollment[]
+  purchases       StorePurchase[]
 
   @@index([familyId])
   @@index([subscriptionStatus])
@@ -212,6 +213,11 @@ model Lesson {
   // resumen visual). URL pública en CDN/Storage; lo produce el equipo
   // editorial. Nullable — no todas las lecciones lo tienen.
   notebookUrl String?
+  // Mejora 8: activador mental (dato curioso, pregunta impactante) que abre
+  // la vista Lectura después de la bienvenida bíblica. Lo produce el pipeline
+  // (ADR-006). Nullable — no todas las lecciones lo tienen.
+  hookEs      String?
+  hookEn      String?
 
   progress      LessonProgress[]
   competencies  LessonCompetency[]
@@ -435,4 +441,56 @@ model StripeWebhookEvent {
   processedAt DateTime @default(now())
 
   @@index([type, processedAt])
+}
+
+// Mejora 9 (Tienda Coin) + ADR-004: producto premium canjeable con Coins
+// (curso especializado, masterclass, electivo). El catálogo base de cursos
+// NUNCA cuesta Coin — está incluido en la subscription. StoreItem es solo
+// para el contenido premium de la tienda.
+model StoreItem {
+  id            String        @id @default(cuid())
+  titleEs       String
+  titleEn       String
+  descriptionEs String
+  descriptionEn String
+  coinPrice     Int           // precio en Coins
+  type          StoreItemType
+  courseSlug    String?       // slug del Course que se desbloquea (si type=COURSE)
+  imageUrl      String?       // imagen de portada del ítem
+  active        Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  purchases     StorePurchase[]
+}
+
+enum StoreItemType {
+  COURSE
+  MASTERCLASS
+  ELECTIVE
+}
+
+// Mejora 9 (Tienda Coin) + ADR-004: registro de canje. En v1 toda compra
+// nace PENDING_APPROVAL — el padre la aprueba desde Parent Copilot (v1.1).
+// Los Coins se descuentan al instante (reserva de saldo) vía una CoinEntry
+// negativa con reason=STORE_PURCHASE y refId=StorePurchase.id.
+model StorePurchase {
+  id          String         @id @default(cuid())
+  student     Student        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId   String
+  item        StoreItem      @relation(fields: [itemId], references: [id])
+  itemId      String
+  coinSpent   Int            // precio pagado al momento de la compra
+  approvedBy  String?        // parentId si la compra requirió aprobación
+  approvedAt  DateTime?
+  status      PurchaseStatus @default(PENDING_APPROVAL)
+  createdAt   DateTime       @default(now())
+
+  @@index([studentId])
+}
+
+enum PurchaseStatus {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
 }

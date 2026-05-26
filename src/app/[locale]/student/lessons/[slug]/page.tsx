@@ -33,6 +33,8 @@ interface LessonRender {
   reflectionEs: string | null;
   reflectionEn: string | null;
   notebookUrl: string | null;
+  hookEs: string | null;
+  hookEn: string | null;
   activities: ActivityData[] | null;
   quizQuestions: Array<{
     id: string;
@@ -67,6 +69,8 @@ async function loadLessonForDemo(slug: string): Promise<LessonRender | null> {
     reflectionEs: null,
     reflectionEn: null,
     notebookUrl: null,
+    hookEs: null,
+    hookEn: null,
     activities: null,
     quizQuestions: []
   };
@@ -105,6 +109,8 @@ async function loadLessonReal(
     reflectionEs: lesson.reflectionEs ?? null,
     reflectionEn: lesson.reflectionEn ?? null,
     notebookUrl: lesson.notebookUrl ?? null,
+    hookEs: lesson.hookEs ?? null,
+    hookEn: lesson.hookEn ?? null,
     activities: (lesson.activities as ActivityData[] | null) ?? null,
     quizQuestions: lesson.quizQuestions.map((q) => {
       const options = q.options as { es?: string[]; en?: string[] } | null;
@@ -242,6 +248,8 @@ export default async function LessonDetailPage({
       reflectionEs={data.reflectionEs}
       reflectionEn={data.reflectionEn}
       notebookUrl={data.notebookUrl ?? undefined}
+      hookEs={data.hookEs ?? undefined}
+      hookEn={data.hookEn ?? undefined}
       activities={data.activities ?? []}
       quizQuestions={data.quizQuestions}
       masteryPct={data.masteryPct}

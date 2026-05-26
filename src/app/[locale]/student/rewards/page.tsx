@@ -1,14 +1,11 @@
-import { getTranslations } from 'next-intl/server';
-import { ComingSoon } from '@/components/ui/ComingSoon';
+import { redirect } from 'next/navigation';
 
-export default async function StudentRewardsPage({
+// Mejora 9 (Tienda Coin): /student/rewards quedó reemplazada por la tienda
+// real. Redirigimos para no romper enlaces/bookmarks viejos.
+export default function StudentRewardsPage({
   params: { locale }
 }: {
   params: { locale: string };
 }) {
-  const [tNav, tCommon] = await Promise.all([
-    getTranslations({ locale, namespace: 'student.nav' }),
-    getTranslations({ locale, namespace: 'common' })
-  ]);
-  return <ComingSoon title={tNav('rewards')} body={tCommon('comingSoonBody')} />;
+  redirect(`/${locale}/student/store`);
 }

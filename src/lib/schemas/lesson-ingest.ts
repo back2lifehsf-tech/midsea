@@ -117,6 +117,10 @@ export const LessonIngestSchema = z.object({
   reflectionEs: z.string().optional(),
   reflectionEn: z.string().optional(),
 
+  // Mejora 8: activador mental opcional — breve e impactante (máx 300 chars).
+  hookEs: z.string().max(300).optional(),
+  hookEn: z.string().max(300).optional(),
+
   // Actividades intercaladas (2-5) y quiz final (3-8 preguntas).
   activities: z.array(ActivitySchema).min(2).max(5),
   quiz: z.object({

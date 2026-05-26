@@ -12,6 +12,8 @@ import {
   intentTone,
   type IntentKey
 } from '@/components/student/intentVisuals';
+import { DailyVerseCard } from '@/components/student/DailyVerseCard';
+import { getDailyVerse } from '@/lib/verses';
 
 // Intent-based dashboard. Reemplaza el lesson grid por 4 entradas de intencion
 // (CLAUDE.md seccion 7.1, AI_TUTOR_SPEC.md seccion 7). El estudiante no piensa
@@ -204,6 +206,9 @@ export default async function StudentDashboardPage({
 
   return (
     <div className="space-y-10">
+      {/* Mejora 7 (Parte A): versículo del día — primer elemento del dashboard. */}
+      <DailyVerseCard verse={getDailyVerse()} locale={locale} />
+
       <header className="space-y-2">
         <h1 className="font-display text-3xl font-bold text-midsea-deep">
           {tDash('greeting', { name: activeStudent.displayName })}

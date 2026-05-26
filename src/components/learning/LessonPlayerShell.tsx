@@ -21,12 +21,13 @@ import { LessonSidebarDomain } from './LessonSidebarDomain';
 import { LessonPullQuote } from './LessonPullQuote';
 import { AngelaSidebarCard } from './AngelaSidebarCard';
 import { LessonContextRegister } from './LessonContextRegister';
+import { LessonWelcomeCard } from './LessonWelcomeCard';
+import { LessonHookCard } from './LessonHookCard';
 import { ActivityList, type ActivityData } from './Activity';
 import { Quiz } from './Quiz';
 import {
   ClockIcon,
   CoinsIcon,
-  SparklesIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
   FileDownIcon
@@ -61,6 +62,8 @@ export interface LessonPlayerShellProps {
   reflectionEs: string | null;
   reflectionEn: string | null;
   notebookUrl?: string; // PDF expandido descargable (Mejora 5); ausente si no hay
+  hookEs?: string; // activador mental (Mejora 8); ausente si no hay
+  hookEn?: string;
   activities: ActivityData[];
   quizQuestions: ShellQuizQuestion[];
 
@@ -90,7 +93,6 @@ export default function LessonPlayerShell(props: LessonPlayerShellProps) {
   const isEs = props.locale !== 'en';
   const title = isEs ? props.titleEs : props.titleEn;
   const summary = isEs ? props.summaryEs : props.summaryEn;
-  const reflection = isEs ? props.reflectionEs : props.reflectionEn;
 
   // LessonContext para Angela — se monta una vez al nivel del shell para que
   // sobreviva al cambio de tab (Riesgo 2 de la Mejora 4).
@@ -182,7 +184,11 @@ export default function LessonPlayerShell(props: LessonPlayerShellProps) {
                 gradeLevel={props.gradeLevel}
                 bodyMd={props.bodyMd}
                 summary={summary}
-                reflection={reflection}
+                reflectionEs={props.reflectionEs ?? undefined}
+                reflectionEn={props.reflectionEn ?? undefined}
+                hookEs={props.hookEs}
+                hookEn={props.hookEn}
+                locale={props.locale}
                 notebookUrl={props.notebookUrl}
                 activities={props.activities}
                 isEs={isEs}
@@ -225,7 +231,11 @@ function ReadingView({
   gradeLevel,
   bodyMd,
   summary,
-  reflection,
+  reflectionEs,
+  reflectionEn,
+  hookEs,
+  hookEn,
+  locale,
   notebookUrl,
   activities,
   isEs,
@@ -236,7 +246,11 @@ function ReadingView({
   gradeLevel: number;
   bodyMd: string | null;
   summary: string | null;
-  reflection: string | null;
+  reflectionEs?: string;
+  reflectionEn?: string;
+  hookEs?: string;
+  hookEn?: string;
+  locale: string;
   notebookUrl?: string;
   activities: ActivityData[];
   isEs: boolean;
@@ -244,9 +258,16 @@ function ReadingView({
   onGoToQuiz: () => void;
 }) {
   const t = useTranslations('student.lesson');
+  const hook = isEs ? hookEs : hookEn;
 
   return (
     <>
+      {/* Mejora 7 (Parte B): bienvenida bíblica — primer elemento de la vista. */}
+      <LessonWelcomeCard reflectionEs={reflectionEs} reflectionEn={reflectionEn} locale={locale} />
+
+      {/* Mejora 8: activador mental — entre la bienvenida y el título. */}
+      {hook ? <LessonHookCard hook={hook} /> : null}
+
       <h1 className="mb-3 font-serif text-2xl font-normal leading-snug text-midsea-ink">
         {title}
       </h1>
@@ -281,16 +302,6 @@ function ReadingView({
             <span className="ml-1.5 font-normal text-midsea-muted">— {t('notebook.hint')}</span>
           </span>
         </a>
-      ) : null}
-
-      {reflection ? (
-        <div className="mt-6 rounded-xl border border-coin/20 bg-coin-light px-4 py-3">
-          <p className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-coin-dark">
-            <SparklesIcon className="h-3 w-3" />
-            {t('reflection')}
-          </p>
-          <p className="font-serif text-sm italic leading-relaxed text-coin-dark">{reflection}</p>
-        </div>
       ) : null}
 
       {/* Footer de navegación */}
