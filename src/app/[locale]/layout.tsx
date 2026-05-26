@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { Inter } from 'next/font/google';
+import { Inter, Lora } from 'next/font/google';
 import { locales, type Locale } from '@/i18n';
 import { SessionProvider } from '@/components/auth/SessionProvider';
 import '../globals.css';
@@ -12,6 +12,15 @@ import '../globals.css';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap'
+});
+
+// Lora (serif) — dirección "Warm Academic" para cuerpo de lectura y
+// reflexiones. La variable CSS la consume tailwind (fontFamily.serif).
+// latin-ext cubre acentos/ñ del es-419.
+const lora = Lora({
+  subsets: ['latin', 'latin-ext'],
+  variable: '--font-lora',
   display: 'swap'
 });
 
@@ -47,7 +56,7 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`scroll-smooth ${inter.variable}`}>
+    <html lang={locale} className={`scroll-smooth ${inter.variable} ${lora.variable}`}>
       <body className="midsea-gradient font-sans">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SessionProvider>{children}</SessionProvider>

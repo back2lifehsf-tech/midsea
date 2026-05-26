@@ -1,11 +1,25 @@
 import type { Config } from 'tailwindcss';
 
-// Paleta oficial MIDSEA Academy:
-//   #1800AA azul profundo  → midsea-deep / midsea-ocean
-//   #0D9488 teal           → midsea-lagoon
-//   #F9B21C naranja        → midsea-coral / coin
-//   #000000 negro          → midsea-ink
-//   Derivados: foam (bg claro), sun (naranja claro), coin-dark.
+// Paleta oficial MIDSEA Academy (v2 — Warm Academic, extraída del mockup aprobado):
+//
+//   TEAL (acción, progreso, activo):
+//     midsea-lagoon        #3D9E7A  → chips activos, checkmarks, pull quote, avatar Angela
+//     midsea-lagoon-light  #E8F5F0  → fondo suave de chip activo y badges sutiles
+//
+//   AMBER (coins, reflexión cristiana):
+//     coin.DEFAULT         #E8921A  → ícono y texto de coins
+//     coin.light           #FEF3E2  → fondo badge coins y card reflexión
+//     coin.dark            #C47A1A  → texto reflexión y labels amber oscuros
+//
+//   NEUTROS:
+//     midsea-ink           #1A1A1A  → texto principal (casi negro)
+//     midsea-muted         #6B7280  → texto secundario y metadata
+//     midsea-border        #E5E7EB  → bordes de cards y separadores
+//     midsea-surface       #FAFAFA  → fondo de página
+//     midsea-foam          #FFFFFF  → fondo de cards
+//
+//   LEGADO (sin cambio — compatibilidad con componentes existentes):
+//     midsea-deep / midsea-ocean  #1800AA  → botones primary, nav
 
 const config: Config = {
   content: [
@@ -17,25 +31,36 @@ const config: Config = {
     extend: {
       colors: {
         midsea: {
+          // Legado — no cambiar, usados por Button, nav y AngelaChat
           deep: '#1800AA',
           ocean: '#1800AA',
-          lagoon: '#0D9488',
-          foam: '#EEF1FF',
-          coral: '#F9B21C',
-          sun: '#FCD46F',
-          ink: '#000000'
+          // Teal (Warm Academic — mockup aprobado)
+          lagoon: '#3D9E7A',
+          'lagoon-light': '#E8F5F0',
+          // Neutros
+          foam: '#FFFFFF',
+          surface: '#FAFAFA',
+          border: '#E5E7EB',
+          ink: '#1A1A1A',
+          muted: '#6B7280',
+          // Aliases legado
+          coral: '#E8921A',
+          sun: '#FEF3E2',
         },
         coin: {
-          DEFAULT: '#F9B21C',
-          dark: '#C88500'
+          DEFAULT: '#E8921A',
+          light: '#FEF3E2',
+          dark: '#C47A1A',
         }
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
-        display: ['var(--font-inter)', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif']
+        display: ['var(--font-inter)', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        serif: ['var(--font-lora)', 'Georgia', 'serif']
       },
       boxShadow: {
-        wave: '0 12px 30px -12px rgba(24, 0, 170, 0.35)'
+        wave: '0 12px 30px -12px rgba(61, 158, 122, 0.20)',
+        card: '0 1px 3px 0 rgba(0, 0, 0, 0.06)',
       },
       keyframes: {
         ripple: {

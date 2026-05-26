@@ -51,16 +51,21 @@ export function AngelaWidget() {
     return () => window.removeEventListener('keydown', onKey);
   }, [widgetOpen, widgetMode, closeWidget, setWidgetMode]);
 
-  // Epic 02 §5: en /stuck, Angela vive como pantalla completa (StuckChat).
-  // Epic 02.5 §5: durante lecciones activas (/student/lessons/*), Angela
-  // se oculta como surface global — el botón "Pedir ayuda" inline dentro
-  // de LessonSurface (Epic 04) abrirá la conversación contextualizada.
-  if (pathname && /\/student\/(stuck|lessons)(\/|$)/.test(pathname)) {
+  // Epic 02 §5: en /stuck, Angela vive como pantalla completa (StuckChat),
+  // así que el widget global se oculta por completo ahí.
+  if (pathname && /\/student\/stuck(\/|$)/.test(pathname)) {
     return null;
   }
 
+  // Mejora 2 (v2): en lecciones, el botón colapsado (FAB) se oculta — lo
+  // reemplaza AngelaSidebarCard. Pero el panel (expanded/focus) SÍ debe
+  // poder abrirse desde la card vía openWidget, así que NO retornamos null
+  // por completo: solo escondemos el FAB colapsado más abajo.
+  const onLessonRoute = pathname?.includes('/student/lessons/') ?? false;
+
   // collapsed → botón flotante
   if (!widgetOpen) {
+    if (onLessonRoute) return null;
     return (
       <div className="fixed bottom-6 right-6 z-40">
         <div className="relative">

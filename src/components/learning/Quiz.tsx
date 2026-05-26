@@ -17,6 +17,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { InlineMath } from 'react-katex';
+import { Button } from '@/components/ui/Button';
+
+// Mejora 3: pantalla intro antes del quiz. El intento solo se registra
+// (POST a la API) en step 'active' → la intro no dispara ningún fetch.
+type QuizStep = 'intro' | 'active' | 'result';
 
 type QuizQuestion =
   | {
@@ -67,14 +72,21 @@ function RichText({ value }: { value: string }) {
 export function Quiz({
   lessonSlug,
   questions,
-  isEs
+  isEs,
+  rewardCoin,
+  onComplete
 }: {
   lessonSlug: string;
   questions: QuizQuestion[];
   isEs: boolean;
+  rewardCoin: number;
+  // Mejora 4: notifica al LessonPlayerShell el resultado para actualizar el
+  // stepper. Opcional — no rompe usos existentes sin esta prop.
+  onComplete?: (result: { masteryPct: number }) => void;
 }) {
   const t = useTranslations('student.lesson.quiz');
   const router = useRouter();
+  const [step, setStep] = useState<QuizStep>('intro');
   const [answers, setAnswers] = useState<Record<string, number | string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<QuizResult | null>(null);
@@ -101,6 +113,7 @@ export function Quiz({
       }
       const payload = (await res.json()) as QuizResult;
       setResult(payload);
+      onComplete?.({ masteryPct: payload.masteryPct });
       // Refresh para que el header (totalCoin) y dashboard reciban
       // los datos actualizados de Coin/mastery.
       router.refresh();
@@ -117,13 +130,23 @@ export function Quiz({
     setError(null);
   };
 
+  if (step === 'intro') {
+    return (
+      <QuizIntroScreen
+        questionCount={questions.length}
+        rewardCoin={rewardCoin}
+        onStart={() => setStep('active')}
+      />
+    );
+  }
+
   return (
     <section className="my-8 rounded-2xl bg-white p-6 shadow-wave ring-1 ring-midsea-ocean/15">
       <header className="mb-4">
-        <h2 className="font-display text-xl font-bold text-midsea-deep">
+        <h2 className="font-display text-xl font-bold text-midsea-ink">
           {t('title')}
         </h2>
-        <p className="mt-1 text-sm text-midsea-ink/70">
+        <p className="mt-1 text-sm text-midsea-muted">
           {t('subtitle', { total: questions.length })}
         </p>
       </header>
@@ -134,8 +157,8 @@ export function Quiz({
           const feedback = result?.perQuestion.find((p) => p.questionId === q.id);
           return (
             <li key={q.id} className="rounded-xl bg-midsea-foam/30 p-4">
-              <p className="font-medium text-midsea-deep">
-                <span className="mr-2 text-midsea-ocean">{i + 1}.</span>
+              <p className="font-medium text-midsea-ink">
+                <span className="mr-2 text-midsea-ink">{i + 1}.</span>
                 <RichText value={prompt} />
               </p>
               <div className="mt-3">
@@ -203,6 +226,73 @@ export function Quiz({
   );
 }
 
+function ClipboardIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      className="h-10 w-10 text-midsea-lagoon"
+    >
+      <rect x="8" y="3" width="8" height="4" rx="1" />
+      <path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2" />
+      <path d="M9 12h6M9 16h4" />
+    </svg>
+  );
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="h-3.5 w-3.5">
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </svg>
+  );
+}
+
+/** Mejora 3: pantalla previa al quiz. Estática — no llama a ninguna API. */
+function QuizIntroScreen({
+  questionCount,
+  rewardCoin,
+  onStart
+}: {
+  questionCount: number;
+  rewardCoin: number;
+  onStart: () => void;
+}) {
+  const t = useTranslations('student.lesson.quiz.intro');
+  const estimatedMinutes = Math.max(2, Math.ceil(questionCount * 1.5));
+  return (
+    <section className="my-8 rounded-2xl border border-midsea-border bg-midsea-foam shadow-card">
+      <div className="flex flex-col items-center gap-6 px-6 py-10 text-center">
+        <ClipboardIcon />
+        <h2 className="font-serif text-xl font-normal text-midsea-ink">{t('title')}</h2>
+        <div className="flex items-center gap-4 text-sm text-midsea-muted">
+          <span>{t('questionCount', { count: questionCount })}</span>
+          <span aria-hidden>·</span>
+          <span>{t('estimatedTime', { minutes: estimatedMinutes })}</span>
+        </div>
+        {rewardCoin > 0 ? (
+          <span className="inline-flex items-center gap-1 rounded-full bg-coin-light px-3 py-1 text-sm font-medium text-coin-dark">
+            {t('coinBadge', { coin: rewardCoin })}
+          </span>
+        ) : null}
+        <p className="w-full max-w-sm rounded-2xl border border-midsea-border bg-midsea-surface px-5 py-4 text-left font-serif text-sm italic leading-relaxed text-midsea-muted">
+          {t('angelaMessage')}
+        </p>
+        <Button variant="primary" onClick={onStart}>
+          {t('startButton')}
+          <ArrowRightIcon />
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 function MCInput({
   question,
   isEs,
@@ -231,12 +321,16 @@ function MCInput({
               className={[
                 'flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm transition',
                 isPicked
-                  ? 'border-midsea-ocean bg-midsea-ocean/10 text-midsea-deep'
+                  ? 'border-midsea-lagoon bg-midsea-lagoon-light text-midsea-lagoon'
                   : 'border-midsea-ocean/15 bg-white text-midsea-ink hover:border-midsea-ocean/40',
                 locked ? 'cursor-default opacity-80' : 'cursor-pointer'
               ].join(' ')}
             >
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-midsea-ocean/10 text-xs font-semibold text-midsea-deep">
+              <span
+                className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-semibold ${
+                  isPicked ? 'bg-midsea-lagoon text-white' : 'bg-midsea-ocean/10 text-midsea-deep'
+                }`}
+              >
                 {String.fromCharCode(65 + i)}
               </span>
               <span>

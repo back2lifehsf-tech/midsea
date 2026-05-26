@@ -665,6 +665,8 @@
     },
     "lesson": {
       "backToHome": "Back to home",
+      "back": "Back",
+      "goToQuiz": "Go to quiz",
       "subjectLabel": "Subject",
       "minutesEstimate": "{minutes} min",
       "rewardPreview": "+{coin} COIN for mastering the lesson",
@@ -672,6 +674,27 @@
       "placeholderHeading": "Lesson content",
       "placeholderBody": "Video, interactive activities and the assessment will live here. If you get stuck, tap Ask for help and Angela will guide you without giving the answer away.",
       "reflection": "Moment of reflection",
+      "nav": {
+        "goToQuiz": "Go to quiz",
+        "backToReading": "Back to reading",
+        "nextLesson": "Next lesson"
+      },
+      "stepper": {
+        "ariaLabel": "Lesson stages",
+        "video": "Video",
+        "reading": "Reading",
+        "quiz": "Quiz"
+      },
+      "sidebar": {
+        "progressTitle": "Your progress",
+        "domainTitle": "Mastery",
+        "domainIncomplete": "Complete the quiz to earn your coins",
+        "domainComplete": "Lesson mastered!"
+      },
+      "topbar": {
+        "minutesLabel": "{minutes} min",
+        "coinLabel": "+{coin} coins when you finish with 80%"
+      },
       "activity": {
         "label": "Activity {n}",
         "check": "Check",
@@ -706,7 +729,15 @@
         "error": "Something went wrong. Try again.",
         "unauthorized": "Your session expired. Please sign in again.",
         "lesson_not_found": "This lesson doesn't exist.",
-        "no_quiz_questions": "This lesson doesn't have a quiz yet."
+        "no_quiz_questions": "This lesson doesn't have a quiz yet.",
+        "intro": {
+          "title": "Ready for the assessment?",
+          "questionCount": "{count, plural, one {# question} other {# questions}}",
+          "estimatedTime": "~{minutes} min",
+          "angelaMessage": "This quiz isn't to grade you — it's to help you learn better. Take your time.",
+          "coinBadge": "+{coin} Coin if you reach 80%",
+          "startButton": "Start assessment"
+        }
       },
       "askAngela": {
         "label": "Ask Angela for help",
@@ -733,6 +764,9 @@
     },
     "angela": {
       "open": "Open Angela",
+      "sidebarContextPrompt": "Is there anything about «{title}» you'd like to understand better before the quiz?",
+      "sidebarTitle": "Need help?",
+      "talkToAngela": "Talk with Angela",
       "openWithUnread": "Angela has a suggestion for you",
       "close": "Close",
       "minimize": "Minimize",

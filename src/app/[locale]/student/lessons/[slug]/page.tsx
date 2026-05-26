@@ -4,11 +4,9 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { ProgressBar } from '@/components/gamification/ProgressBar';
 import { LessonSurface } from '@/components/tutoring/LessonSurface';
-import { LessonMarkdown } from '@/components/learning/LessonMarkdown';
-import { ActivityList, type ActivityData } from '@/components/learning/Activity';
-import { Quiz } from '@/components/learning/Quiz';
-import { AskAngelaButton } from '@/components/learning/AskAngelaButton';
-import { LessonContextRegister } from '@/components/learning/LessonContextRegister';
+import LessonPlayerShell from '@/components/learning/LessonPlayerShell';
+import { type StepInfo } from '@/components/learning/LessonStepper';
+import { type ActivityData } from '@/components/learning/Activity';
 import { requireStudent } from '@/lib/auth/session';
 import { prisma } from '@/lib/prisma';
 import { DEMO_LESSONS, DEMO_LUCIA_PROGRESS } from '@/lib/demo/data';
@@ -27,6 +25,7 @@ interface LessonRender {
   rewardCoin: number;
   status: string;
   masteryPct: number;
+  attempts: number;
   // Campos de Epic 04 — solo presentes en lecciones generadas por el
   // pipeline, ausentes en placeholders/demo.
   bodyMd: string | null;
@@ -61,6 +60,7 @@ async function loadLessonForDemo(slug: string): Promise<LessonRender | null> {
     rewardCoin: lesson.rewardCoin,
     status: progress?.status ?? 'AVAILABLE',
     masteryPct: progress?.masteryPct ?? 0,
+    attempts: progress?.attempts ?? 0,
     bodyMd: null,
     bodyMdEn: null,
     reflectionEs: null,
@@ -97,6 +97,7 @@ async function loadLessonReal(
     rewardCoin: lesson.rewardCoin,
     status: progress?.status ?? 'AVAILABLE',
     masteryPct: progress?.masteryPct ?? 0,
+    attempts: progress?.attempts ?? 0,
     bodyMd: lesson.bodyMd ?? null,
     bodyMdEn: lesson.bodyMdEn ?? null,
     reflectionEs: lesson.reflectionEs ?? null,
@@ -114,6 +115,27 @@ async function loadLessonReal(
       };
     })
   };
+}
+
+// Rediseño v3 — Mejora 4: estado inicial de las etapas (reading + quiz; no hay
+// videos en v1). Mastery >=80% prevalece sobre attempts.
+function computeSteps(attempts: number, masteryPct: number): StepInfo[] {
+  if (masteryPct >= 80) {
+    return [
+      { id: 'reading', number: 1, status: 'done' },
+      { id: 'quiz', number: 2, status: 'done' }
+    ];
+  }
+  if (attempts > 0) {
+    return [
+      { id: 'reading', number: 1, status: 'done' },
+      { id: 'quiz', number: 2, status: 'active' }
+    ];
+  }
+  return [
+    { id: 'reading', number: 1, status: 'active' },
+    { id: 'quiz', number: 2, status: 'pending' }
+  ];
 }
 
 export default async function LessonDetailPage({
@@ -138,7 +160,6 @@ export default async function LessonDetailPage({
   const summary = isEs ? data.summaryEs : data.summaryEn;
   const subject = tSubjects(data.subject);
   const studentFirstName = activeStudent.displayName.split(/\s+/)[0];
-  const reflection = isEs ? data.reflectionEs : data.reflectionEn;
   // El cuerpo de la lección es bilingüe (bodyMd = es, bodyMdEn = en).
   // Si falta la versión en inglés (lecciones viejas pre-backfill), caemos
   // al español para no romper la lección.
@@ -154,98 +175,77 @@ export default async function LessonDetailPage({
     estMinutes: data.estMinutes
   };
 
-  // Si la lección tiene contenido real generado por el pipeline (bodyMd),
-  // renderizamos el lesson player completo. Si no (legacy/demo), caemos
-  // al LessonSurface placeholder.
   const hasRealContent = data.bodyMd !== null;
 
-  return (
-    <div className="space-y-6">
-      <Link
-        href={`/${locale}/student`}
-        className="inline-block text-sm text-midsea-ocean hover:underline"
-      >
-        ← {tLesson('backToHome')}
-      </Link>
-
-      <header className="space-y-2">
-        <p className="text-xs uppercase tracking-wide text-midsea-ocean">{subject}</p>
-        <h1 className="font-display text-3xl font-bold text-midsea-deep">{title}</h1>
-        {summary ? (
-          <p className="max-w-2xl text-sm text-midsea-ink/70">{summary}</p>
-        ) : null}
-        <p className="text-sm text-midsea-ink/70">
-          {tLesson('minutesEstimate', { minutes: data.estMinutes })} ·{' '}
-          {tLesson('rewardPreview', { coin: data.rewardCoin })}
-        </p>
-        {data.status === 'IN_PROGRESS' || data.status === 'MASTERED' ? (
-          <div className="max-w-md pt-2">
-            <p className="mb-1 text-xs text-midsea-ink/60">
-              {tLesson('masteryProgress')}
-            </p>
-            <ProgressBar value={data.masteryPct} label={`${data.masteryPct}%`} />
-          </div>
-        ) : null}
-      </header>
-
-      {hasRealContent ? (
-        <>
-          <LessonContextRegister
-            lesson={lessonCtx}
-            studentFirstName={studentFirstName}
-          />
-          <Card>
-            <LessonMarkdown markdown={body!} />
-          </Card>
-
-          {data.activities && data.activities.length > 0 ? (
-            <ActivityList activities={data.activities} isEs={isEs} />
-          ) : null}
-
-          {reflection ? (
-            <Card className="bg-midsea-foam/50 ring-1 ring-midsea-ocean/15">
-              <p className="text-xs font-semibold uppercase tracking-wide text-midsea-ocean">
-                {tLesson('reflection')}
-              </p>
-              <p className="mt-2 text-sm italic text-midsea-deep">{reflection}</p>
-            </Card>
-          ) : null}
-
-          <div className="flex justify-center">
-            <AskAngelaButton
-              locale={locale}
-              lessonSlug={data.slug}
-              studentFirstName={studentFirstName}
-            />
-          </div>
-
-          {data.quizQuestions.length > 0 ? (
-            <Quiz
-              lessonSlug={data.slug}
-              questions={data.quizQuestions as never}
-              isEs={isEs}
-            />
-          ) : null}
-        </>
-      ) : (
-        <>
-          <Card>
-            <h2 className="font-display text-lg font-semibold text-midsea-deep">
-              {tLesson('placeholderHeading')}
-            </h2>
-            <p className="mt-2 text-sm text-midsea-ink/70">
-              {tLesson('placeholderBody')}
-            </p>
-            <div
-              aria-hidden
-              className="mt-6 grid h-40 place-items-center rounded-xl bg-midsea-foam text-sm text-midsea-ink/40"
-            >
-              {tLesson('placeholderHeading')}
+  // Lecciones legacy/demo sin contenido del pipeline → layout simple +
+  // placeholder. El rediseño v3 dos columnas aplica solo a contenido real.
+  if (!hasRealContent) {
+    return (
+      <div className="space-y-6">
+        <Link
+          href={`/${locale}/student`}
+          className="inline-block text-sm text-midsea-ocean hover:underline"
+        >
+          ← {tLesson('backToHome')}
+        </Link>
+        <header className="space-y-2">
+          <p className="text-xs uppercase tracking-wide text-midsea-ocean">{subject}</p>
+          <h1 className="font-display text-3xl font-bold text-midsea-deep">{title}</h1>
+          {summary ? <p className="max-w-2xl text-sm text-midsea-ink/70">{summary}</p> : null}
+          <p className="text-sm text-midsea-ink/70">
+            {tLesson('minutesEstimate', { minutes: data.estMinutes })} ·{' '}
+            {tLesson('rewardPreview', { coin: data.rewardCoin })}
+          </p>
+          {data.status === 'IN_PROGRESS' || data.status === 'MASTERED' ? (
+            <div className="max-w-md pt-2">
+              <p className="mb-1 text-xs text-midsea-ink/60">{tLesson('masteryProgress')}</p>
+              <ProgressBar value={data.masteryPct} label={`${data.masteryPct}%`} />
             </div>
-          </Card>
-          <LessonSurface lesson={lessonCtx} studentFirstName={studentFirstName} />
-        </>
-      )}
-    </div>
+          ) : null}
+        </header>
+        <Card>
+          <h2 className="font-display text-lg font-semibold text-midsea-deep">
+            {tLesson('placeholderHeading')}
+          </h2>
+          <p className="mt-2 text-sm text-midsea-ink/70">{tLesson('placeholderBody')}</p>
+          <div
+            aria-hidden
+            className="mt-6 grid h-40 place-items-center rounded-xl bg-midsea-foam text-sm text-midsea-ink/40"
+          >
+            {tLesson('placeholderHeading')}
+          </div>
+        </Card>
+        <LessonSurface lesson={lessonCtx} studentFirstName={studentFirstName} />
+      </div>
+    );
+  }
+
+  // Rediseño v3 — Mejora 4: el render interactivo (navegación por tabs) vive
+  // en el Client Component LessonPlayerShell. page.tsx solo fetchea y delega.
+  // AskAngelaButton no se incluye — lo reemplaza el card Angela del sidebar.
+  return (
+    <LessonPlayerShell
+      lessonId={data.id}
+      lessonSlug={data.slug}
+      titleEs={data.titleEs}
+      titleEn={data.titleEn}
+      subject={data.subject}
+      gradeLevel={data.gradeLevel}
+      estMinutes={data.estMinutes}
+      rewardCoin={data.rewardCoin}
+      bodyMd={body}
+      summaryEs={data.summaryEs}
+      summaryEn={data.summaryEn}
+      reflectionEs={data.reflectionEs}
+      reflectionEn={data.reflectionEn}
+      activities={data.activities ?? []}
+      quizQuestions={data.quizQuestions}
+      masteryPct={data.masteryPct}
+      attempts={data.attempts}
+      initialSteps={computeSteps(data.attempts, data.masteryPct)}
+      locale={locale}
+      studentFirstName={studentFirstName}
+      backHref={`/${locale}/student`}
+    />
   );
 }

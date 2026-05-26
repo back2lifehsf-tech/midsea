@@ -91,10 +91,10 @@ function Shell({
   const t = useTranslations('student.lesson.activity');
   return (
     <section className="my-6 rounded-2xl bg-midsea-foam/40 p-5 ring-1 ring-midsea-ocean/15">
-      <p className="text-xs font-semibold uppercase tracking-wide text-midsea-ocean">
+      <p className="text-xs font-semibold uppercase tracking-wide text-midsea-muted">
         {t('label', { n: index + 1 })}
       </p>
-      <p className="mt-2 font-medium text-midsea-deep">
+      <p className="mt-2 font-medium text-midsea-ink">
         <RichText value={prompt} />
       </p>
       <div className="mt-3">{children}</div>

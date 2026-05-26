@@ -78,10 +78,10 @@ export function LessonMarkdown({ markdown }: { markdown: string }) {
             const Tag = `h${block.level}` as 'h2' | 'h3' | 'h4';
             const cls =
               block.level === 2
-                ? 'mt-6 font-display text-xl font-bold text-midsea-deep'
+                ? 'mt-6 font-display text-xl font-bold text-midsea-ink'
                 : block.level === 3
-                  ? 'mt-5 font-display text-lg font-semibold text-midsea-deep'
-                  : 'mt-4 font-display text-base font-semibold text-midsea-deep';
+                  ? 'mt-5 font-display text-lg font-semibold text-midsea-ink'
+                  : 'mt-4 font-display text-base font-semibold text-midsea-ink';
             return (
               <Tag key={key} className={cls}>
                 {renderInline(block.text, key)}

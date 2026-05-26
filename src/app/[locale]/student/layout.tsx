@@ -44,7 +44,8 @@ export default async function StudentLayout({
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
+    <div className="min-h-screen bg-midsea-surface">
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white/70 px-4 py-3 ring-1 ring-midsea-ocean/10 shadow-wave backdrop-blur">
         <div className="flex flex-wrap items-center gap-3">
           {/* Epic 02.5 §1: Angela hero reemplaza el círculo Midsea como
@@ -85,6 +86,7 @@ export default async function StudentLayout({
         </Link>
       </footer>
       <AngelaWidget />
+      </div>
     </div>
   );
 }

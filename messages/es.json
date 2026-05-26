@@ -665,6 +665,8 @@
     },
     "lesson": {
       "backToHome": "Volver al inicio",
+      "back": "Volver",
+      "goToQuiz": "Ir al Quiz",
       "subjectLabel": "Materia",
       "minutesEstimate": "{minutes} min",
       "rewardPreview": "+{coin} COIN si dominas la lección",
@@ -672,6 +674,27 @@
       "placeholderHeading": "Contenido de la lección",
       "placeholderBody": "Aquí irán el video, las actividades interactivas y la evaluación. Si te atascas, pulsa el botón Pedir ayuda y Angela te orienta sin darte la respuesta.",
       "reflection": "Momento de reflexión",
+      "nav": {
+        "goToQuiz": "Ir al Quiz",
+        "backToReading": "Volver a la Lectura",
+        "nextLesson": "Siguiente lección"
+      },
+      "stepper": {
+        "ariaLabel": "Etapas de la lección",
+        "video": "Video",
+        "reading": "Lectura",
+        "quiz": "Quiz"
+      },
+      "sidebar": {
+        "progressTitle": "Tu progreso",
+        "domainTitle": "Dominio",
+        "domainIncomplete": "Completa el quiz para ganar tus coins",
+        "domainComplete": "¡Lección dominada!"
+      },
+      "topbar": {
+        "minutesLabel": "{minutes} min",
+        "coinLabel": "+{coin} coins si completas con 80%"
+      },
       "activity": {
         "label": "Actividad {n}",
         "check": "Comprobar",
@@ -706,7 +729,15 @@
         "error": "Algo salió mal. Intenta de nuevo.",
         "unauthorized": "Tu sesión expiró. Vuelve a iniciar sesión.",
         "lesson_not_found": "Esta lección no existe.",
-        "no_quiz_questions": "Esta lección aún no tiene quiz."
+        "no_quiz_questions": "Esta lección aún no tiene quiz.",
+        "intro": {
+          "title": "¿Todo listo para la evaluación?",
+          "questionCount": "{count, plural, one {# pregunta} other {# preguntas}}",
+          "estimatedTime": "~{minutes} min",
+          "angelaMessage": "Este quiz no es para calificarte — es para ayudarte a aprender mejor. Tómate tu tiempo.",
+          "coinBadge": "+{coin} Coin si llegas al 80%",
+          "startButton": "Comenzar evaluación"
+        }
       },
       "askAngela": {
         "label": "Pedir ayuda a Angela",
@@ -733,6 +764,9 @@
     },
     "angela": {
       "open": "Abrir a Angela",
+      "sidebarContextPrompt": "¿Hay algo de «{title}» que quieras entender mejor antes del quiz?",
+      "sidebarTitle": "¿Necesitas ayuda?",
+      "talkToAngela": "Hablar con Angela",
       "openWithUnread": "Angela tiene una sugerencia para ti",
       "close": "Cerrar",
       "minimize": "Minimizar",
