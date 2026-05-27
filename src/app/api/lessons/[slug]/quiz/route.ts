@@ -22,6 +22,7 @@ import { z } from 'zod';
 import { authOptions } from '@/app/api/auth/options';
 import { prisma } from '@/lib/prisma';
 import { computeLessonReward, MASTERY_THRESHOLD } from '@/lib/gamification/engine';
+import { checkAndUnlockExams } from '@/lib/gamification/examUnlock';
 import {
   scoreQuiz,
   type QuizQuestionShape,
@@ -135,12 +136,27 @@ export async function POST(
     }
   });
 
+  // Mejora 13: verificar si se desbloquea un examen
+  let unlockedExam = null;
+  if (newMasteryAchieved) {
+    const result = await checkAndUnlockExams(studentId, lesson.id);
+    unlockedExam = result.unlockedExam
+      ? {
+          id: result.unlockedExam.id,
+          type: result.unlockedExam.type,
+          monthIndex: result.unlockedExam.monthIndex,
+          titleEs: result.unlockedExam.titleEs
+        }
+      : null;
+  }
+
   return NextResponse.json({
     correct: score.correct,
     total: score.total,
     masteryPct: score.masteryPct,
     perQuestion: score.perQuestion,
     coinAwarded: coinToAward,
-    newMasteryAchieved
+    newMasteryAchieved,
+    unlockedExam,
   });
 }

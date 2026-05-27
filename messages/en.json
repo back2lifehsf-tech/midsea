@@ -907,6 +907,39 @@
         "comingSoon": "Spaced repetition coming soon"
       },
       "backToDashboard": "Back to dashboard"
+    },
+    "exam": {
+      "monthly": {
+        "title": "Month {month} Exam",
+        "badge": "Monthly Exam"
+      },
+      "midterm": {
+        "title": "Midterm Exam",
+        "badge": "Midterm"
+      },
+      "final": {
+        "title": "Final Exam",
+        "badge": "Final"
+      },
+      "instructions": {
+        "timeLimit": "{minutes} minutes",
+        "questions": "{count} questions",
+        "passing": "You need {pct}% to pass",
+        "coinReward": "Earn {coins} Coins if you pass",
+        "noPause": "You cannot pause the exam once started",
+        "angelaRestricted": "Angela cannot help you with exam questions"
+      },
+      "actions": {
+        "start": "Start exam",
+        "submit": "Submit answers",
+        "review": "View corrections"
+      },
+      "results": {
+        "passed": "You passed with {pct}%!",
+        "failed": "You got {pct}%. You need {passing}% to pass.",
+        "coinEarned": "+{coins} Coins earned",
+        "tryAgain": "Review lessons and try again"
+      }
     }
   },
   "gamification": {

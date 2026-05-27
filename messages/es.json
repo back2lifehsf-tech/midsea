@@ -907,6 +907,39 @@
         "comingSoon": "Repetición espaciada próximamente"
       },
       "backToDashboard": "Volver al inicio"
+    },
+    "exam": {
+      "monthly": {
+        "title": "Examen de Mes {month}",
+        "badge": "Evaluación Mensual"
+      },
+      "midterm": {
+        "title": "Examen Parcial",
+        "badge": "Midterm"
+      },
+      "final": {
+        "title": "Examen Final",
+        "badge": "Final"
+      },
+      "instructions": {
+        "timeLimit": "{minutes} minutos",
+        "questions": "{count} preguntas",
+        "passing": "Necesitás {pct}% para aprobar",
+        "coinReward": "Ganás {coins} Coins si aprobás",
+        "noPause": "No podés pausar el examen una vez iniciado",
+        "angelaRestricted": "Angela no puede ayudarte con las preguntas durante el examen"
+      },
+      "actions": {
+        "start": "Comenzar examen",
+        "submit": "Enviar respuestas",
+        "review": "Ver correcciones"
+      },
+      "results": {
+        "passed": "¡Aprobaste con {pct}%!",
+        "failed": "Obtuviste {pct}%. Necesitás {passing}% para aprobar.",
+        "coinEarned": "+{coins} Coins ganados",
+        "tryAgain": "Volver a las lecciones y reintentar"
+      }
     }
   },
   "gamification": {

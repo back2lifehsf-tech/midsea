@@ -98,6 +98,7 @@ enum CoinReason {
   PARENT_GRANT
   STORE_PURCHASE
   ADJUSTMENT
+  EXAM_PASS
 
   @@map("NexosReason")
 }
@@ -188,6 +189,7 @@ model Student {
   tutorUsage      TutorUsageDaily[]
   enrollments     StudentCourseEnrollment[]
   purchases       StorePurchase[]
+  examAttempts    ExamAttempt[]
 
   @@index([familyId])
   @@index([subscriptionStatus])
@@ -270,6 +272,7 @@ model Course {
   lessons       Lesson[]
   competencies  Competency[]
   enrollments   StudentCourseEnrollment[]
+  exams         Exam[]
 
   @@index([subject, gradeBand, published])
 }
@@ -515,4 +518,86 @@ enum PurchaseStatus {
   PENDING_APPROVAL
   APPROVED
   REJECTED
+}
+
+// Mejora 13: Sistema de Exámenes (Monthly, Midterm, Final).
+// Cada Course tiene N Exam. Un Exam tiene N ExamQuestion.
+// El estudiante crea un ExamAttempt por examen; se puede reintentar
+// (para MONTHLY siempre; MIDTERM/FINAL necesitan aprobación paterna post-reprob.).
+
+enum ExamType {
+  MONTHLY
+  MIDTERM
+  FINAL
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+}
+
+model Exam {
+  id              String         @id @default(cuid())
+  courseId        String
+  course          Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  type            ExamType
+  monthIndex      Int?
+  titleEs         String
+  titleEn         String
+  instructionEs   String         @db.Text
+  instructionEn   String         @db.Text
+  timeLimitMin    Int            @default(45)
+  passingPct      Int            @default(70)
+  coinReward      Int            @default(300)
+  consolationCoin Int            @default(50)
+  questions       ExamQuestion[]
+  attempts        ExamAttempt[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([courseId, type, monthIndex])
+  @@index([courseId])
+}
+
+model ExamQuestion {
+  id            String       @id @default(cuid())
+  examId        String
+  exam          Exam         @relation(fields: [examId], references: [id], onDelete: Cascade)
+  orderIndex    Int
+  type          QuestionType
+  stemEs        String       @db.Text
+  stemEn        String       @db.Text
+  options       Json?
+  correctAnswer String
+  explanationEs String?      @db.Text
+  explanationEn String?      @db.Text
+  points        Int          @default(1)
+
+  @@index([examId, orderIndex])
+}
+
+model ExamAttempt {
+  id          String        @id @default(cuid())
+  examId      String
+  exam        Exam          @relation(fields: [examId], references: [id])
+  studentId   String
+  student     Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status      AttemptStatus @default(IN_PROGRESS)
+  score       Int?
+  totalPoints Int?
+  pctScore    Int?
+  passed      Boolean?
+  answers     Json          @default("[]")
+  startedAt   DateTime      @default(now())
+  submittedAt DateTime?
+  coinAwarded Boolean       @default(false)
+
+  @@index([studentId, examId])
 }
