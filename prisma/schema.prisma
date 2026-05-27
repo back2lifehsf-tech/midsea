@@ -213,6 +213,10 @@ model Lesson {
   // resumen visual). URL pública en CDN/Storage; lo produce el equipo
   // editorial. Nullable — no todas las lecciones lo tienen.
   notebookUrl String?
+  // Mejora 12: video introductorio (~10 min) que abre la lección del día.
+  // YouTube embed o URL directa; el curador la carga post-generación.
+  videoUrl      String?
+  videoDuration Int?     // duración del video en segundos (ej. 600 = 10 min)
   // Mejora 8: activador mental (dato curioso, pregunta impactante) que abre
   // la vista Lectura después de la bienvenida bíblica. Lo produce el pipeline
   // (ADR-006). Nullable — no todas las lecciones lo tienen.
