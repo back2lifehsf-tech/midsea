@@ -798,7 +798,9 @@
       "courseCompleted": "You completed every lesson in this course!"
     },
     "angela": {
-      "open": "Open Angela",
+      "open": "Angela, AI Tutor",
+      "sidebarLabel": "Angela, AI Tutor",
+      "panelLabel": "Angela, AI Tutor",
       "sidebarContextPrompt": "Is there anything about «{title}» you'd like to understand better before the quiz?",
       "sidebarTitle": "Need help?",
       "talkToAngela": "Talk with Angela",
@@ -806,7 +808,7 @@
       "close": "Close",
       "minimize": "Minimize",
       "expand": "Expand to full screen",
-      "focusTitle": "Talk to Angela",
+      "focusTitle": "Angela, AI Tutor",
       "send": "Send",
       "thinking": "Thinking…",
       "clearHistory": "Clear conversation",

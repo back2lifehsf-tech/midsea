@@ -35,7 +35,7 @@ export function AngelaSidePanel() {
         <div className="flex items-center gap-2">
           <AngelaAvatar state={angelaState} size="sm" />
           <span className="font-display text-sm font-bold text-midsea-deep">
-            Angela
+            {t('panelLabel')}
           </span>
         </div>
         <div className="flex items-center gap-1">

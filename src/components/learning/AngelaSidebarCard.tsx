@@ -41,7 +41,7 @@ export function AngelaSidebarCard({ locale }: { locale: string }) {
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-midsea-lagoon text-sm font-semibold text-white">
           A
         </span>
-        <span className="text-sm font-medium text-midsea-ink">Angela</span>
+        <span className="text-sm font-medium text-midsea-ink">{t('sidebarLabel')}</span>
       </div>
       <p className="font-serif text-sm italic leading-relaxed text-midsea-muted">{message}</p>
     </div>

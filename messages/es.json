@@ -798,7 +798,9 @@
       "courseCompleted": "¡Completaste todas las lecciones de este curso!"
     },
     "angela": {
-      "open": "Abrir a Angela",
+      "open": "Angela, AI Tutor",
+      "sidebarLabel": "Angela, AI Tutor",
+      "panelLabel": "Angela, AI Tutor",
       "sidebarContextPrompt": "¿Hay algo de «{title}» que quieras entender mejor antes del quiz?",
       "sidebarTitle": "¿Necesitas ayuda?",
       "talkToAngela": "Hablar con Angela",
@@ -806,7 +808,7 @@
       "close": "Cerrar",
       "minimize": "Minimizar",
       "expand": "Expandir a pantalla completa",
-      "focusTitle": "Habla con Angela",
+      "focusTitle": "Angela, AI Tutor",
       "send": "Enviar",
       "thinking": "Pensando…",
       "clearHistory": "Borrar conversación",
