@@ -54,3 +54,4 @@ outputs/**/rework.md
 outputs/bulk-generate-*.log
 outputs/review-site/
 midsea-review*.zip
+scripts/exam-generation.log

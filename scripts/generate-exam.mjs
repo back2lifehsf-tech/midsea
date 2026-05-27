@@ -191,6 +191,10 @@ try {
   process.exit(1);
 }
 
+// Sobrescribir instrucciones con tiempo correcto (Claude a veces inventa tiempos)
+examData.instructionEs = `Tenés ${params.timeLimitMin} minutos para completar este examen de ${examData.questions.length} preguntas. Leé cada enunciado con atención y revisá tus respuestas antes de enviar.`;
+examData.instructionEn = `You have ${params.timeLimitMin} minutes to complete this ${examData.questions.length}-question exam. Read each question carefully and review your answers before submitting.`;
+
 console.log(`Generadas ${examData.questions.length} preguntas`);
 
 if (args.dryRun) {
@@ -200,34 +204,50 @@ if (args.dryRun) {
 }
 
 // -- Upsert en Prisma --
-const examRecord = await prisma.exam.upsert({
-  where: {
-    courseId_type_monthIndex: {
-      courseId: course.id,
-      type: examType,
-      monthIndex: monthIndex ?? null
-    }
-  },
-  create: {
-    courseId: course.id,
-    type: examType,
-    monthIndex: monthIndex ?? null,
-    titleEs: examData.titleEs,
-    titleEn: examData.titleEn,
-    instructionEs: examData.instructionEs,
-    instructionEn: examData.instructionEn,
-    timeLimitMin: params.timeLimitMin,
-    passingPct: params.passingPct,
-    coinReward: params.coinReward,
-    consolationCoin: params.consolationCoin
-  },
-  update: {
-    titleEs: examData.titleEs,
-    titleEn: examData.titleEn,
-    instructionEs: examData.instructionEs,
-    instructionEn: examData.instructionEn
+// Prisma no soporta null en @@unique para upsert. Para MIDTERM/FINAL
+// (monthIndex=null) usamos findFirst + create/update manualmente.
+const examPayloadCreate = {
+  courseId: course.id,
+  type: examType,
+  monthIndex: monthIndex ?? null,
+  titleEs: examData.titleEs,
+  titleEn: examData.titleEn,
+  instructionEs: examData.instructionEs,
+  instructionEn: examData.instructionEn,
+  timeLimitMin: params.timeLimitMin,
+  passingPct: params.passingPct,
+  coinReward: params.coinReward,
+  consolationCoin: params.consolationCoin
+};
+const examPayloadUpdate = {
+  titleEs: examData.titleEs,
+  titleEn: examData.titleEn,
+  instructionEs: examData.instructionEs,
+  instructionEn: examData.instructionEn
+};
+
+let examRecord;
+if (monthIndex !== undefined && monthIndex !== null) {
+  // MONTHLY: monthIndex es un entero — upsert funciona normalmente
+  examRecord = await prisma.exam.upsert({
+    where: { courseId_type_monthIndex: { courseId: course.id, type: examType, monthIndex } },
+    create: examPayloadCreate,
+    update: examPayloadUpdate
+  });
+} else {
+  // MIDTERM / FINAL: monthIndex es null — Prisma no soporta null en @@unique para upsert
+  const existing = await prisma.exam.findFirst({
+    where: { courseId: course.id, type: examType }
+  });
+  if (existing) {
+    examRecord = await prisma.exam.update({
+      where: { id: existing.id },
+      data: examPayloadUpdate
+    });
+  } else {
+    examRecord = await prisma.exam.create({ data: examPayloadCreate });
   }
-});
+}
 
 // Borrar preguntas viejas y recrear
 await prisma.examQuestion.deleteMany({ where: { examId: examRecord.id } });
