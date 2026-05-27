@@ -10,69 +10,56 @@
 -- Habilitar RLS no afecta al backend — solo cierra el acceso anónimo
 -- via REST API.
 --
--- Estrategia: ENABLE RLS en todas las tablas + sin policies públicas.
--- Resultado: acceso anónimo bloqueado; service_role/postgres sin cambios.
+-- Estrategia: ENABLE RLS en todas las tablas existentes. IF EXISTS en
+-- el DO block para ser idempotente y seguro en cualquier entorno.
 -- =====================================================================
 
--- -----------------------------------------------------------------------
--- Identidad y familias
--- -----------------------------------------------------------------------
-ALTER TABLE "Family"          ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "Parent"          ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "Student"         ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "DeviceLinkToken" ENABLE ROW LEVEL SECURITY;
-
--- -----------------------------------------------------------------------
--- Currículo
--- -----------------------------------------------------------------------
-ALTER TABLE "Course"                    ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "Competency"                ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "Lesson"                    ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "LessonCompetency"          ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "QuizQuestion"              ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "StudentCourseEnrollment"   ENABLE ROW LEVEL SECURITY;
-
--- -----------------------------------------------------------------------
--- Progreso y gamificación
--- -----------------------------------------------------------------------
-ALTER TABLE "LessonProgress"   ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "NexosEntry"       ENABLE ROW LEVEL SECURITY;  -- CoinEntry @@map
-ALTER TABLE "Badge"            ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "EarnedBadge"      ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "StoreItem"        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "StorePurchase"    ENABLE ROW LEVEL SECURITY;
-
--- -----------------------------------------------------------------------
--- Tutor AI
--- -----------------------------------------------------------------------
-ALTER TABLE "TutorSession"     ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "TutorMessage"     ENABLE ROW LEVEL SECURITY;
-ALTER TABLE "TutorUsageDaily"  ENABLE ROW LEVEL SECURITY;
-
--- -----------------------------------------------------------------------
--- Billing / webhooks
--- -----------------------------------------------------------------------
-ALTER TABLE "StripeWebhookEvent" ENABLE ROW LEVEL SECURITY;
-
--- -----------------------------------------------------------------------
--- Tablas de NextAuth (si existen en este proyecto)
--- Las creamos con IF EXISTS para no romper si no están presentes.
--- -----------------------------------------------------------------------
 DO $$
+DECLARE
+  tbl TEXT;
+  tables TEXT[] := ARRAY[
+    -- Identidad y familias
+    'Family',
+    'Parent',
+    'Student',
+    'DeviceLinkToken',
+    -- Currículo
+    'Course',
+    'Competency',
+    'Lesson',
+    'LessonCompetency',
+    'QuizQuestion',
+    'StudentCourseEnrollment',
+    -- Progreso y gamificación
+    'LessonProgress',
+    'NexosEntry',
+    'Badge',
+    'EarnedBadge',
+    'StoreItem',
+    'StorePurchase',
+    -- Tutor AI
+    'TutorSession',
+    'TutorMessage',
+    'TutorUsageDaily',
+    -- Billing / webhooks
+    'StripeWebhookEvent',
+    -- NextAuth (si existen)
+    'accounts',
+    'sessions',
+    'users',
+    'verification_tokens',
+    '_prisma_migrations'
+  ];
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'accounts') THEN
-    EXECUTE 'ALTER TABLE "accounts" ENABLE ROW LEVEL SECURITY';
-  END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'sessions') THEN
-    EXECUTE 'ALTER TABLE "sessions" ENABLE ROW LEVEL SECURITY';
-  END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users') THEN
-    EXECUTE 'ALTER TABLE "users" ENABLE ROW LEVEL SECURITY';
-  END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'verification_tokens') THEN
-    EXECUTE 'ALTER TABLE "verification_tokens" ENABLE ROW LEVEL SECURITY';
-  END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = '_prisma_migrations') THEN
-    EXECUTE 'ALTER TABLE "_prisma_migrations" ENABLE ROW LEVEL SECURITY';
-  END IF;
+  FOREACH tbl IN ARRAY tables LOOP
+    IF EXISTS (
+      SELECT 1 FROM information_schema.tables
+      WHERE table_schema = 'public' AND table_name = tbl
+    ) THEN
+      EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', tbl);
+      RAISE NOTICE 'RLS enabled: %', tbl;
+    ELSE
+      RAISE NOTICE 'Skipped (not found): %', tbl;
+    END IF;
+  END LOOP;
 END $$;
