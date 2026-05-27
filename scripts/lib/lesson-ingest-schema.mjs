@@ -88,14 +88,18 @@ export const LessonIngestSchema = z.object({
   titleEn: z.string().min(1).max(140),
   summaryEs: z.string().min(20).max(400),
   summaryEn: z.string().min(20).max(400),
-  estMinutes: z.number().int().min(3).max(20),
+  estMinutes: z.number().int().min(3).max(35),
   contentMarkdownEs: z.string().min(100),
   contentMarkdownEn: z.string().min(100),
   reflectionEs: z.string().optional(),
   reflectionEn: z.string().optional(),
+  hookEs: z.string().max(300).optional(),
+  hookEn: z.string().max(300).optional(),
+  videoUrl: z.string().url().optional(),
+  videoDuration: z.number().int().min(60).max(900).optional(),
   activities: z.array(ActivitySchema).min(2).max(5),
   quiz: z.object({
-    questions: z.array(QuizQuestionSchema).min(3).max(8)
+    questions: z.array(QuizQuestionSchema).length(5)
   }),
   handsOnSuggestionEs: z.string().min(1),
   handsOnSuggestionEn: z.string().min(1),

@@ -8,27 +8,51 @@ Enfoque cristiano, lógico y formal.
 
 ## Marzo
 
-### Tema: Conjuntos y números reales
+### Tema: Conjuntos — definición, notación y tipos
 
 Actividades Hands-On:
 
 \- Diagramas de Venn
 
-\- Clasificación de números
+\- Notación por extensión y por comprensión
+
+\- Clasificación de conjuntos (finitos, infinitos, vacío)
 
 \- Trabajo en equipos
 
+### Tema: Conjuntos — operaciones (unión, intersección, complemento)
+
+Actividades Hands-On:
+
+\- Diagramas de Venn con operaciones
+
+\- Problemas con conjuntos de la vida real
+
+\- Resolución colaborativa
+
+\- Evaluación
+
+### Tema: Números reales — clasificación y la recta numérica
+
+Actividades Hands-On:
+
+\- Clasificación de números (naturales, enteros, racionales, irracionales)
+
+\- Ubicación de números en la recta numérica
+
 \- Aplicaciones reales
 
-### Tema: Operaciones combinadas
+\- Trabajo en equipos
+
+### Tema: Operaciones combinadas con números reales
 
 Actividades Hands-On:
 
 \- Desafíos matemáticos
 
-\- Resolución colaborativa
+\- Resolución paso a paso
 
-\- Estrategias
+\- Estrategias de cálculo
 
 \- Evaluación
 

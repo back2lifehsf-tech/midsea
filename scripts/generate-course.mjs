@@ -41,6 +41,7 @@ function parseArgs() {
     toMonth: Number(get('--to-month') ?? 10),
     lessonsPerTopic: get('--lessons-per-topic') ? Number(get('--lessons-per-topic')) : null,
     concurrency: Number(get('--concurrency') ?? 3),
+    model: get('--model'),
     skipExisting: argv.includes('--skip-existing'),
     dryRun: argv.includes('--dry-run')
   };
@@ -74,7 +75,7 @@ function jobOutputPath(course, courseSlug, job) {
   return path.join(repoRoot(), 'outputs', 'gen', courseSlug, `${code}.json`);
 }
 
-function runJob(courseSlug, job) {
+function runJob(courseSlug, job, model) {
   return new Promise((resolve) => {
     const args = [
       path.join(repoRoot(), 'scripts', 'generate-lesson.mjs'),
@@ -84,6 +85,8 @@ function runJob(courseSlug, job) {
       `--n=${job.n}`,
       `--total=${job.total}`
     ];
+    // Reenvía el modelo elegido (si no, generate-lesson usa su DEFAULT_MODEL).
+    if (model) args.push(`--model=${model}`);
     const child = spawn(process.execPath, args, { stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = '';
     let stderr = '';
@@ -132,6 +135,7 @@ async function main() {
   console.log(`Meses: ${args.fromMonth}-${args.toMonth}`);
   console.log(`Jobs a procesar: ${jobs.length}`);
   console.log(`Concurrency: ${args.concurrency}`);
+  console.log(`Modelo: ${args.model ?? '(default de generate-lesson)'}`);
 
   if (args.dryRun) {
     for (const j of jobs.slice(0, 8)) {
@@ -143,7 +147,7 @@ async function main() {
 
   const ok = [];
   const fail = [];
-  const results = await withConcurrency(jobs, args.concurrency, (j) => runJob(args.course, j));
+  const results = await withConcurrency(jobs, args.concurrency, (j) => runJob(args.course, j, args.model));
   for (const r of results) {
     if (r.code === 0) {
       ok.push(r);

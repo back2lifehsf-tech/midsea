@@ -30,7 +30,7 @@ export const CATALOG = Object.freeze({
       'docs/content/source/Matematicas/Secundaria/Matematica_9_Marzo_Diciembre_Completo.md',
     outlineFormat: 'B',
     christianFocus: true,
-    lessonsPerTopic: 2
+    lessonsPerTopic: 5
   },
   'math-grade-10': {
     titleEs: 'Matemática — Grado 10°',
@@ -43,7 +43,7 @@ export const CATALOG = Object.freeze({
       'docs/content/source/Matematicas/Secundaria/Matematica_10_Marzo_Diciembre_Completo.md',
     outlineFormat: 'B',
     christianFocus: true,
-    lessonsPerTopic: 2
+    lessonsPerTopic: 5
   },
   'language-grade-9-10': {
     titleEs: 'Lengua y Literatura — Grados 9°-10°',
@@ -56,7 +56,7 @@ export const CATALOG = Object.freeze({
       'docs/content/source/Espanol/Secundaria/Lengua_9th, 10th_ Completo_Completo.md',
     outlineFormat: 'B',
     christianFocus: true,
-    lessonsPerTopic: 2
+    lessonsPerTopic: 5
   },
   'english-esl-grade-9': {
     titleEs: 'Inglés ESL — Grado 9° (A2)',
@@ -69,7 +69,7 @@ export const CATALOG = Object.freeze({
       'docs/content/source/English ESL/Secundaria/Ingles_ESL_Grado_9_Completo_Final.md',
     outlineFormat: 'A',
     christianFocus: true,
-    lessonsPerTopic: 4
+    lessonsPerTopic: 5
   },
   'english-esl-grade-10': {
     titleEs: 'Inglés ESL — Grado 10° (A2+/Transición a B1)',
@@ -82,7 +82,7 @@ export const CATALOG = Object.freeze({
       'docs/content/source/English ESL/Secundaria/Ingles_ESL_Grado_10_Completo_Final.md',
     outlineFormat: 'A',
     christianFocus: true,
-    lessonsPerTopic: 4
+    lessonsPerTopic: 5
   },
   'history-ancient-civ-2-grade-9-10': {
     titleEs: 'Civilización Antigua II — Grados 9°-10°',
@@ -95,7 +95,7 @@ export const CATALOG = Object.freeze({
       'docs/content/source/Ciencias Sociales/Secundaria/Civilizacion_Antigua_II_Grados_9_10.md',
     outlineFormat: 'A',
     christianFocus: true,
-    lessonsPerTopic: 2
+    lessonsPerTopic: 5
   },
   'science-biology-grade-9-10': {
     titleEs: 'Biología — Grados 9°-10°',
@@ -108,7 +108,7 @@ export const CATALOG = Object.freeze({
       'docs/content/source/Ciencias/Secundaria/Ciencias_9,10_ Biologia .md',
     outlineFormat: 'B',
     christianFocus: true,
-    lessonsPerTopic: 2
+    lessonsPerTopic: 5
   },
   'music-grade-9': {
     titleEs: 'Música — Grado 9°',
@@ -121,7 +121,7 @@ export const CATALOG = Object.freeze({
       'docs/content/source/Musica/Secundaria/Musica_9_Secundaria.md',
     outlineFormat: 'A',
     christianFocus: false,
-    lessonsPerTopic: 2
+    lessonsPerTopic: 5
   }
 });
 

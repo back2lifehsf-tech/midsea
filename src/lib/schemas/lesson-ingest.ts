@@ -106,7 +106,8 @@ export const LessonIngestSchema = z.object({
   titleEn: z.string().min(1).max(140),
   summaryEs: z.string().min(20).max(400),
   summaryEn: z.string().min(20).max(400),
-  estMinutes: z.number().int().min(3).max(20),
+  // Mejora 12: la lección es un día de estudio (~30 min), no 6-10 min.
+  estMinutes: z.number().int().min(3).max(35),
 
   // Cuerpo de la lección (markdown con KaTeX inline + placeholders de imagen).
   contentMarkdownEs: z.string().min(100),
@@ -121,10 +122,16 @@ export const LessonIngestSchema = z.object({
   hookEs: z.string().max(300).optional(),
   hookEn: z.string().max(300).optional(),
 
+  // Mejora 12: video introductorio (~10 min). En v1 el curador carga la URL
+  // post-generación; el LLM no genera URLs reales.
+  videoUrl: z.string().url().optional(),
+  videoDuration: z.number().int().min(60).max(900).optional(), // 1-15 min en segundos
+
   // Actividades intercaladas (2-5) y quiz final (3-8 preguntas).
   activities: z.array(ActivitySchema).min(2).max(5),
+  // Mejora 12: el quiz diario tiene EXACTAMENTE 5 preguntas.
   quiz: z.object({
-    questions: z.array(QuizQuestionSchema).min(3).max(8)
+    questions: z.array(QuizQuestionSchema).length(5)
   }),
 
   // Cierre conectado al mundo físico (siempre presente, derivado del outline).

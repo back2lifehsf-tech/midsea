@@ -5,6 +5,67 @@
 
 ---
 
+## Arquitectura Curricular Maestra — Ciclo Escolar Completo
+
+> Midsea funciona como un **profesor completo para cada materia** durante los 10 meses del ciclo escolar. No es un curso suelto — es un año académico completo, auto-paced, con evaluación continua.
+
+### Principios rectores
+
+1. **1 lección = 1 día de estudio.** El estudiante completa una lección por día por materia. Al final de cada lección hay un Quiz obligatorio. No hay lección sin quiz.
+2. **5 días por semana, 10 meses sin interrupción.** 200 días de clase en el ciclo. El calendar es sugerido; las familias pueden avanzar a su ritmo.
+3. **30 minutos por materia core, 20 minutos por electiva.** Con 4 materias core + hasta 3 electivas, el estudiante puede hacer entre 2h y 2h 30m de estudio al día.
+4. **Evaluación formal en tres niveles:** Quiz diario (al final de cada lección) → Examen Mensual (fin de cada mes) → Midterm (fin del mes 5) → Final (fin del mes 10).
+5. **El AI genera el contenido de cada día.** El curador define los temas del outline; GPT-4o genera el contenido completo de cada lección diaria según el prompt.
+
+### Distribución de tiempo diario
+
+| Tipo | Materias | Duración | Estructura |
+|------|----------|----------|-----------|
+| Core | Matemática, Lengua, Historia, Ciencias | 30 min | 10 min video + 10 min lectura + 5 min actividades + 5 min quiz |
+| Electiva | Arte, Música, Inglés ESL | 20 min | 5 min video + 8 min contenido + 3 min actividades + 4 min quiz |
+
+### Ciclo escolar completo (por materia)
+
+| Período | Evento | Preguntas | Tiempo | Coins |
+|---------|--------|-----------|--------|-------|
+| Cada día | Quiz de lección | 5 | ~5 min | 100 si mastery ≥80% |
+| Fin de cada mes (×10) | Examen Mensual | 15 | 30 min | 300 si aprueba |
+| Fin del mes 5 | Midterm Exam | 30 | 60 min | 800 si aprueba |
+| Fin del mes 10 | Final Exam | 50 | 90 min | 2000 si aprueba |
+
+### Totales del ciclo por materia
+
+- **200 lecciones** (1 por día × 200 días)
+- **200 quizzes** (1 al final de cada lección, obligatorio)
+- **12 evaluaciones formales** para materias core: 10 Exámenes Mensuales + 1 Midterm + 1 Final
+- **11 evaluaciones formales** para electivas: 10 Exámenes Mensuales + 1 Final (sin Midterm)
+- **Total del ciclo completo** (4 core + 3 electivas): 1.400 lecciones + 1.400 quizzes + 81 exámenes formales
+
+### Estructura del `monthIndex` en Prisma
+
+El campo `monthIndex` en el modelo `Lesson` es la clave de toda la lógica de exámenes:
+
+```
+monthIndex: 1  → Mes 1 del ciclo (Marzo en calendario argentino)
+monthIndex: 2  → Mes 2 (Abril)
+...
+monthIndex: 5  → Mes 5 (Julio) — dispara el Midterm al completarse
+monthIndex: 10 → Mes 10 (Diciembre) — dispara el Final al completarse
+```
+
+El campo `monthIndex` en `Lesson` ya existe en Prisma. Cada lección tiene exactamente un `monthIndex`. Con 5 lecciones por semana y ~4 semanas por mes, hay **~20 lecciones por materia por mes** (= 1 semana × 5 días × 4 semanas).
+
+### Lógica de unlock de exámenes
+
+```
+Quiz diario      → siempre disponible, se activa al completar la lección
+Examen Mensual N → se desbloquea cuando LessonProgress.COMPLETED COUNT para monthIndex=N === total lecciones del mes
+Midterm          → se desbloquea cuando los 5 Exámenes Mensuales (meses 1-5) están en status PASSED
+Final            → se desbloquea cuando los 10 Exámenes Mensuales + Midterm están en status PASSED
+```
+
+---
+
 ## Referencia visual aprobada
 
 El mockup aprobado muestra:
@@ -2848,4 +2909,811 @@ RESTRICCIONES CRÍTICAS:
 - NO tocar AuthOptions ni los providers de NextAuth.
 
 Referencia completa: docs/IMPLEMENTATION.md → "Mejora 11: Student Device Pairing".
+```
+
+---
+
+## Mejora 12: Lecciones de 30 minutos con video — Estructura curricular diaria (5 días/semana)
+
+> Cada lección representa exactamente un día de estudio (~30 minutos). El plan semanal por materia es 5 lecciones. Cada lección incluye un video introductorio de ~10 minutos, lectura/actividades de ~15 minutos, y quiz de ~5 minutos. El AI es responsable de generar el contenido completo de cada día según el prompt actualizado.
+
+---
+
+### Diagnóstico del estado actual
+
+- `catalog-map.mjs` tiene `lessonsPerTopic: 2` para la mayoría de cursos y `lessonsPerTopic: 4` para ESL. Esto produjo ~280 lecciones con estructura de "1 tema por semana".
+- El objetivo correcto: **5 lecciones por tema = 1 por día de la semana escolar**. Un tema de 5 días equivale a una semana completa de estudio por materia.
+- El campo `videoUrl` no existe en el modelo `Lesson`. Hay que agregarlo.
+- `estMinutes` está validado con `max(20)` en el schema Zod — debe subir a `max(35)`.
+- El stepper de `LessonPlayerShell` no tiene tab de Video activo. Hay que habilitarlo cuando `videoUrl` existe.
+- El prompt `lesson-generator-v1.md` apunta a 6-10 min de duración — debe actualizarse a 30 min con estructura de video + lectura + actividades + quiz.
+
+---
+
+### Cambio 1: `catalog-map.mjs` — 5 lecciones por tema
+
+Archivo: `scripts/lib/catalog-map.mjs`
+
+Cambiar `lessonsPerTopic` de **2 (o 4) → 5** en TODOS los cursos del pilot:
+
+```javascript
+// ANTES
+'math-grade-9': { lessonsPerTopic: 2, /* ... */ }
+'english-esl-grade-9': { lessonsPerTopic: 4, /* ... */ }
+
+// DESPUÉS — todos los cursos del pilot
+export const catalogMap = {
+  'math-grade-9':        { lessonsPerTopic: 5, subject: 'mathematics', gradeLevel: 'GRADE_9' },
+  'math-grade-10':       { lessonsPerTopic: 5, subject: 'mathematics', gradeLevel: 'GRADE_10' },
+  'language-grade-9':    { lessonsPerTopic: 5, subject: 'language',    gradeLevel: 'GRADE_9' },
+  'language-grade-10':   { lessonsPerTopic: 5, subject: 'language',    gradeLevel: 'GRADE_10' },
+  'history-grade-9':     { lessonsPerTopic: 5, subject: 'history',     gradeLevel: 'GRADE_9' },
+  'history-grade-10':    { lessonsPerTopic: 5, subject: 'history',     gradeLevel: 'GRADE_10' },
+  'science-grade-9':     { lessonsPerTopic: 5, subject: 'science',     gradeLevel: 'GRADE_9' },
+  'science-grade-10':    { lessonsPerTopic: 5, subject: 'science',     gradeLevel: 'GRADE_10' },
+  'english-esl-grade-9': { lessonsPerTopic: 5, subject: 'english',     gradeLevel: 'GRADE_9' },
+  'english-esl-grade-10':{ lessonsPerTopic: 5, subject: 'english',     gradeLevel: 'GRADE_10' },
+  'music-grade-9':       { lessonsPerTopic: 5, subject: 'music',       gradeLevel: 'GRADE_9' },
+  'music-grade-10':      { lessonsPerTopic: 5, subject: 'music',       gradeLevel: 'GRADE_10' },
+}
+```
+
+Con 5 lecciones por tema y el ciclo escolar de 10 meses, cada curso tiene **~200 lecciones** distribuidas en ~40 temas (4 temas/mes × 10 meses). El outline del curador debe definir 4 temas por mes por materia. El pipeline genera 5 lecciones diarias por tema automáticamente.
+
+---
+
+### Cambio 2: Agregar `videoUrl` al modelo `Lesson` en Prisma
+
+Archivo: `prisma/schema.prisma`
+
+Dentro del modelo `Lesson`, después de `notebookUrl String?`, agregar:
+
+```prisma
+videoUrl      String?       // URL del video introductorio (~10 min). YouTube embed o URL directa.
+videoDuration Int?          // Duración del video en segundos (ej. 600 = 10 min)
+```
+
+Migración:
+```bash
+npx prisma migrate dev --name add_lesson_video_url
+npx prisma generate
+```
+
+---
+
+### Cambio 3: Actualizar Zod schema de ingestión
+
+Archivo: `src/lib/schemas/lesson-ingest.ts`
+
+```typescript
+// ANTES
+estMinutes: z.number().int().min(3).max(20),
+
+// DESPUÉS
+estMinutes: z.number().int().min(15).max(35),
+
+// Agregar campos opcionales de video al schema:
+videoUrl: z.string().url().optional(),
+videoDuration: z.number().int().min(60).max(900).optional(), // 1-15 minutos en segundos
+```
+
+También actualizar el schema de output del generador para incluir `videoUrl` y `videoDuration` en el objeto que el script espera del LLM. En v1 pilot, `videoUrl` se deja vacío (el curador lo agrega después manualmente o vía CMS); el LLM no genera URLs de video reales.
+
+---
+
+### Cambio 4: Actualizar el prompt del generador
+
+Archivo: `scripts/prompts/lesson-generator-v1.md`
+
+Reemplazar la sección de `DURACIÓN Y ESTRUCTURA` (actualmente apunta a 6-10 min) por:
+
+```markdown
+## DURACIÓN Y ESTRUCTURA DE LA LECCIÓN
+
+Esta lección representa **UN DÍA DE ESTUDIO** en el plan semanal del estudiante.
+Duración total objetivo: **~30 minutos** distribuidos así:
+
+| Etapa | Tiempo | Responsable |
+|-------|--------|-------------|
+| Video introductorio | ~10 min | Curador (URL cargada post-generación) |
+| Lectura + concepto clave | ~10 min | GPT (bodyMd) |
+| Actividades prácticas | ~5 min | GPT (activities[]) |
+| Quiz de verificación | ~5 min | GPT (quiz{}) |
+
+### Parámetros de contenido para el bodyMd:
+- Extensión: **800–1200 palabras** en español LATAM neutro
+- Estructura: introducción al concepto del día → desarrollo con ejemplo → conexión con tema general
+- Tono: académico-respetuoso, sin infantilismo
+- 1 pull quote o dato destacado relevante (envuelto en `> `)
+- Cierre que prepara al estudiante para las actividades
+
+### Actividades (activities[]):
+- Mínimo **2**, máximo **4**
+- Deben poder completarse en ~5 min total
+- Tipos: SHORT_ANSWER, MULTIPLE_CHOICE, FILL_BLANK, MATCHING
+
+### Quiz (quiz{}):
+- **5 preguntas** obligatorias (min 5, max 7)
+- Mix: comprensión lectora (2), aplicación conceptual (2), conexión con día anterior (1)
+- Incluir `explanation` para cada opción incorrecta
+
+### Campos a completar en el JSON de salida:
+- `estMinutes`: 30
+- `videoUrl`: null (se asigna post-generación por el curador)
+- `videoDuration`: 600 (600 segundos = 10 min — valor por defecto)
+```
+
+---
+
+### Cambio 5: Habilitar tab de Video en `LessonPlayerShell`
+
+Archivo: `src/components/learning/LessonPlayerShell.tsx`
+
+El stepper ya tiene soporte para la etapa 'video' en el diseño (Mejora 4), pero en la función `computeSteps()` el video está comentado o condicional. Activarlo:
+
+```typescript
+// En computeSteps(), agregar como primer step cuando videoUrl existe:
+function computeSteps(lesson: LessonData): StepInfo[] {
+  const steps: StepInfo[] = []
+
+  // Step 1: Video (si tiene URL)
+  if (lesson.videoUrl) {
+    steps.push({
+      id: 'video',
+      labelKey: 'student.lesson.tabs.video',  // "Video"
+      icon: 'play',
+    })
+  }
+
+  // Step 2: Lectura (siempre)
+  steps.push({
+    id: 'reading',
+    labelKey: 'student.lesson.tabs.reading',  // "Lectura"
+    icon: 'book',
+  })
+
+  // Step 3: Quiz (si tiene preguntas)
+  if (lesson.quiz?.questions?.length > 0) {
+    steps.push({
+      id: 'quiz',
+      labelKey: 'student.lesson.tabs.quiz',  // "Quiz"
+      icon: 'check',
+    })
+  }
+
+  return steps
+}
+```
+
+**VideoView sub-componente** (nuevo, dentro del mismo archivo o como archivo separado):
+
+```typescript
+// src/components/learning/VideoView.tsx (Server Component)
+interface VideoViewProps {
+  videoUrl: string
+  titleEs: string
+  titleEn: string
+  locale: string
+}
+
+export function VideoView({ videoUrl, titleEs, titleEn, locale }: VideoViewProps) {
+  const isYouTube = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')
+  const embedUrl = isYouTube ? toYouTubeEmbed(videoUrl) : videoUrl
+
+  return (
+    <div className="space-y-4">
+      {/* Player */}
+      <div className="aspect-video w-full rounded-xl overflow-hidden bg-midsea-ink">
+        {isYouTube ? (
+          <iframe
+            src={embedUrl}
+            className="w-full h-full"
+            allowFullScreen
+            title={locale === 'es' ? titleEs : titleEn}
+          />
+        ) : (
+          <video
+            src={videoUrl}
+            controls
+            className="w-full h-full"
+            title={locale === 'es' ? titleEs : titleEn}
+          />
+        )}
+      </div>
+      {/* Instrucción debajo del video */}
+      <p className="text-sm text-midsea-muted text-center">
+        {locale === 'es'
+          ? 'Mirá el video completo antes de pasar a la lectura.'
+          : 'Watch the full video before moving to the reading.'}
+      </p>
+    </div>
+  )
+}
+
+function toYouTubeEmbed(url: string): string {
+  // Convierte https://youtu.be/ID o https://www.youtube.com/watch?v=ID
+  // a https://www.youtube-nocookie.com/embed/ID
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([^&?/]+)/)
+  return match ? `https://www.youtube-nocookie.com/embed/${match[1]}` : url
+}
+```
+
+> Usar `youtube-nocookie.com` para evitar cookies de tracking de YouTube (mejor UX y privacidad).
+
+---
+
+### Cambio 6: Re-generar lecciones con el nuevo pipeline
+
+Con `lessonsPerTopic: 5` y el prompt actualizado, re-ejecutar el pipeline para todos los cursos:
+
+```bash
+# Para cada curso del pilot (reemplazar con el slug real):
+node scripts/generate-course.mjs --course math-grade-9 --lessons-per-topic 5
+node scripts/generate-course.mjs --course math-grade-10 --lessons-per-topic 5
+node scripts/generate-course.mjs --course language-grade-9 --lessons-per-topic 5
+node scripts/generate-course.mjs --course language-grade-10 --lessons-per-topic 5
+node scripts/generate-course.mjs --course history-grade-9 --lessons-per-topic 5
+node scripts/generate-course.mjs --course history-grade-10 --lessons-per-topic 5
+node scripts/generate-course.mjs --course science-grade-9 --lessons-per-topic 5
+node scripts/generate-course.mjs --course science-grade-10 --lessons-per-topic 5
+node scripts/generate-course.mjs --course english-esl-grade-9 --lessons-per-topic 5
+node scripts/generate-course.mjs --course english-esl-grade-10 --lessons-per-topic 5
+```
+
+> **Nota:** Las lecciones existentes con el nombre genérico del tema (ej. "Ecuaciones Lineales — Día 1 a 5") son correctas en estructura. El AI ya genera títulos únicos por día. Lo que cambia es que ahora hay **5 lecciones por tema** en lugar de 2, con mayor profundidad de contenido (~30 min cada una).
+
+---
+
+### Keys i18n adicionales
+
+En `messages/es.json` y `messages/en.json`, bajo `student.lesson.tabs`:
+
+```json
+"tabs": {
+  "video": "Video",
+  "reading": "Lectura",
+  "quiz": "Quiz"
+}
+```
+
+---
+
+### Criterios de aceptación
+
+- [ ] `catalog-map.mjs` tiene `lessonsPerTopic: 5` en todos los cursos pilot.
+- [ ] El modelo `Lesson` en Prisma tiene los campos `videoUrl String?` y `videoDuration Int?`.
+- [ ] La migración `add_lesson_video_url` corre sin errores.
+- [ ] `lesson-ingest.ts` valida `estMinutes` entre 15 y 35.
+- [ ] El stepper muestra el tab "Video" cuando `lesson.videoUrl` existe.
+- [ ] Si `videoUrl` es null, el stepper comienza en "Lectura" (sin cambio de comportamiento actual).
+- [ ] El embed de YouTube usa `youtube-nocookie.com`.
+- [ ] El prompt del generador produce lecciones de ~30 min con 5 preguntas de quiz.
+- [ ] `npm run type-check` pasa sin errores.
+
+---
+
+### Prompt para Claude Code (Mejora 12):
+
+```
+Implementá la Mejora 12 del docs/IMPLEMENTATION.md: Lecciones de 30 minutos con video.
+
+PASOS EN ORDEN:
+
+1. Editar scripts/lib/catalog-map.mjs:
+   Cambiar lessonsPerTopic de 2 (o 4) a 5 en TODOS los cursos del pilot.
+   Ver la tabla completa de cursos en IMPLEMENTATION.md Mejora 12.
+
+2. Editar prisma/schema.prisma:
+   En el modelo Lesson, después del campo notebookUrl, agregar:
+     videoUrl      String?
+     videoDuration Int?
+   Ejecutar: npx prisma migrate dev --name add_lesson_video_url
+   Luego: npx prisma generate
+
+3. Editar src/lib/schemas/lesson-ingest.ts:
+   Cambiar: estMinutes: z.number().int().min(3).max(20)
+   A:       estMinutes: z.number().int().min(15).max(35)
+   Agregar al schema los campos opcionales:
+     videoUrl: z.string().url().optional(),
+     videoDuration: z.number().int().min(60).max(900).optional(),
+
+4. Editar scripts/prompts/lesson-generator-v1.md:
+   Reemplazar la sección DURACIÓN Y ESTRUCTURA con la nueva que apunta a 30 min.
+   Ver contenido exacto en IMPLEMENTATION.md Mejora 12.
+   El campo estMinutes en el JSON de salida debe ser 30.
+   videoUrl: null (asignado por el curador post-generación).
+   videoDuration: 600 por defecto.
+
+5. Crear src/components/learning/VideoView.tsx:
+   Server Component. Props: videoUrl, titleEs, titleEn, locale.
+   Detectar si es YouTube (youtu.be o youtube.com/watch?v=).
+   Si es YouTube: <iframe> con embed en youtube-nocookie.com.
+   Si no: <video controls />.
+   Ver implementación completa en IMPLEMENTATION.md Mejora 12.
+
+6. Editar src/components/learning/LessonPlayerShell.tsx:
+   En computeSteps(), agregar step 'video' como primer step cuando lesson.videoUrl existe.
+   En el switch/if que renderiza cada step, agregar case 'video':
+     return <VideoView videoUrl={lesson.videoUrl} titleEs={lesson.titleEs} titleEn={lesson.titleEn} locale={locale} />
+   La lógica de fade/transición no cambia — es la misma que para 'reading' y 'quiz'.
+
+7. Agregar keys i18n en messages/es.json y messages/en.json:
+   Bajo student.lesson.tabs, agregar: video: "Video" (igual en ambos idiomas).
+
+8. npm run type-check. Corregir errores.
+9. npm run lint.
+
+RESTRICCIONES CRÍTICAS:
+- VideoView es Server Component — sin 'use client', sin useState.
+- Usar youtube-nocookie.com (no youtube.com) para el embed: mejor privacidad.
+- Si videoUrl es null o undefined, el tab de Video NO aparece en el stepper (condicional en computeSteps).
+- NO modificar la lógica de fade/transición del stepper — solo agregar el nuevo step.
+- NO re-generar las lecciones existentes en esta tarea — solo cambiar el pipeline. La re-generación es manual.
+- El campo videoDuration es informativo (para mostrar "10 min" en el stepper) — no es obligatorio.
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 12: Lecciones de 30 minutos con video".
+```
+
+---
+
+## Mejora 13: Sistema de Exámenes — Monthly Exam, Midterm y Final
+
+> Al completar el contenido de cada mes, el estudiante debe rendir un **Examen de Mes**. A mitad del curriculum del ciclo, un **Midterm Exam**. Al finalizar todo el curriculum, un **Final Exam**. Estos exámenes son evaluaciones formales con mayor peso, más preguntas, y recompensa de Coins diferenciada.
+
+---
+
+### Arquitectura conceptual
+
+```
+Ciclo escolar (ej. Matemática 9° — 8 semanas de contenido)
+│
+├── Semana 1 (5 lecciones) → Examen de Mes 1
+├── Semana 2 (5 lecciones) → Examen de Mes 2
+├── Semana 3 (5 lecciones) → Examen de Mes 3
+├── Semana 4 (5 lecciones) ─┐
+│                            └→ MIDTERM EXAM (cubre Semanas 1-4)
+├── Semana 5 (5 lecciones) → Examen de Mes 5
+├── Semana 6 (5 lecciones) → Examen de Mes 6
+├── Semana 7 (5 lecciones) → Examen de Mes 7
+└── Semana 8 (5 lecciones) ─┐
+                             └→ FINAL EXAM (cubre todo el ciclo)
+```
+
+> La definición de "mes" en el catálogo se mapea al campo `monthIndex` ya existente en `Lesson`. El Examen de Mes se dispara cuando el estudiante completa todas las lecciones del `monthIndex` N.
+
+---
+
+### Modelo de datos
+
+Agregar al `prisma/schema.prisma`:
+
+```prisma
+model Exam {
+  id            String      @id @default(cuid())
+  courseId      String
+  course        Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  type          ExamType    // MONTHLY, MIDTERM, FINAL
+  monthIndex    Int?        // Para MONTHLY: el mes al que corresponde (1, 2, 3...)
+                            // Para MIDTERM/FINAL: null
+  titleEs       String
+  titleEn       String
+  instructionEs String      @db.Text
+  instructionEn String      @db.Text
+  timeLimitMin  Int         @default(45)  // Tiempo límite en minutos
+  passingPct    Int         @default(70)  // Porcentaje mínimo para aprobar
+  coinReward    Int         @default(300) // Coins al aprobar (más que una lección normal)
+  questions     ExamQuestion[]
+  attempts      ExamAttempt[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([courseId, type, monthIndex])
+  @@index([courseId])
+}
+
+enum ExamType {
+  MONTHLY
+  MIDTERM
+  FINAL
+}
+
+model ExamQuestion {
+  id            String    @id @default(cuid())
+  exam          Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  examId        String
+  orderIndex    Int
+  type          QuestionType  // MULTIPLE_CHOICE, TRUE_FALSE, SHORT_ANSWER
+  stemEs        String    @db.Text
+  stemEn        String    @db.Text
+  options       Json?     // Array de opciones para MULTIPLE_CHOICE
+  correctAnswer String
+  explanationEs String?   @db.Text
+  explanationEn String?   @db.Text
+  points        Int       @default(1)  // Peso de la pregunta
+
+  @@index([examId, orderIndex])
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+model ExamAttempt {
+  id            String        @id @default(cuid())
+  exam          Exam          @relation(fields: [examId], references: [id])
+  examId        String
+  student       Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId     String
+  status        AttemptStatus @default(IN_PROGRESS)
+  score         Int?          // Puntaje obtenido (null si no terminó)
+  totalPoints   Int?          // Puntaje máximo posible
+  pctScore      Int?          // Porcentaje (0-100)
+  passed        Boolean?      // null si no terminó
+  answers       Json          // { questionId: string, answer: string }[]
+  startedAt     DateTime      @default(now())
+  submittedAt   DateTime?
+  coinAwarded   Boolean       @default(false)
+
+  @@index([studentId, examId])
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+}
+```
+
+Agregar relaciones en modelos existentes:
+```prisma
+// En model Course:
+exams         Exam[]
+
+// En model Student:
+examAttempts  ExamAttempt[]
+```
+
+Migración:
+```bash
+npx prisma migrate dev --name add_exam_system
+npx prisma generate
+```
+
+---
+
+### Lógica de activación de exámenes
+
+**¿Cuándo se desbloquea un examen?**
+
+La lógica vive en `src/lib/gamification/examUnlock.ts`:
+
+```typescript
+// Examen de Mes N: se desbloquea cuando el estudiante tiene status COMPLETED
+// en TODAS las lecciones con monthIndex === N del courseId dado.
+
+export async function checkAndUnlockExams(
+  studentId: string,
+  courseId: string,
+  completedLessonId: string
+): Promise<{ unlockedExam?: Exam }> {
+  // 1. Obtener la lección recién completada para saber su monthIndex
+  const lesson = await prisma.lesson.findUnique({ where: { id: completedLessonId } })
+  if (!lesson?.monthIndex) return {}
+
+  // 2. Contar lecciones del mes en este curso
+  const lessonsInMonth = await prisma.lesson.count({
+    where: { courseId, monthIndex: lesson.monthIndex }
+  })
+
+  // 3. Contar cuántas completó el estudiante en ese mes
+  const completedInMonth = await prisma.lessonProgress.count({
+    where: {
+      studentId,
+      status: 'COMPLETED',
+      lesson: { courseId, monthIndex: lesson.monthIndex }
+    }
+  })
+
+  if (completedInMonth < lessonsInMonth) return {} // No completó el mes aún
+
+  // 4. Buscar el Examen de Mes N para este curso
+  const exam = await prisma.exam.findUnique({
+    where: { courseId_type_monthIndex: { courseId, type: 'MONTHLY', monthIndex: lesson.monthIndex } }
+  })
+  if (!exam) return {}
+
+  // 5. Verificar si ya tiene un intento
+  const existingAttempt = await prisma.examAttempt.findFirst({
+    where: { examId: exam.id, studentId }
+  })
+  if (existingAttempt) return {} // Ya desbloqueado antes
+
+  return { unlockedExam: exam }
+}
+
+// Midterm: se desbloquea cuando el estudiante tiene ExamAttempt.passed=true
+//          en los 5 Exámenes Mensuales (monthIndex 1–5) del mismo courseId
+// Final: se desbloquea cuando tiene passed=true en los 10 Exámenes Mensuales + Midterm
+```
+
+> Esta función se llama desde el endpoint `POST /api/lesson/complete` luego de actualizar `LessonProgress`.
+
+---
+
+### Parámetros por tipo de examen
+
+| Tipo | Preguntas | Tiempo | Coin reward | Coin si reprueba |
+|------|-----------|--------|-------------|-----------------|
+| Monthly Exam | 15 | 30 min | 300 | 50 |
+| Midterm Exam | 30 | 60 min | 800 | 150 |
+| Final Exam | 50 | 90 min | 2000 | 300 |
+
+Los Coins se otorgan solo si `pctScore >= passingPct` (70% por defecto). Si reprueba, se otorga un Coin de consolación (configurado en `consolationCoin` del Exam — agregar campo si necesario, o hardcodear en la lógica de grading).
+
+---
+
+### Generación de exámenes con AI
+
+Los exámenes se generan por un script separado, **después** de generar las lecciones:
+
+Archivo: `scripts/generate-exam.mjs`
+
+```javascript
+// Uso:
+// node scripts/generate-exam.mjs --course math-grade-9 --type MONTHLY --month 1
+// node scripts/generate-exam.mjs --course math-grade-9 --type MIDTERM
+// node scripts/generate-exam.mjs --course math-grade-9 --type FINAL
+
+// El script:
+// 1. Lee TODAS las lecciones del curso (y del mes, si es MONTHLY)
+// 2. Extrae los títulos, summaries y competencias cubiertas
+// 3. Llama a GPT-4o con un prompt que genera las preguntas en JSON
+// 4. Valida el JSON con Zod (ExamIngestSchema)
+// 5. Upsert en Prisma (Exam + ExamQuestion[])
+```
+
+**Prompt para el generador de exámenes** (`scripts/prompts/exam-generator-v1.md`):
+
+```markdown
+Sos un profesor experto en educación secundaria hispanohablante (9°-12°).
+Tu tarea: crear un examen formal de {{type}} para el curso {{courseTitle}} ({{gradeLevel}}).
+
+## Lecciones cubiertas:
+{{lessonSummaries}}
+
+## Parámetros:
+- Tipo: {{type}} (MONTHLY = 15 preguntas | MIDTERM = 30 | FINAL = 50)
+- Idioma principal: español LATAM neutro (es-419)
+- Dificultad progresiva: 40% básicas, 40% intermedias, 20% avanzadas
+- Incluir: comprensión, aplicación, análisis, síntesis
+- NO incluir preguntas que copien textualmente el texto de las lecciones
+
+## Formato JSON de salida:
+{
+  "titleEs": "Examen de Mes 1 — Matemática 9°",
+  "titleEn": "Month 1 Exam — 9th Grade Mathematics",
+  "instructionEs": "Tenés {{timeLimitMin}} minutos para completar este examen...",
+  "instructionEn": "You have {{timeLimitMin}} minutes to complete this exam...",
+  "questions": [
+    {
+      "orderIndex": 1,
+      "type": "MULTIPLE_CHOICE",
+      "stemEs": "¿Cuál es el resultado de resolver 2x + 4 = 12?",
+      "stemEn": "What is the result of solving 2x + 4 = 12?",
+      "options": [
+        { "id": "A", "textEs": "x = 4", "textEn": "x = 4" },
+        { "id": "B", "textEs": "x = 8", "textEn": "x = 8" },
+        { "id": "C", "textEs": "x = 3", "textEn": "x = 3" },
+        { "id": "D", "textEs": "x = 6", "textEn": "x = 6" }
+      ],
+      "correctAnswer": "A",
+      "explanationEs": "2(4) + 4 = 12. La respuesta correcta es x = 4.",
+      "explanationEn": "2(4) + 4 = 12. The correct answer is x = 4.",
+      "points": 1
+    }
+  ]
+}
+```
+
+---
+
+### Rutas del examen
+
+```
+/student/courses/[courseSlug]/exam/[examId]     — Página del examen (instrucciones + inicio)
+/student/courses/[courseSlug]/exam/[examId]/take — Examen en curso
+/student/courses/[courseSlug]/exam/[examId]/results — Resultados post-envío
+
+/api/exam/[examId]/start     POST — Crea ExamAttempt (IN_PROGRESS)
+/api/exam/[examId]/submit    POST — Grading, actualiza ExamAttempt, otorga Coins
+```
+
+---
+
+### UX del examen
+
+**Pantalla de instrucciones** (`/exam/[examId]`):
+```
+┌─────────────────────────────────────────────────────┐
+│  🎓  Examen de Mes 1 — Matemática 9°               │  serif text-2xl
+│                                                     │
+│  Este examen cubre todo lo que aprendiste          │  text-muted
+│  este mes. Tenés 30 minutos para completarlo.      │
+│                                                     │
+│  • 15 preguntas de opción múltiple                 │
+│  • Podés ganar hasta 300 Coins si aprobás          │
+│  • Necesitás 70% o más para aprobar                │
+│  • No podés pausar el examen una vez iniciado      │
+│                                                     │
+│  Angela estará disponible pero NO podrá            │
+│  ayudarte con las preguntas del examen.            │  italic muted
+│                                                     │
+│  [  Comenzar examen →  ]                           │  btn-lagoon
+└─────────────────────────────────────────────────────┘
+```
+
+**Pantalla de resultados**:
+- Si aprobó: animación de confetti leve + mensaje Angela + Coins otorgados
+- Si reprobó: mensaje empático de Angela + "Podés repasar las lecciones y volver a intentarlo" + botón "Volver a las lecciones"
+- Mostrar breakdown: cuántas correctas, cuáles fallaron (con explicación)
+- Para MIDTERM y FINAL: no permitir reintento hasta que el padre apruebe (configurable)
+
+---
+
+### Indicadores visuales en el MasteryMap
+
+En la vista del curso (`/student/courses/[courseSlug]`), mostrar el estado del examen junto a cada "semana":
+
+```
+Semana 1 ████████████ ✓   → [Examen de Mes 1: Aprobado ✓ 92%]
+Semana 2 ████████░░░░      → (En progreso — examen no disponible aún)
+```
+
+Para MIDTERM y FINAL: badge especial de "próxima evaluación importante" cuando el estudiante completa la semana anterior.
+
+---
+
+### Keys i18n
+
+En `messages/es.json` y `messages/en.json`, bajo `student.exam`:
+
+```json
+"exam": {
+  "monthly": {
+    "title": "Examen de Mes {{month}}",
+    "badge": "Evaluación Mensual"
+  },
+  "midterm": {
+    "title": "Examen Parcial",
+    "badge": "Midterm"
+  },
+  "final": {
+    "title": "Examen Final",
+    "badge": "Final"
+  },
+  "instructions": {
+    "timeLimit": "Tenés {{minutes}} minutos",
+    "questions": "{{count}} preguntas",
+    "passing": "Necesitás {{pct}}% para aprobar",
+    "coinReward": "Ganás {{coins}} Coins si aprobás",
+    "noPause": "No podés pausar el examen una vez iniciado",
+    "angelaRestricted": "Angela no puede ayudarte con las preguntas durante el examen"
+  },
+  "actions": {
+    "start": "Comenzar examen",
+    "submit": "Enviar respuestas",
+    "review": "Ver correcciones"
+  },
+  "results": {
+    "passed": "¡Aprobaste con {{pct}}%!",
+    "failed": "Obtuviste {{pct}}%. Necesitás {{passing}}% para aprobar.",
+    "coinEarned": "+{{coins}} Coins ganados",
+    "tryAgain": "Volver a las lecciones y reintentar"
+  }
+}
+```
+
+---
+
+### Criterios de aceptación
+
+- [ ] `npx prisma migrate dev` corre sin errores con los nuevos modelos.
+- [ ] `generate-exam.mjs` genera un examen MONTHLY válido para un curso existente.
+- [ ] El examen aparece en la vista del curso cuando el estudiante completó todas las lecciones del mes.
+- [ ] El timer cuenta hacia atrás y envía el examen automáticamente al llegar a cero.
+- [ ] Los Coins se otorgan solo si `pctScore >= 70`.
+- [ ] La pantalla de resultados muestra preguntas correctas e incorrectas con explicación.
+- [ ] Angela está presente pero muestra mensaje de "modo examen" (no sugiere respuestas).
+- [ ] El MIDTERM se desbloquea cuando se completan los primeros 4 Exámenes de Mes.
+- [ ] El FINAL se desbloquea cuando se completan todos los Exámenes de Mes y el MIDTERM.
+- [ ] `npm run type-check` pasa sin errores.
+
+---
+
+### Prompt para Claude Code (Mejora 13 — Sistema de Exámenes):
+
+```
+Implementá la Mejora 13 del docs/IMPLEMENTATION.md: Sistema de Exámenes (Monthly, Midterm, Final).
+
+PASOS EN ORDEN:
+
+1. Editar prisma/schema.prisma:
+   Agregar modelos: Exam, ExamQuestion, ExamAttempt.
+   Agregar enums: ExamType, QuestionType, AttemptStatus.
+   Agregar en Course: exams Exam[]
+   Agregar en Student: examAttempts ExamAttempt[]
+   Ver definición exacta en IMPLEMENTATION.md Mejora 13.
+   Ejecutar: npx prisma migrate dev --name add_exam_system
+   Luego: npx prisma generate
+
+2. Crear src/lib/gamification/examUnlock.ts:
+   Función checkAndUnlockExams(studentId, courseId, completedLessonId).
+   Lógica: si el estudiante completó TODAS las lecciones del monthIndex de la lección recién
+   completada, buscar el Exam MONTHLY correspondiente y retornarlo como "unlockedExam".
+   Ver lógica completa en IMPLEMENTATION.md Mejora 13.
+
+3. Llamar checkAndUnlockExams desde el endpoint de completar lección:
+   En src/app/api/lesson/complete/route.ts (o el endpoint equivalente que actualiza LessonProgress),
+   después de marcar la lección como COMPLETED, llamar checkAndUnlockExams.
+   Si retorna unlockedExam, incluirlo en la response JSON para que el frontend lo muestre.
+
+4. Crear scripts/generate-exam.mjs:
+   CLI: --course <slug> --type MONTHLY|MIDTERM|FINAL --month <N> (solo para MONTHLY)
+   El script lee las lecciones del curso del mes dado, construye el prompt con el template
+   de scripts/prompts/exam-generator-v1.md, llama a GPT-4o, valida con Zod, hace upsert en Prisma.
+   Ver prompt template en IMPLEMENTATION.md Mejora 13.
+
+5. Crear src/app/[locale]/student/courses/[courseSlug]/exam/[examId]/page.tsx:
+   Server Component. Muestra la pantalla de instrucciones del examen.
+   Leer el Exam de Prisma. Mostrar: tipo, título, tiempo límite, cantidad de preguntas,
+   coin reward, passing pct, restricciones (Angela en modo examen, no pausar).
+   Botón "Comenzar examen" → navega a /exam/[examId]/take.
+   Ver diseño en IMPLEMENTATION.md Mejora 13.
+
+6. Crear src/app/[locale]/student/courses/[courseSlug]/exam/[examId]/take/page.tsx:
+   Client Component ('use client'). Timer con countdown (timeLimitMin → 0).
+   Al llegar a 0: auto-submit. Botón "Enviar respuestas" disponible en cualquier momento.
+   Preguntas una por vez o todas en pantalla (recomendado: todas en pantalla con scroll).
+   Al submit: POST /api/exam/[examId]/submit con { attemptId, answers }.
+   Redirigir a /exam/[examId]/results.
+
+7. Crear src/app/api/exam/[examId]/submit/route.ts (POST handler):
+   Requiere sesión de estudiante. 
+   Recibe { attemptId, answers: { questionId, answer }[] }.
+   Grading: comparar cada answer con correctAnswer en ExamQuestion.
+   Calcular score, totalPoints, pctScore, passed.
+   Si passed && !existingAttempt.coinAwarded: otorgar coinReward vía CoinEntry + marcar coinAwarded=true.
+   Actualizar ExamAttempt: status=GRADED, score, totalPoints, pctScore, passed, submittedAt.
+   Retornar { pctScore, passed, coinEarned, correctAnswers: questionId[] }.
+
+8. Crear src/app/[locale]/student/courses/[courseSlug]/exam/[examId]/results/page.tsx:
+   Server Component. Leer el ExamAttempt más reciente del estudiante.
+   Mostrar: pctScore, passed/failed, coins ganados, breakdown de preguntas correctas/incorrectas.
+   Ver diseño de UX en IMPLEMENTATION.md Mejora 13.
+
+9. Agregar keys i18n en messages/es.json y messages/en.json:
+   Bajo student.exam: monthly, midterm, final, instructions, actions, results.
+   Ver valores en IMPLEMENTATION.md Mejora 13.
+
+10. npm run type-check. Corregir errores.
+11. npm run lint.
+
+RESTRICCIONES CRÍTICAS:
+- El timer del examen (countdown) vive SOLO en el Client Component /take/page.tsx.
+  Usar useEffect + setInterval. Al unmount, clearInterval para evitar memory leaks.
+- Angela en modo examen: en LessonPlayerShell/take, pasar prop examMode=true al AngelaWidget.
+  Cuando examMode=true, Angela muestra solo: "Estás en un examen. Hacé tu mejor esfuerzo 🌟".
+  NO responde preguntas sobre el contenido. NO procesa mensajes de ayuda conceptual.
+- Los Coins se otorgan UNA SOLA VEZ por examen (field coinAwarded=true en ExamAttempt).
+  Si el estudiante reprueba y vuelve a intentar (si se permite), NO otorgar Coins dos veces.
+- El MIDTERM y FINAL: por defecto, no se puede reintentar sin aprobación del padre.
+  Implementar como: si ExamAttempt.passed=false y exam.type IN ['MIDTERM','FINAL'],
+  mostrar mensaje "Tu padre/madre debe aprobar un nuevo intento desde su cuenta" y no mostrar
+  botón de reintento.
+- El MONTHLY sí permite reintento sin aprobación parental (1 reintento automático).
+- NO tocar el componente AngelaWidget en esta tarea, solo pasarle el prop examMode.
+
+Referencia completa: docs/IMPLEMENTATION.md → "Mejora 13: Sistema de Exámenes".
 ```

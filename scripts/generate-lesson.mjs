@@ -7,14 +7,14 @@
  *        --course math-grade-9 \
  *        --month 1 --topic 1 --n 1 \
  *        [--total 2]                    # default = course.lessonsPerTopic
- *        [--model gpt-4o]               # default
+ *        [--model claude-sonnet-4-6]    # default (Sonnet); Haiku para materias livianas
  *        [--dry-run]                    # no llama OpenAI, prueba parser+prompt
  *
  * Pasos:
  *   1. Lee el outline del curso desde docs/content/source/...md.
  *   2. Lo parsea (parser dual A/B) y localiza el topic objetivo.
  *   3. Inyecta variables en scripts/prompts/lesson-generator-v1.md.
- *   4. Llama a OpenAI con response_format=json_object.
+ *   4. Llama a Anthropic (Claude) con system + user; espera JSON puro.
  *   5. Wrappea la respuesta con campos posicionales derivados (slug,
  *      competencyCode, monthIndex, courseSlug, lessonOrderIndex, metadata).
  *   6. Valida contra LessonIngestSchema (Zod).
@@ -24,7 +24,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import {
   buildCompetencyCode,
   getCourse
@@ -33,8 +33,11 @@ import { loadEnv, repoRoot } from './lib/env.mjs';
 import { LessonIngestSchema } from './lib/lesson-ingest-schema.mjs';
 import { parseOutline } from './parsers/outline-parser.mjs';
 
-const PROMPT_VERSION = 'v1.1';
-const DEFAULT_MODEL = 'gpt-4o';
+const PROMPT_VERSION = 'v1.7';
+// Default a Sonnet para generación (contenido intelligence-sensitive: mate/
+// ciencias con KaTeX, prosa pedagógica, bilingüe). Para materias livianas
+// pasá --model=claude-haiku-4-5-20251001 y ahorrás ~3x.
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
 function parseArgs() {
   const out = { course: null, month: null, topic: null, n: null, total: null, model: null, dryRun: false };
@@ -110,74 +113,75 @@ function splitSystemUser(rendered) {
   return { system: '', user: rendered.trim() };
 }
 
-// Parsea el mensaje de error 429 buscando "try again in Xs" o "Xms".
-// Devuelve segundos a esperar (con piso de 1s y techo de 60s).
-function parseRetryAfter(errMessage) {
-  if (typeof errMessage !== 'string') return null;
-  const msMatch = errMessage.match(/try again in ([\d.]+)ms/i);
-  if (msMatch) return Math.max(1, Math.min(60, Math.ceil(parseFloat(msMatch[1]) / 1000)));
-  const sMatch = errMessage.match(/try again in ([\d.]+)s/i);
-  if (sMatch) return Math.max(1, Math.min(60, Math.ceil(parseFloat(sMatch[1]))));
-  return null;
+// El prompt pide JSON puro, pero Claude a veces lo envuelve en ```json ... ```
+// o agrega prosa. Extraemos el primer objeto {...} balanceado por las dudas.
+function extractJsonText(text) {
+  let t = (text ?? '').trim();
+  const fence = t.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  if (fence) t = fence[1].trim();
+  if (t.startsWith('{')) return t;
+  const first = t.indexOf('{');
+  const last = t.lastIndexOf('}');
+  if (first !== -1 && last > first) return t.slice(first, last + 1);
+  return t;
 }
 
-async function callOpenAI({ system, user, model, apiKey }) {
-  const client = new OpenAI({ apiKey });
-  const MAX_RETRIES = 4;
-  let lastError;
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+async function callAnthropic({ system, user, model, apiKey }) {
+  // El SDK reintenta 429 / 5xx / 529 (overloaded) automáticamente con backoff.
+  const client = new Anthropic({ apiKey, maxRetries: 4 });
+  // Anthropic no tiene json_object mode (y structured outputs no compila para
+  // este schema tan grande). Validamos el JSON nosotros y, si el modelo lo
+  // devuelve inválido (típicamente LaTeX mal escapado) o truncado, reintentamos
+  // a temp 0.7 — suele salir bien en otro intento.
+  const PARSE_RETRIES = 2;
+  let lastErr;
+  for (let attempt = 0; attempt <= PARSE_RETRIES; attempt++) {
+    let message;
     try {
-      const completion = await client.chat.completions.create({
+      message = await client.messages.create({
         model,
-        response_format: { type: 'json_object' },
+        // Una lección bilingüe completa no entra en 4096 tokens; 16k da holgura
+        // sin pasar el techo seguro para requests no-stream.
+        max_tokens: 16000,
         temperature: 0.7,
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: user }
-        ]
+        // El system prompt es idéntico en cada lección del bulk → cache server-side.
+        system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }],
+        messages: [{ role: 'user', content: user }]
       });
-      const content = completion.choices[0]?.message?.content ?? '';
-      return { content, tokensUsed: completion.usage?.total_tokens };
     } catch (e) {
-      lastError = e;
-      const status = e?.status ?? e?.code;
       const msg = e?.message ?? '';
-      // OpenAI usa 429 para DOS cosas distintas:
-      //   - Rate limit por TPM (temporal): "Rate limit reached on tokens per min".
-      //     code: 'rate_limit_exceeded'.
-      //   - Quota agotada (billing): "You exceeded your current quota".
-      //     code: 'insufficient_quota'.
-      // Solo la primera se puede recuperar con retry. La segunda requiere
-      // top-up de créditos — reintentar es perder tiempo.
-      const isQuotaExhausted =
-        e?.code === 'insufficient_quota' ||
-        /exceeded your current quota/i.test(msg) ||
-        /check your plan and billing/i.test(msg);
-      if (isQuotaExhausted) {
+      // Créditos/cuota agotada o sin permiso: reintentar es inútil.
+      if (e instanceof Anthropic.PermissionDeniedError || /credit|billing|quota/i.test(msg)) {
         const err = new Error(
-          'OpenAI quota agotada. Recargá créditos en https://platform.openai.com/settings/organization/billing y re-corré el bulk con --skip-existing.'
+          'Anthropic: créditos/cuota insuficientes o sin permiso. Revisá billing en https://console.anthropic.com/ y re-corré con --skip-existing.'
         );
         err.code = 'insufficient_quota';
         throw err;
       }
-      const is429 = status === 429 || /rate limit/i.test(msg);
-      const is5xx = typeof status === 'number' && status >= 500 && status < 600;
-      if (!is429 && !is5xx) throw e;
-      if (attempt === MAX_RETRIES) break;
-      // Para 429 usamos el wait time del mensaje; para 5xx backoff exponencial.
-      const retryAfterSec =
-        (is429 ? parseRetryAfter(msg) : null) ?? Math.pow(2, attempt) + 1;
-      // Jitter +0-500ms para evitar thundering herd cuando varios subprocesos
-      // de generate-course salen del 429 al mismo tiempo.
-      const jitterMs = Math.floor(Math.random() * 500);
-      const waitMs = retryAfterSec * 1000 + jitterMs;
-      console.warn(
-        `  ⏸ retry ${attempt + 1}/${MAX_RETRIES} en ${(waitMs / 1000).toFixed(1)}s — ${is429 ? '429' : status}`
-      );
-      await new Promise((r) => setTimeout(r, waitMs));
+      throw e;
+    }
+
+    const content = message.content
+      .filter((b) => b.type === 'text')
+      .map((b) => b.text)
+      .join('');
+    const usage = message.usage ?? {};
+    const tokensUsed = (usage.input_tokens ?? 0) + (usage.output_tokens ?? 0);
+
+    if (message.stop_reason === 'max_tokens') {
+      lastErr = new Error('Respuesta truncada por max_tokens.');
+    } else {
+      try {
+        return { modelJson: JSON.parse(extractJsonText(content)), tokensUsed };
+      } catch (e) {
+        lastErr = new Error(`JSON inválido (${e.message}). Inicio: ${content.slice(0, 160)}`);
+      }
+    }
+    if (attempt < PARSE_RETRIES) {
+      console.warn(`  ⏸ ${lastErr.message.split('\n')[0]} — reintento ${attempt + 1}/${PARSE_RETRIES}`);
     }
   }
-  throw lastError;
+  throw lastErr;
 }
 
 function buildLessonSlug(competencyCode) {
@@ -240,30 +244,22 @@ async function main() {
     console.log('\n--- DRY RUN: prompt rendered ---');
     console.log('SYSTEM:\n' + system.slice(0, 400) + (system.length > 400 ? '...' : ''));
     console.log('\nUSER:\n' + user.slice(0, 800) + (user.length > 800 ? '...' : ''));
-    console.log('\n(no se llamó a OpenAI)');
+    console.log('\n(no se llamó a Anthropic)');
     return;
   }
 
   const env = loadEnv();
-  if (!env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY no está seteada (.env.local o env var)');
+  if (!env.ANTHROPIC_API_KEY) {
+    throw new Error('ANTHROPIC_API_KEY no está seteada (.env.local o env var)');
   }
 
-  const { content, tokensUsed } = await callOpenAI({
+  const { modelJson, tokensUsed } = await callAnthropic({
     system,
     user,
     model,
-    apiKey: env.OPENAI_API_KEY
+    apiKey: env.ANTHROPIC_API_KEY
   });
 
-  let modelJson;
-  try {
-    modelJson = JSON.parse(content);
-  } catch (e) {
-    throw new Error(
-      `OpenAI devolvió contenido no-JSON. Primeros 300 chars:\n${content.slice(0, 300)}`
-    );
-  }
   if (modelJson._error) {
     throw new Error(`Modelo se negó/falló: ${modelJson._error}`);
   }
@@ -287,6 +283,8 @@ async function main() {
     contentMarkdownEn: modelJson.contentMarkdownEn,
     reflectionEs: modelJson.reflectionEs,
     reflectionEn: modelJson.reflectionEn,
+    hookEs: modelJson.hookEs,
+    hookEn: modelJson.hookEn,
     activities: modelJson.activities,
     quiz: modelJson.quiz,
     handsOnSuggestionEs: modelJson.handsOnSuggestionEs,

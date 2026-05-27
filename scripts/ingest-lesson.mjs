@@ -154,7 +154,9 @@ export async function ingestLesson(prisma, lesson, courseMeta) {
     bodyMdEn: lesson.contentMarkdownEn ?? null,
     activities: lesson.activities,
     reflectionEs: lesson.reflectionEs ?? null,
-    reflectionEn: lesson.reflectionEn ?? null
+    reflectionEn: lesson.reflectionEn ?? null,
+    hookEs: lesson.hookEs ?? null,
+    hookEn: lesson.hookEn ?? null
   };
   const lessonRow = await prisma.lesson.upsert({
     where: { slug: lesson.slug },
