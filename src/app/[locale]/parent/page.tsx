@@ -7,6 +7,7 @@ import {
 } from '@/components/parent/billing/StudentCard';
 import { MonthlyTotalBar } from '@/components/parent/billing/MonthlyTotalBar';
 import { AddStudentButton } from '@/components/parent/billing/AddStudentButton';
+import { DeviceLinkCard } from '@/components/parent/DeviceLinkCard';
 import {
   PLAN_TIER_VALUES,
   BILLING_CYCLE_VALUES
@@ -135,7 +136,10 @@ export default async function ParentDashboardPage({
               <StudentCard key={s.id} student={s} locale={locale} />
             ))}
           </div>
-          <MonthlyTotalBar students={students} />
+          <div className="space-y-4">
+            <MonthlyTotalBar students={students} />
+            {!parent.isDemo && <DeviceLinkCard />}
+          </div>
         </div>
       )}
     </div>

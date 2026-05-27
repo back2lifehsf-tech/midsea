@@ -44,9 +44,11 @@ export default async function StudentLoginPage({
   const familyIdFromCookie = cookies().get(DEVICE_FAMILY_COOKIE)?.value ?? null;
   const familyId = familyIdFromSession ?? familyIdFromCookie;
 
-  // Si el device no fue reclamado todavía, mostramos pantalla amigable
-  // en vez de loop hacia /login. (Evita confusión al estudiante.)
-  const deviceNotClaimed = !familyId;
+  // Si el device no fue reclamado todavía, mostramos la pantalla dedicada
+  // /student-login/no-device en lugar de inline o loop a /login.
+  if (!familyId) {
+    redirect(`/${locale}/student-login/no-device`);
+  }
 
   const studentsRaw = familyId
     ? await prisma.student.findMany({
@@ -81,20 +83,7 @@ export default async function StudentLoginPage({
       </header>
 
       <main className="py-10">
-        {deviceNotClaimed ? (
-          <div className="mx-auto max-w-md space-y-5 text-center">
-            <h1 className="font-display text-2xl font-bold text-midsea-deep">
-              {t('deviceNotClaimedTitle')}
-            </h1>
-            <p className="text-sm text-midsea-ink/70">{t('deviceNotClaimedBody')}</p>
-            <Link
-              href={`/${locale}/login?as=parent`}
-              className="inline-flex rounded-xl bg-midsea-deep px-5 py-2.5 text-sm font-semibold text-white shadow-wave hover:bg-midsea-lagoon"
-            >
-              {t('deviceNotClaimedCta')}
-            </Link>
-          </div>
-        ) : students.length === 0 ? (
+        {students.length === 0 ? (
           <div className="mx-auto max-w-md space-y-4 text-center">
             <h1 className="font-display text-2xl font-bold text-midsea-deep">{t('title')}</h1>
             <p className="text-sm text-midsea-ink/70">{t('noStudentsYet')}</p>
@@ -109,6 +98,7 @@ export default async function StudentLoginPage({
           <StudentLoginForm students={students} />
         )}
       </main>
+
     </div>
   );
 }

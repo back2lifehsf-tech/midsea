@@ -142,7 +142,7 @@ function Pill({
 }) {
   const cls: Record<PillKind, string> = {
     info: 'bg-midsea-lagoon/10 text-midsea-lagoon',
-    success: 'bg-emerald-100 text-emerald-800',
+    success: 'bg-midsea-lagoon/10 text-midsea-lagoon',
     warn: 'bg-amber-100 text-amber-900',
     muted: 'bg-midsea-ink/10 text-midsea-ink/70'
   };

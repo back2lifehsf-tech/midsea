@@ -604,6 +604,16 @@
         "later": "I'll do it later"
       }
     },
+    "deviceLink": {
+      "cardTitle": "Link student device",
+      "cardDescription": "Share this link with your child so they can sign in with their PIN from any tablet or computer.",
+      "generateButton": "Generate access link",
+      "generating": "Generating...",
+      "copyButton": "Copy",
+      "copied": "Copied!",
+      "expiresIn": "This link expires in 7 days. You can generate a new one anytime.",
+      "invalidLink": "This link is invalid or has expired. Ask your parent to generate a new one."
+    },
     "errors": {
       "name_required": "We need the student's name.",
       "birth_invalid": "Invalid date of birth.",
@@ -631,6 +641,13 @@
     }
   },
   "student": {
+    "noDevice": {
+      "title": "This device isn't linked yet",
+      "description": "Ask your parent to generate an access link from their Midsea account and open it on this tablet or computer.",
+      "hasLink": "I already have a link",
+      "linkPlaceholder": "Paste the link here...",
+      "invalidLink": "This link is invalid or has expired. Ask your parent to generate a new one."
+    },
     "nav": {
       "home": "Home",
       "lessons": "Lessons",

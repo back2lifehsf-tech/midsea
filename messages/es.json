@@ -604,6 +604,16 @@
         "later": "Lo haré luego"
       }
     },
+    "deviceLink": {
+      "cardTitle": "Vincular dispositivo del estudiante",
+      "cardDescription": "Compartí este link con tu hijo/a para que pueda entrar solo con su PIN desde cualquier tablet o computadora.",
+      "generateButton": "Generar link de acceso",
+      "generating": "Generando...",
+      "copyButton": "Copiar",
+      "copied": "¡Copiado!",
+      "expiresIn": "Este link expira en 7 días. Podés generar uno nuevo cuando quieras.",
+      "invalidLink": "Este link no es válido o ya expiró. Pedile a tu papá o mamá que genere uno nuevo."
+    },
     "errors": {
       "name_required": "Necesitamos el nombre del estudiante.",
       "birth_invalid": "Fecha de nacimiento inválida.",
@@ -631,6 +641,13 @@
     }
   },
   "student": {
+    "noDevice": {
+      "title": "Este dispositivo aún no está vinculado",
+      "description": "Pedile a tu papá o mamá que genere un link de acceso desde su cuenta de Midsea y abrilo en esta tablet o computadora.",
+      "hasLink": "Ya tengo un link",
+      "linkPlaceholder": "Pegá el link aquí...",
+      "invalidLink": "Este link no es válido o ya expiró. Pedile a tu papá o mamá que genere uno nuevo."
+    },
     "nav": {
       "home": "Inicio",
       "lessons": "Lecciones",

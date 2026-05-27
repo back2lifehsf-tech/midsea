@@ -103,12 +103,30 @@ enum CoinReason {
 }
 
 model Family {
-  id          String   @id @default(cuid())
-  name        String
-  locale      Locale   @default(es)
-  createdAt   DateTime @default(now())
-  parents     Parent[]
-  students    Student[]
+  id               String            @id @default(cuid())
+  name             String
+  locale           Locale            @default(es)
+  createdAt        DateTime          @default(now())
+  parents          Parent[]
+  students         Student[]
+  deviceLinkTokens DeviceLinkToken[]
+}
+
+// Mejora 11: Device Pairing — permite al estudiante entrar con PIN sin que
+// el padre esté logueado en el dispositivo. El padre genera un link desde
+// su dashboard; el link setea la cookie midsea_device_family (1 año) y
+// redirige a /student-login. Un token puede usarse en múltiples dispositivos
+// de la misma familia (la cookie persiste en cada dispositivo).
+model DeviceLinkToken {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  family    Family    @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  familyId  String
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  usedAt    DateTime? // null = no usado aún (primer dispositivo que lo abrió)
+
+  @@index([familyId])
 }
 
 model Parent {
